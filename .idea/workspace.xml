@@ -2,8 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2a106b0b-4d36-4cc4-b214-5c8d1af7ddf4" name="Default Changelist" comment="">
+<<<<<<< HEAD
+      <change afterPath="$PROJECT_DIR$/feature_extraction/Feature Extraction, Foundations and Applications 经典（被拖移）.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/feature_extraction/SFFS.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/feature_extraction/temp.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/feature_extraction/无量资本1902.pdf" afterDir="false" />
+=======
       <change beforePath="$PROJECT_DIR$/.idea/industrial.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/industrial.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/settings.jar" beforeDir="false" />
     </list>
@@ -13,6 +20,85 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+<<<<<<< HEAD
+  <component name="FUSProjectUsageTrigger">
+    <session id="315701662">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="1" />
+          <entry key="project.open.time.2" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="dummy" value="5" />
+          <entry key="py" value="97" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="PLAIN_TEXT" value="5" />
+          <entry key="Python" value="97" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="py" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Python" value="1" />
+        </counts>
+      </usages-collector>
+    </session>
+    <session id="-1950218863">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="6" />
+          <entry key="project.open.time.0" value="1" />
+          <entry key="project.open.time.3" value="2" />
+          <entry key="project.open.time.4" value="4" />
+          <entry key="project.opened" value="7" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="JPG" value="1" />
+          <entry key="csv" value="2" />
+          <entry key="py" value="7" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Image" value="1" />
+          <entry key="PLAIN_TEXT" value="2" />
+          <entry key="Python" value="7" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="dummy" value="6" />
+          <entry key="py" value="4217" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="PLAIN_TEXT" value="6" />
+          <entry key="Python" value="4217" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/feature_extraction/temp.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="267">
+              <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+=======
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
@@ -23,20 +109,37 @@
               <folding>
                 <element signature="e#70#88#0" expanded="true" />
               </folding>
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/feature_extraction/SFFS.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="598">
+              <caret line="26" column="25" lean-forward="true" selection-start-line="26" selection-start-column="25" selection-end-line="26" selection-end-column="25" />
+              <folding>
+                <element signature="e#70#88#0" expanded="true" />
+                <marker date="1552137784477" expanded="true" signature="1713:1714" ph="..." />
+              </folding>
+=======
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../../softwares/anaconda3/Lib/site-packages/numpy/core/arrayprint.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="140">
               <caret line="1412" selection-start-line="1412" selection-end-line="1412" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+<<<<<<< HEAD
+        <entry file="file://$PROJECT_DIR$/feature_extraction/IMG_2893.JPG">
+          <provider selected="true" editor-type-id="images" />
+=======
         <entry file="file://$PROJECT_DIR$/feature_extraction/feature_generator.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="234">
@@ -55,6 +158,7 @@
               <caret line="1036" selection-start-line="1036" selection-end-line="1036" />
             </state>
           </provider>
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -75,10 +179,14 @@
     <findStrings>
       <find>ate</find>
       <find>date</find>
+<<<<<<< HEAD
+      <find>SS[j] = 1</find>
+=======
       <find>J</find>
       <find>R</find>
       <find>R[</find>
       <find>print</find>
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -96,17 +204,28 @@
         <option value="$PROJECT_DIR$/MPT/mpt.py" />
         <option value="$PROJECT_DIR$/efficient_frontier/draw.py" />
         <option value="$PROJECT_DIR$/efficient_frontier/draw2.py" />
+<<<<<<< HEAD
+        <option value="$PROJECT_DIR$/feature_extraction/temp.py" />
+=======
         <option value="$PROJECT_DIR$/feature_extraction/test.py" />
         <option value="$PROJECT_DIR$/test.py" />
         <option value="$PROJECT_DIR$/feature_extraction/feature_generator.py" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
         <option value="$PROJECT_DIR$/feature_extraction/SFFS.py" />
       </list>
     </option>
   </component>
+<<<<<<< HEAD
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+    <option name="x" value="730" />
+    <option name="width" value="710" />
+    <option name="height" value="900" />
+=======
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="23" />
     <option name="width" value="1440" />
     <option name="height" value="877" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -157,9 +276,16 @@
     <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/feature_extraction" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+<<<<<<< HEAD
+      <recent name="$PROJECT_DIR$/feature_extraction" />
+=======
       <recent name="D:\Meiying\codes\industrial\feature_extraction" />
       <recent name="D:\Meiying\codes\industrial\feature_extraction\feature_generator" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/tushare" />
     </key>
@@ -201,7 +327,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="draw2" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="draw" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="industrial" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -213,7 +339,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/efficient_frontier/draw2.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/efficient_frontier/draw.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -222,7 +348,11 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+<<<<<<< HEAD
+    <configuration name="draw2" type="PythonConfigurationType" factoryName="Python" temporary="true">
+=======
     <configuration name="feature_generator" type="PythonConfigurationType" factoryName="Python" temporary="true">
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
       <module name="industrial" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -230,11 +360,19 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
+<<<<<<< HEAD
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/efficient_frontier" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/efficient_frontier/draw2.py" />
+=======
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/feature_extraction" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/feature_extraction/feature_generator.py" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -243,7 +381,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="mpt" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="industrial" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -255,7 +393,11 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+<<<<<<< HEAD
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MPT/mpt.py" />
+=======
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -264,7 +406,11 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+<<<<<<< HEAD
+    <configuration name="temp" type="PythonConfigurationType" factoryName="Python" temporary="true">
+=======
     <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
       <module name="industrial" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -276,7 +422,11 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+<<<<<<< HEAD
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/feature_extraction/temp.py" />
+=======
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/feature_extraction/test.py" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -286,19 +436,34 @@
       <method v="2" />
     </configuration>
     <list>
+<<<<<<< HEAD
+      <item itemvalue="Python.mpt" />
+      <item itemvalue="Python.draw" />
+      <item itemvalue="Python.draw2" />
+      <item itemvalue="Python.SFFS" />
+      <item itemvalue="Python.temp" />
+=======
       <item itemvalue="Python.draw2" />
       <item itemvalue="Python.feature_generator" />
       <item itemvalue="Python.test" />
       <item itemvalue="Python.test (1)" />
       <item itemvalue="Python.SFFS" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.SFFS" />
+<<<<<<< HEAD
+        <item itemvalue="Python.temp" />
+        <item itemvalue="Python.draw2" />
+        <item itemvalue="Python.draw" />
+        <item itemvalue="Python.mpt" />
+=======
         <item itemvalue="Python.feature_generator" />
         <item itemvalue="Python.test (1)" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.draw2" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
       </list>
     </recent_temporary>
   </component>
@@ -316,6 +481,18 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
+<<<<<<< HEAD
+    <frame x="0" y="0" width="1440" height="900" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49936306" weight="0.38751814" />
+      <window_info id="Structure" order="1" sideWeight="0.50063694" side_tool="true" weight="0.15362932" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.5325301" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.25060242" />
+=======
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
@@ -326,17 +503,41 @@
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.41318977" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39973083" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+<<<<<<< HEAD
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32891566" />
+=======
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.32974428" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49936306" weight="0.38751814" />
+      <window_info id="Structure" order="1" sideWeight="0.50063694" side_tool="true" weight="0.15362932" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.15903614" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.25060242" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32891566" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -389,6 +590,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tushr/test.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="460">
+          <caret line="20" column="9" selection-start-line="20" selection-start-column="9" selection-end-line="20" selection-end-column="9" />
+=======
         <state relative-caret-position="286">
           <caret line="11" column="11" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
         </state>
@@ -412,6 +617,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="338">
           <caret line="14" selection-start-line="14" selection-end-line="14" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
           <folding>
             <element signature="e#71#137#0" expanded="true" />
           </folding>
@@ -423,8 +629,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../softwares/anaconda3/Lib/site-packages/pandas/core/dtypes/base.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="739">
+          <caret line="116" selection-start-line="116" selection-end-line="116" />
+=======
         <state relative-caret-position="218">
           <caret line="86" selection-start-line="86" selection-end-line="86" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
         </state>
       </provider>
     </entry>
@@ -458,6 +669,30 @@
     </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="690">
+          <caret line="34" column="20" selection-start-line="34" selection-start-column="20" selection-end-line="34" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/feature_extraction/temp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="267">
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/feature_extraction/IMG_2893.JPG">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/feature_extraction/SFFS.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="598">
+          <caret line="26" column="25" lean-forward="true" selection-start-line="26" selection-start-column="25" selection-end-line="26" selection-end-column="25" />
+          <folding>
+            <element signature="e#70#88#0" expanded="true" />
+            <marker date="1552137784477" expanded="true" signature="1713:1714" ph="..." />
+=======
         <state relative-caret-position="140">
           <caret line="1134" selection-start-line="1134" selection-end-line="1134" />
         </state>
@@ -500,6 +735,7 @@
           <caret line="82" column="10" lean-forward="true" selection-start-line="82" selection-start-column="10" selection-end-line="82" selection-end-column="10" />
           <folding>
             <element signature="e#70#88#0" expanded="true" />
+>>>>>>> f197c73488c21907f49404e79e60aab4f78c02f6
           </folding>
         </state>
       </provider>
