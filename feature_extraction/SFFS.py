@@ -19,6 +19,7 @@ def SFFS(n, data):
     S = np.zeros(n)
     B = np.zeros([n,n])
     k = 0
+    result = {}
     while k < n:
         R = np.zeros(n)
         for j in range(n):
@@ -48,18 +49,28 @@ def SFFS(n, data):
                     B[k] = S
                 else:
                     t = 0
+        result[J(S, data)] = B[k]
+        print(J(B[k], data))
         k += 1
-    return B
+    return result
 
 
 def J(feature_select, dataset_orig):
-    k = feature_select.shape[0]# K=特征数量=pd的列数-1
+    n = feature_select.shape[0]# K=特征数量=pd的列数-1
+    k = 0
+    for i in range(n):
+        if feature_select[i] != 0:
+            k += 1
+    if(k == 0): return 0
     y_label = np.array([1])
-    dataset = np.insert(feature_select, k, values = y_label) * dataset_orig
+    dataset = np.insert(feature_select, n, values = y_label) * dataset_orig
     df = pd.DataFrame(dataset)
     corr = df.corr().abs() # 相关系数矩阵取绝对值
-    r_ky = corr.iloc[:,k:].mean() # 相关系数矩阵最后一列的平均值
-    r_kk = corr.iloc[:,:k].mean().mean() # 除去最后一列的平均值
+    r_ky = corr.iloc[:n,n:].mean(skipna = True) # 相关系数矩阵最后一列的平均值
+    r_kk = (corr.iloc[:n,:n].sum().sum() - k)/(2*k)
+    # print(corr)
+    # print("r_ky ",r_ky)
+    # print("r_kk ",r_kk )
     j = float(k * r_ky / np.sqrt(k + (k-1) * r_kk))
     return j
 
@@ -70,9 +81,3 @@ if __name__ == '__main__':
     generated_data = np.c_[features,labels]
     B = (SFFS(10,generated_data))
     print(B)
-
-
-
-
-
-
