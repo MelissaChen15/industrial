@@ -234,8 +234,22 @@ def grid_search_and_pipline():
 if __name__ == "__main__":
     # TODO:  随机 train_test split/ 考虑手续费
     # TODO:  测试每一种方法
-    train()
+    # train()
     # grid_search_and_pipline()
+
+# 测试：数据按时序排列
+    f = h5py.File(para.path_data, 'r')  # 打开h5文件
+    data = pd.DataFrame()
+    count = 0
+    for k in f.keys():
+        count += 1
+        print(count)
+        h5 = pd.read_hdf(para.path_data, key=str(k))
+        df = pd.DataFrame(h5)
+        data = pd.concat([data, df], axis=0, ignore_index=True)  # 把各个月份拼接起来
+    data = data.dropna(axis=0)  # remove nan
+    print(data)
+
 
     # # 测试： iris 数据集
     # from sklearn import datasets
