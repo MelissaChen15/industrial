@@ -5,12 +5,12 @@
 import pandas as pd
 import h5py
 
-f = h5py.File(r"D:\Meiying\data\cleaned\200505.h5", 'r')  # 打开h5文件
-for k in f.keys():
-    print(k)
-    h = pd.read_hdf(r"D:\Meiying\data\cleaned\200505.h5", key=str(k))
-    df = pd.DataFrame(h)
-    print(df)
+# f = h5py.File(r"D:\Meiying\data\cleaned\1.h5", 'r')  # 打开h5文件
+# for k in f.keys():
+#     print(k)
+#     h = pd.read_hdf(r"D:\Meiying\data\cleaned\1.h5", key=str(k))
+#     df = pd.DataFrame(h)
+#     print(df)
 
 # k:20140102 - 20181228
 
@@ -25,3 +25,5 @@ for k in f.keys():
 # print(count)
 
 # print(2 ** 1 * 3)
+
+print(range(0, 15)[-1])

@@ -67,11 +67,6 @@ def load_data(end,start):
 
 # 分类模型标记数据
 def label_data(data):
-    """
-    label data, 30% positive samples as 1 amd 30% negative samples as 0
-    :param data: DataFrame format
-    :return: labeled data set, DataFrame format
-    """
     data['y'] = np.nan # 新加标签列，初始化为nan
     data = data.sort_values(by='pct_chg', ascending=False) # 对日收益率行进行排序
     # print(data.iloc[,:])
