@@ -10,8 +10,9 @@ import numpy as np
 import pandas as pd
 import h5py
 from sklearn.model_selection import train_test_split
-from sklearn import decomposition, preprocessing, metrics
-from mlmodels import PCA_algorithm
+from sklearn import preprocessing, metrics
+from mlmodels.others import PCA_algorithm
+
 
 # method: SVR svr_kernel = "linear" svr_c = 0.01  svr_epsilon = 0.1
 # train mean_absolute_error: 0.871772

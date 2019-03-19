@@ -9,7 +9,7 @@ import pandas as pd
 import h5py
 import matplotlib.pyplot as plt
 from sklearn import preprocessing, metrics, svm, tree,linear_model
-from mlmodels import PCA_algorithm
+from mlmodels.others import PCA_algorithm
 from sklearn.model_selection import ShuffleSplit,GridSearchCV,train_test_split
 from sklearn import ensemble
 

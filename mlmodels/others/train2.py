@@ -9,8 +9,8 @@ import numpy as np
 import pandas as pd
 import h5py
 import sklearn.model_selection as ms
-from sklearn import decomposition, preprocessing, metrics
-from mlmodels import PCA_algorithm
+from sklearn import preprocessing, metrics
+from mlmodels.others import PCA_algorithm
 
 
 # method: SVR svr_kernel = "linear" svr_c = 0.01  svr_epsilon = 0.1
@@ -187,7 +187,6 @@ def train():
         returns_pred = pd.DataFrame(y_pred_test).sort_values(by=0, ascending=False)  # 对日收益率行进行排序
         strategy = returns_pred.iloc[:para.n_stock_select,:]
         # strategy.mean()
-        import matplotlib.pyplot as plt
         # plt
 
 
@@ -197,7 +196,6 @@ def grid_search_and_pipline():
     from sklearn.pipeline import Pipeline
     from sklearn.model_selection import ShuffleSplit
     from sklearn.model_selection import GridSearchCV
-    from sklearn.tree import DecisionTreeClassifier
 
     data_orig = load_data(para.trainset[0], para.trainset[1])
     # 如果是分类模型
