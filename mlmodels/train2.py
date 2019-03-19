@@ -227,8 +227,7 @@ def grid_search_and_pipline():
 
 
 if __name__ == "__main__":
-    # TODO:  随机 train_test split/ 考虑手续费
-    # TODO:  测试每一种方法
+
     # train()
     # grid_search_and_pipline()
 

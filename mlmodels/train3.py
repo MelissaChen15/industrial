@@ -2,21 +2,22 @@
 # -*- coding: utf-8 -*-
 # 2019/3/15 17:03
 
-# 整理代码，按照书上的方法写回测
+# 数据：训练数据去掉nan、收益率绝对值大于10、收益率为0， 预测数据中将收益率大于10的按10处理
 
 import numpy as np
 import pandas as pd
 import h5py
+import matplotlib.pyplot as plt
 from sklearn import preprocessing, metrics, svm, tree,linear_model
 from mlmodels import PCA_algorithm
-from sklearn.pipeline import Pipeline
 from sklearn.model_selection import ShuffleSplit,GridSearchCV,train_test_split
 from sklearn import ensemble
 
+
 # 参数类
 class Para:
-    method = 'LogisticR' # LinearR\RidgeR\LassoR\SVR\DT\SVC\LogisticR\RFC
-    method_type = 'c' # classification or regression
+    method = 'LinearR' # LinearR\RidgeR\LassoR\SVR\DT\SVC\LogisticR\RFC
+    method_type = 'r' # classification or regression
     percent_select = [0.3,0.3] # 30% positive samples amd 30% negative samples
     percent_cv = 0.1 # 10% cross validation samples
     path_data = "D:\Meiying\data\cleaned\\"
@@ -79,6 +80,8 @@ def load_data(datarange):
             h5 = pd.read_hdf(file_name, key=str(key))
             df = pd.DataFrame(h5)
             data_curr_month = pd.concat([data_curr_month,df],axis=0,ignore_index=False) # 把一个月内每天的数据拼接起来
+        data_curr_month = data_curr_month.mask(data_curr_month['pct_chg'].abs() >= 10.0)# 去掉收益率绝对值大于10的数据点
+        data_curr_month = data_curr_month.mask(data_curr_month['pct_chg'] == 0.0) # 去掉收益率为0的数据点
         data_curr_month = data_curr_month.dropna(axis = 0)# remove nan
         if(para.method_type == 'c'): data_curr_month = label_data(data_curr_month) # 标记数据
         data = pd.concat([data, data_curr_month], axis=0, ignore_index=False)  # 把每月的数据拼接起来
@@ -100,7 +103,6 @@ def label_data(data):
 
 # 数据预处理: 标准化，pca
 def preprocess(data_labeled):
-    # 注意：没有处理未除权的股票和收益率为0的股票
     # 切分数据
     X_in_samples = pd.DataFrame()
     y_in_samples = pd.DataFrame()
@@ -124,11 +126,10 @@ def preprocess(data_labeled):
     # print(X_train.shape)
 
     # 统一格式
-    X = np.array(X_in_samples)
-    y = np.array(y_in_samples)
+    X = pd.DataFrame(X_in_samples)
+    y = pd.DataFrame(y_in_samples)
     # print(X.shape,y.shape)
     return X, y
-
 
 # 训练模型
 def classifier_train_with_grid_search(X, y, model, param_grid):
@@ -253,12 +254,13 @@ def RFC(X, y):
     return model
 
 # 策略构建
-def build_strategy():
-    strategy = pd.DataFrame({'return':[0]*para.month_in_test[-1], 'value':[1]*para.month_in_test[-1]}) # 这句是不是有错？
-    for i_month in para.month_in_test:     # 按月份输出模型在测试集上的表现
-        y_true_curr_month = y_true_curr_month
+def select(result):
+    result = result.mask(result['pred_chg'] > 10.0, 10.0) # 预测收益率大于10 的按10计算
+    result = result.sort_values(by='pred_chg', ascending=False) # 按预测的回报率排序
+    select = result.iloc[:para.n_stock_select, 1:]
+    ave_return = select.mean()
+    return float(ave_return),select
 
-    pass
 
 if __name__ == "__main__":
 
@@ -266,6 +268,7 @@ if __name__ == "__main__":
     data_orig = load_data(para.month_in_sample)
     X, y = preprocess(data_orig)
     print("train data loading done, shape: "+str(X.shape)+str(y.shape))
+
 
     # 训练模型
     # print(linear_model.LassoCV().get_params().keys()) # 查看模型需要的参数
@@ -280,14 +283,44 @@ if __name__ == "__main__":
 
     # 模型评价
     print("running on test set")
-    for i_month in para.month_in_test:     # 按月份输出模型在测试集上的表现
-        data_test_orig = load_data(range(i_month,i_month+1))
-        X_test, y_test = preprocess(data_test_orig)
-        y_test_pred = model_trained.predict(X_test)
+    accurancy = {} # 分类模型评估指标
+    MSE = {} # 回归模型评估指标
+    n_test = para.month_in_test[-1]-para.month_in_test[0]+1
+    strategy = pd.DataFrame({'return': [0]*para.month_in_test[-1],'value': [1]*para.month_in_test[-1]})
+    # 按月计算模型在测试集上的表现
+    for i_month in para.month_in_test:
+        print("month #%d" %i_month)
+        data_test_month = load_data(range(i_month,i_month+1)) #加载测试数据
+        X_month, y_month = preprocess(data_test_month)
+        y_pred_month = model_trained.predict(X_month) #预测
+        # y_score_month = model_trained.decision_function(X_month)
+        result  = pd.DataFrame(y_month)         # 预测结果存储在result里
+        result['pred_chg'] = y_pred_month  # result有pct_chg和pred_chg两列，index为股票代码
         if para.method_type == 'c':
-            print("test month #%d, accurancy = %6f" %(i_month,metrics.accuracy_score(y_test,y_test_pred)))
+            acc = metrics.accuracy_score(result['pct_chg'],result['pred_chg'])
+            accurancy[i_month] = acc
+            print("test set accuracy = %6f" % acc)
         if para.method_type == 'r':
-            print("test  month #%d, MSE = %6d" %(i_month,metrics.mean_squared_error(y_test,y_test_pred)))
+            mse = metrics.mean_squared_error(result['pct_chg'],result['pred_chg'])
+            MSE[i_month] = mse
+            print("test set MSE = %6f" % mse)
+
+
+
+        # 策略构建
+        ave, *arg = select(result)
+        strategy.iloc[i_month-1, 0] = ave
+    # print(accurancy, MSE)
+    strategy['value'] = (strategy['return']*0.01 + 1).cumprod()
+    print(strategy)
+
+    # 策略评价
+    #画图
+    plt.plot(para.month_in_test, strategy.loc[para.month_in_test,'value'],'r-')
+    plt.show()
+
+
+
 
 
 

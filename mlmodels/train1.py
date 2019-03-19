@@ -197,8 +197,6 @@ def train():
         print('test r2_score: %.6f' % metrics.r2_score(y_test, y_pred_test))
 
 if __name__ == "__main__":
-    # TODO:  parameter grid search / pipline /  performance tests
-    # TODO:  测试每一种方法
     train()
 
     # 测试： iris 数据集
