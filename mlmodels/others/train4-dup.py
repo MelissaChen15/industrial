@@ -4,7 +4,8 @@ import h5py
 import matplotlib.pyplot as plt
 from sklearn import preprocessing, metrics, svm
 from mlmodels.others import PCA_algorithm
-from sklearn.model_selection import ShuffleSplit,GridSearchCV,train_test_split
+from sklearn.model_selection import StratifiedShuffleSplit,GridSearchCV,train_test_split
+from sklearn.externals import joblib
 
 
 # 参数类
@@ -75,7 +76,7 @@ X_cv = PCA_algorithm.pca(X_cv)
 
 print("X_train shape :", X_train.shape)
 # 构建模型
-cv_split = ShuffleSplit(n_splits=1, train_size=0.9, test_size=0.1)
+cv_split = StratifiedShuffleSplit(n_splits=1, train_size=0.9, test_size=0.1)
 if para.method == 'SVM':
     model = GridSearchCV(estimator=svm.SVC(), param_grid={'C':[1]}, cv=cv_split, n_jobs=1)  # n_jobs=-1 代表使用全部的cp
 
@@ -93,15 +94,19 @@ if para.method == 'SVM':
     y_score_train = model.decision_function(X_train)
     y_pred_cv = model.predict(X_cv)
     y_score_cv = model.decision_function(X_cv)
+joblib.dump(model, para.path_results  + "model.m")# 模型存储
+print("model saved")
+# model = joblib.load( para.path_results  + "model.m") # 模型加载
+
 
 # 模型预测
-n_days_in_test = 0
-accu = []
+n_days_in_test = 0 # 记录test set包含的天数
+accuracy_whole_test = [] # 记录每一天的预测准确度
 for i_month in para.month_test:  # 按月加载
     file_name = para.path_data + str(i_month) + ".h5"
-    f = h5py.File(file_name, 'r')  # 打开h5文件
+    f = h5py.File(file_name, 'r')
     # print(file_name)
-    for key in f.keys():  # 按天加载
+    for key in f.keys():  # 按天加载，按天预处理数据
         n_days_in_test += 1
         # 加载
         h5 = pd.read_hdf(file_name, key=str(key))
@@ -118,9 +123,6 @@ for i_month in para.month_test:  # 按月加载
         scalar = preprocessing.StandardScaler().fit(X_curr_day)
         X_curr_day = scalar.transform(X_curr_day)
 
-        # pca = decomposition.PCA(n_components=0.95)
-        # pca.fit(X_curr_day)
-        # X_curr_day = pca.transform(X_curr_day)
         X_curr_day = PCA_algorithm.pca(X_curr_day)
 
         # 计算
@@ -137,8 +139,10 @@ for i_month in para.month_test:  # 按月加载
         store_path = para.path_results + str(n_days_in_test) + ".csv"
         result_curr_day.to_csv(store_path, sep=',', header=True, index=True)
 
-        accu.append(metrics.accuracy_score(y_curr_day,y_pred_curr_day))
+        accuracy_whole_test.append(metrics.accuracy_score(y_curr_day,y_pred_curr_day))
         print("day #%d, accurancy = %6f, roc = %6f" %(n_days_in_test, metrics.accuracy_score(y_curr_day,y_pred_curr_day), metrics.roc_auc_score(y_curr_day, y_score_curr_day)))
+print("average accurancy on test days = %6f" %np.mean(accuracy_whole_test))
+
 
 # 策略构建
 strategy = pd.DataFrame({'return': [0] * n_days_in_test, 'value': [1] * n_days_in_test})
@@ -149,7 +153,16 @@ for i_day in range(1,n_days_in_test+1):
     select = result_csv_day.iloc[:100,1:2] # return_true列
     strategy.iloc[i_day-1, 0] = float(select.mean())
 strategy['value'] = (strategy['return']*0.01 + 1).cumprod()
+strategy.to_csv(para.path_results  + "strategy.csv", sep=',', header=True, index=True)
 print(strategy)
 
+
+# 策略评价
+ann_excess_return = float(np.mean(strategy['return']) / 100) * 252 #年化超额收益
+ann_excess_vol = float(np.std(strategy['return']) / 100) * np.sqrt(252) #年化超额收益波动率
+info_ratio = ann_excess_return/ann_excess_vol #信息比率
+print("ann excess return = %6f" % ann_excess_return)
+print("ann excess vol = %6f" % ann_excess_vol)
+print("info ratio = %6f" % info_ratio)
 plt.plot(range(1,n_days_in_test+1), strategy.loc[range(n_days_in_test),'value'],'r-')
 plt.show()
