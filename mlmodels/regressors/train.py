@@ -17,7 +17,6 @@ def train(model, model_name, X_train, X_cv,y_train, y_cv):
         print("best score : ", model.best_score_)
     except:
         print("did not use param grid search")
-        pass
     y_score_train = model.predict(X_train)
     y_score_cv = model.predict(X_cv)
     print("train set r2 = %6f, MSE = %6f" %(metrics.r2_score(y_train, y_score_train), metrics.mean_squared_error(y_train, y_score_train)) )

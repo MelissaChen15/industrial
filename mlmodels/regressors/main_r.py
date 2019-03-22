@@ -3,24 +3,22 @@
 # 2019/3/20 10:40
 
 from mlmodels.regressors import load_sample_data,train, predict, build_strategy,evaluate_strategy
-from mlmodels.regressors import LinearR_init,Ridge_init,Lasso_init
 from mlmodels.regressors.Para import Para
 para = Para()
+from mlmodels.regressors.model_inits import SVR_init, DTR_init, RFR_init,ExraTreeR_init,GBoostR_init
+
 
 # 1. 加载train/cv set数据
-X_train, X_cv, y_train, y_cv, *args = load_sample_data.load()
-print("X_train shape :", X_train.shape)
-print("X_cv shape :", X_cv.shape)
-# print(X_train, y_train)
+X_in_sample, y_in_sample = load_sample_data.load2()
+X_train, X_cv, y_train, y_cv, *args = load_sample_data.preprocess(X_in_sample, y_in_sample)
+print("X_train shape, y_train shape:", X_train.shape, y_train.shape)
+print("X_cv shape, y_cv shape:", X_cv.shape,y_cv.shape)
 
 # 2. 初始化模型
-# from sklearn import linear_model
-# print(linear_model.Lasso().get_params().keys()) # 查看模型需要的参数
-model, model_name= Lasso_init.init()
+model, model_name= GBoostR_init.init()
 
 # 3. 训练模型,保存模型
 model = train.train(model, model_name, X_train, X_cv, y_train, y_cv)
-# print(model.coef_)
 
 # 4. 模型预测,保存预测结果
 n_days_in_test = predict.predict(model,model_name)

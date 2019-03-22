@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import h5py
 from sklearn import preprocessing, metrics
-from mlmodels.others import PCA_algorithm
+from mlmodels.utities import PCA_algorithm
 from mlmodels.regressors.Para import Para
 para = Para()
 
