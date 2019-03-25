@@ -32,3 +32,6 @@ if __name__ == '__main__':
     # 其他
     # print(svm.SVC().get_params().keys()) # 查看模型需要的参数
     # model = joblib.load( para.path_results  + "model.m") # 模型加载
+
+    from sklearn import pipeline
+    steps = []
