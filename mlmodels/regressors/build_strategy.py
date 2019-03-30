@@ -15,7 +15,7 @@ def build(n_days_in_test,model_name):
         result_csv_day = pd.DataFrame(csv)
         select = result_csv_day.iloc[:100, 1:2]  # return_true列
         strategy.iloc[i_day - 1, 0] = float(select.mean())
-    strategy['value'] = (strategy['return'] * 0.01 * 0.9996 + 1).cumprod()
+    strategy['value'] = (strategy['return'] * 0.9986 + 1).cumprod()
     strategy.to_csv(para.path_results + model_name+ "\\" + model_name+ "_performance.csv", sep=',', header=True, index=True)
 
     return  strategy

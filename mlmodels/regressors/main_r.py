@@ -5,12 +5,12 @@
 from mlmodels.regressors import load_sample_data,train, predict, build_strategy,evaluate_strategy
 from mlmodels.regressors.Para import Para
 para = Para()
-from mlmodels.regressors.model_inits import SVR_init, DTR_init, RFR_init,ExraTreeR_init,GBoostR_init
+from mlmodels.regressors.model_inits import SVR_init, DTR_init, RFR_init,ExraTreeR_init,GBoostR_init,Ridge_init
 
 
 # 1. 加载train/cv set数据
 X_in_sample, y_in_sample = load_sample_data.load2()
-X_train, X_cv, y_train, y_cv, *args = load_sample_data.preprocess(X_in_sample, y_in_sample)
+X_train, X_cv, y_train, y_cv, *args = load_sample_data.preprocess(X_in_sample, y_in_sample*0.01) ########
 print("X_train shape, y_train shape:", X_train.shape, y_train.shape)
 print("X_cv shape, y_cv shape:", X_cv.shape,y_cv.shape)
 

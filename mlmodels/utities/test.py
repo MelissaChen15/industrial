@@ -53,6 +53,10 @@ import matplotlib.pyplot as plt
 # import os
 # os.mkdir(path_results+"SVC")
 
-from sklearn import linear_model
-from sklearn import tree,naive_bayes,svm,ensemble
-print(ensemble.GradientBoostingRegressor().get_params().keys()) # 查看模型需要的参数
+# from sklearn import linear_model
+# from sklearn import tree,naive_bayes,svm,ensemble
+# print(ensemble.GradientBoostingRegressor().get_params().keys()) # 查看模型需要的参数
+
+df = pd.DataFrame(['A','B','O','AB'])
+print(df)
+print(pd.get_dummies(df))

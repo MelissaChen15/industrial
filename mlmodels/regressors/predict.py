@@ -40,7 +40,7 @@ def predict(model, model_name):
             y_score_curr_day = model.predict(X_curr_day)
 
             # 保存结果到csv文件
-            result_curr_day = pd.DataFrame(y_curr_day).rename(columns={'pct_chg': 'return_true'})
+            result_curr_day = pd.DataFrame(y_curr_day).rename(columns={'pct_chg': 'return_pred'})
             result_curr_day['return_pred'] = y_score_curr_day
             result_curr_day = result_curr_day.sort_values(by='return_pred', ascending=False)
             store_path = para.path_results + model_name+ "\\"+str(n_days_in_test) + ".csv"
@@ -56,3 +56,46 @@ def predict(model, model_name):
     print("average MSE on all test days = %6f" % np.mean(mse_all_tests))
 
     return n_days_in_test
+
+
+def add_next_day_return(model_name):
+    n_days_in_test = 0
+    for i_month in para.month_test:  # 按月加载
+        file_name = para.path_data + str(i_month) + ".h5"
+        f = h5py.File(file_name, 'r')
+        # print(file_name)
+        for key in f.keys():  # 按天加载，按天预处理数据
+            n_days_in_test += 1
+            if n_days_in_test == 1: continue # 第一天的y不要
+            ### key!!
+            h5 = pd.read_hdf(file_name, key=str(key))
+            data_next_day = pd.DataFrame(h5)
+            y_next_day = data_next_day.loc[:, 'pct_chg'] # y的实际值
+            # print(y_next_day)
+            csv_name = para.path_results + model_name + "\\" + str(n_days_in_test-1)
+            print("day/csv",n_days_in_test, csv_name)
+            csv = pd.read_csv(csv_name + ".csv")
+            csv_curr_day = pd.DataFrame(csv).iloc[:100,:]# 取前100支
+            csv_curr_day['return_true'] = np.zeros([100])
+            # print(csv_curr_day)
+            # map对应的股票
+            for i in range(100):
+                code = csv_curr_day.iloc[i,0]
+                try:
+                    csv_curr_day.iloc[i,2] = y_next_day[code]
+                except:
+                    pass
+            # print(csv_curr_day)
+            csv_curr_day.to_csv(csv_name + '_r.csv', sep=',', header=True, index=True)
+            # print(csv_curr_day)
+            print(n_days_in_test)
+
+
+
+
+if __name__ == '__main__':
+    from sklearn.externals import joblib
+    model = joblib.load( r"D:\Meiying\data\result\GBoostR\GBoostR_model.m") # 模型加载
+    # predict(model, "GBoostR")
+    add_next_day_return("GBoostR")
+    # keys_set = list(f.keys())
