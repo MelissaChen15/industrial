@@ -56,7 +56,11 @@ import matplotlib.pyplot as plt
 # from sklearn import linear_model
 # from sklearn import tree,naive_bayes,svm,ensemble
 # print(ensemble.GradientBoostingRegressor().get_params().keys()) # 查看模型需要的参数
+#
+# df = pd.DataFrame([[1,2,3],[3,4,5]])
+# print(df)
+# df2 = pd.DataFrame([[1,2,3],[3,4,5]])
+# print(df + df2)
 
-df = pd.DataFrame(['A','B','O','AB'])
-print(df)
-print(pd.get_dummies(df))
+a = [1,2,4]
+print(len(a))

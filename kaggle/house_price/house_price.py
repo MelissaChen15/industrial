@@ -24,7 +24,6 @@ from sklearn.svm import SVR, LinearSVR
 from sklearn.linear_model import ElasticNet, SGDRegressor, BayesianRidge
 from sklearn.kernel_ridge import KernelRidge
 from xgboost import XGBRegressor
-from sklearn.base import BaseEstimator, TransformerMixin, RegressorMixin, clone
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import RobustScaler, StandardScaler
 from sklearn.metrics import mean_squared_error

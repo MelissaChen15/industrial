@@ -10,7 +10,7 @@ import pandas as pd
 import h5py
 import sklearn.model_selection as ms
 from sklearn import preprocessing, metrics
-from mlmodels.utities import PCA_algorithm
+from mlmodels.main_etry import PCA_algorithm
 
 
 # method: SVR svr_kernel = "linear" svr_c = 0.01  svr_epsilon = 0.1

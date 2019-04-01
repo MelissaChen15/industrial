@@ -3,7 +3,7 @@ import pandas as pd
 import h5py
 import matplotlib.pyplot as plt
 from sklearn import preprocessing, metrics, svm
-from mlmodels.utities import PCA_algorithm
+from mlmodels.main_etry import PCA_algorithm
 from sklearn.model_selection import StratifiedShuffleSplit,GridSearchCV,train_test_split
 from sklearn.externals import joblib
 

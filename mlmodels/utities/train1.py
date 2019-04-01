@@ -11,7 +11,7 @@ import pandas as pd
 import h5py
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing, metrics
-from mlmodels.utities import PCA_algorithm
+from mlmodels.main_etry import PCA_algorithm
 
 
 # method: SVR svr_kernel = "linear" svr_c = 0.01  svr_epsilon = 0.1
