@@ -6,13 +6,14 @@ import h5py
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing, metrics
-from mlmodels.main_etry import PCA_algorithm,load_sample_data
-from mlmodels.main_etry.Para import Para
+from main_entry.process import load_sample_data
+from utilities import PCA_algorithm
+from main_entry.process.Para import Para
 para = Para()
 
 
+# 回归模型预测
 def predict_regress(model, model_name):
-    # 模型预测
     n_days_in_test = 0  # 记录test set包含的天数
     r2_all_tests = []  # 记录每一天的r2
     mse_all_tests = []  # 记录每一天的mse
@@ -60,9 +61,8 @@ def predict_regress(model, model_name):
 
     return n_days_in_test
 
-
+# 分类模型预测
 def predict_class(model, model_name):
-    # 模型预测
     n_days_in_test = 0  # 记录test set包含的天数
     accuracy_all_tests = []  # 记录每一天的预测准确度
     roc_all_tests = []  # 记录每一天的roc
@@ -120,6 +120,7 @@ def predict_class(model, model_name):
     return n_days_in_test
 
 if __name__ == '__main__':
-    from sklearn.externals import joblib
-    model = joblib.load(para.path_results  + "Logistic/"+"Logistic_model.m") # 模型加载
-    predict_class(model, "Logistic")
+    # from sklearn.externals import joblib
+    # model = joblib.load(para.path_results  + "Logistic/"+"Logistic_model.m") # 模型加载
+    # predict_class(model, "Logistic")
+    pass

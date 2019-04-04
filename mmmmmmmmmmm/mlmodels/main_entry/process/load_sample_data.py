@@ -7,7 +7,8 @@ import h5py
 import numpy as np
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
-from mlmodels.main_etry import Para, PCA_algorithm
+from main_entry.process import Para
+from utilities import PCA_algorithm
 
 para = Para.Para()
 
@@ -34,7 +35,7 @@ def load_regress():
     y_in_sample = data_in_sample.loc[:, 'pct_chg']
     return X_in_sample, y_in_sample*0.01
 
-# 回归模型：从整理好的数据中加载
+# 回归模型：从处理之后拼接好的数据中加载
 def load2_regress():
     file_name = para.path_data + "sample_unlabeled.h5"
     x = pd.read_hdf(file_name, key=str("X_in_sample"))
@@ -79,7 +80,7 @@ def load_class():
     y_in_sample = data_in_sample.loc[:, 'return_bin']
     return X_in_sample, y_in_sample
 
-# 分类模型：从整理好的数据中加载
+# 分类模型：从处理之后拼接好的数据中加载
 def load2_class():
     file_name = para.path_data + "sample_labeled.h5"
     x = pd.read_hdf(file_name, key=str("X_in_sample"))
@@ -114,4 +115,4 @@ if __name__ == '__main__':
     # store["X_in_sample"] = X_in_sample
     # store["y_in_sample"] = y_in_sample
     # store.close()
-    print(1)
+    pass

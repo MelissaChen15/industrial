@@ -3,9 +3,9 @@
 # 2019/3/20 10:57
 
 from sklearn import svm
-from sklearn.model_selection import StratifiedShuffleSplit,GridSearchCV,train_test_split,ShuffleSplit
+from sklearn.model_selection import GridSearchCV, ShuffleSplit
 import os
-from mlmodels.main_etry.Para import Para
+from main_entry.process.Para import Para
 para = Para()
 
 def init():
