@@ -42,17 +42,13 @@ def predict_regress(model, model_name):
             y_score_curr_day = model.predict(X_curr_day)
 
             # 保存结果到csv文件
-            ###### key是当天的日期
             result_curr_day = pd.DataFrame(y_curr_day.index)
-            print(result_curr_day)
-
-            result_curr_day = pd.DataFrame(y_curr_day).rename(columns={'pct_chg': 'return_pred'}) # 复制y_curr_day是为了获取股票代码
-            result_curr_day['return_pred'] = y_score_curr_day # 用预测值覆盖掉前面复制的y_curr_day值
+            result_curr_day['date_pred'] = np.nan
+            result_curr_day['return_true'] = np.nan
+            result_curr_day['return_pred'] = y_score_curr_day
             result_curr_day = result_curr_day.sort_values(by='return_pred', ascending=False)
-            result_curr_day.loc["predict data from:"] = [key]
-            # print(result_curr_day)
             store_path = para.path_results + model_name+ "\\"+str(n_days_in_test) + ".csv"
-            result_curr_day.to_csv(store_path, sep=',', header=True, index=True)
+            result_curr_day.to_csv(store_path, sep=',', header=True, index=False)
 
             # 计算r2, mse
             r2_curr_day =  metrics.r2_score(y_curr_day, y_score_curr_day)
@@ -96,7 +92,9 @@ def predict_class(model, model_name):
             y_pred_curr_day = model.predict(X_curr_day)
 
             # 保存结果到csv文件
-            result_curr_day = pd.DataFrame(y_curr_day).rename(columns={'return_bin': 'return_pred_bin'})
+            result_curr_day = pd.DataFrame(y_curr_day.index)
+            result_curr_day['date_pred'] = np.nan
+            result_curr_day['return_true'] = np.nan
             result_curr_day['return_pred_bin'] = y_pred_curr_day # 预测y标签
             try: # 如果是有decision function的模型，以y_score排序存入csv
                 y_score_curr_day = model.decision_function(X_curr_day)
@@ -107,7 +105,7 @@ def predict_class(model, model_name):
             # result_curr_day.loc["predict data from:"] = [key,np.NAN * result_curr_day.loc[0].shape[0]]
 
             store_path = para.path_results + model_name+ "\\"+str(n_days_in_test) + ".csv"
-            result_curr_day.to_csv(store_path, sep=',', header=True, index=True)
+            result_curr_day.to_csv(store_path, sep=',', header=True, index=False)
 
             # 计算accuracy，roc
             accuracy_curr_day =  metrics.accuracy_score(y_curr_day, y_pred_curr_day)
@@ -124,7 +122,10 @@ def predict_class(model, model_name):
     return n_days_in_test
 
 if __name__ == '__main__':
-    # from sklearn.externals import joblib
-    # model = joblib.load(para.path_results  + "Logistic/"+"Logistic_model.m") # 模型加载
-    # predict_class(model, "Logistic")
     pass
+    # from sklearn.externals import joblib
+    # model = joblib.load(para.path_results  + "Ridge/"+ "Ridge_model.m") # 模型加载
+    # predict_regress(model, "Ridge")
+    # # Logistic
+    # model = joblib.load(para.path_results + "Logistic/" + "Logistic_model.m")  # 模型加载
+    # predict_class(model, "Logistic")

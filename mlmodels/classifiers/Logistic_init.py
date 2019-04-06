@@ -6,7 +6,7 @@
 from sklearn import linear_model
 from sklearn.model_selection import GridSearchCV, ShuffleSplit
 import os
-from main_entry.process.Para import Para
+from main_entry.Para import Para
 para = Para()
 
 def init():

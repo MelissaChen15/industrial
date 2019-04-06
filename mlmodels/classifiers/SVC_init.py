@@ -5,7 +5,7 @@
 from sklearn import svm
 from sklearn.model_selection import StratifiedShuffleSplit,GridSearchCV
 import os
-from main_entry.process.Para import Para
+from main_entry.Para import Para
 para = Para()
 
 def init():
