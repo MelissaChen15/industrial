@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="e7b8910a-cd9d-4785-b5ca-7b55c7459985" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../.idea/industrial.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/industrial.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classifiers/DTC_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifiers/DTC_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classifiers/GaussianNB_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifiers/GaussianNB_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classifiers/Logistic_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifiers/Logistic_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classifiers/RFC_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifiers/RFC_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classifiers/SVC_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifiers/SVC_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_etry/PCA_algorithm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_etry/Para.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_etry/build_strategy.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_etry/evaluate_strategy.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_etry/load_sample_data.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_etry/main_ave_stacking.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_etry/main_meta_stacking.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_etry/main_origin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_etry/predict.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_etry/train.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_etry/xgboosting.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/regressors/DTR_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/regressors/DTR_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/regressors/ExraTreeR_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/regressors/ExraTreeR_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/regressors/GBoostR_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/regressors/GBoostR_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/regressors/Lasso_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/regressors/Lasso_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/regressors/LinearR_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/regressors/LinearR_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/regressors/RFR_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/regressors/RFR_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/regressors/Ridge_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/regressors/Ridge_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/regressors/SVR_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/regressors/SVR_init.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/Detting_data.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/Main_Function.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/cubic_spline.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/data_clear.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/iris.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/performance_index.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/spline_extrapolation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/temp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/train1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/train2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/train3.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utities/train4-dup.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/.idea/codeStyles/Project.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/.idea/dictionaries/melissa.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/.idea/mlmodels.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/classifiers/DTC_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/classifiers/GaussianNB_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/classifiers/Logistic_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/classifiers/RFC_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/classifiers/SVC_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/main_entry/main_ave_stacking.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/main_entry/main_c.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/main_entry/main_meta_stacking.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/main_entry/main_r.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/main_entry/process/Para.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/main_entry/process/build_strategy.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/main_entry/process/evaluate_strategy.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/main_entry/process/load_sample_data.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/main_entry/process/predict.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/main_entry/process/train.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/main_entry/xgboost.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/regressors/DTR_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/regressors/ExraTreeR_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/regressors/GBoostR_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/regressors/Lasso_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/regressors/LinearR_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/regressors/RFR_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/regressors/Ridge_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/regressors/SVR_init.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/utilities/Detting_data.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/utilities/Main_Function.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/utilities/PCA_algorithm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/utilities/cubic_spline.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/utilities/data_clear.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/utilities/iris.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/mlmodels/utilities/performance_index.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../mmmmmmmmmmm/新建文本文档.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../新建文本文档.txt" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="-72190221">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.open.time.0" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="py" value="53" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="Python" value="53" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="py" value="37" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Python" value="37" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/main_entry/process/predict.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="556">
+              <caret line="127" column="45" selection-start-line="127" selection-start-column="45" selection-end-line="127" selection-end-column="45" />
+              <folding>
+                <element signature="e#70#81#0" expanded="true" />
+                <element signature="e#2713#5647#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main_entry/process/build_strategy.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="372">
+              <caret line="51" column="118" selection-start-line="51" selection-start-column="113" selection-end-line="51" selection-end-column="118" />
+              <folding>
+                <element signature="e#71#90#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/classifiers/DTC_init.py" />
+        <option value="$PROJECT_DIR$/classifiers/GaussianNB_init.py" />
+        <option value="$PROJECT_DIR$/classifiers/Logistic_init.py" />
+        <option value="$PROJECT_DIR$/classifiers/RFC_init.py" />
+        <option value="$PROJECT_DIR$/main_etry/build_strategy.py" />
+        <option value="$PROJECT_DIR$/main_etry/evaluate_strategy.py" />
+        <option value="$PROJECT_DIR$/main_etry/main_ave_stacking.py" />
+        <option value="$PROJECT_DIR$/main_etry/main_origin.py" />
+        <option value="$PROJECT_DIR$/main_etry/predict.py" />
+        <option value="$PROJECT_DIR$/main_etry/train.py" />
+        <option value="$PROJECT_DIR$/main_etry/xgboosting.py" />
+        <option value="$PROJECT_DIR$/main_etry/load_sample_data.py" />
+        <option value="$PROJECT_DIR$/main_etry/main_meta_stacking.py" />
+        <option value="$PROJECT_DIR$/main_etry/Para.py" />
+        <option value="$PROJECT_DIR$/main_entry/main_origin.py" />
+        <option value="$PROJECT_DIR$/classifiers/SVC_init.py" />
+        <option value="$PROJECT_DIR$/main_entry/process/Para.py" />
+        <option value="$PROJECT_DIR$/main_entry/main_ave_stacking.py" />
+        <option value="$PROJECT_DIR$/main_entry/main_r.py" />
+        <option value="$PROJECT_DIR$/regressors/SVR_init.py" />
+        <option value="$PROJECT_DIR$/regressors/Ridge_init.py" />
+        <option value="$PROJECT_DIR$/regressors/RFR_init.py" />
+        <option value="$PROJECT_DIR$/regressors/Lasso_init.py" />
+        <option value="$PROJECT_DIR$/regressors/LinearR_init.py" />
+        <option value="$PROJECT_DIR$/regressors/GBoostR_init.py" />
+        <option value="$PROJECT_DIR$/regressors/ExraTreeR_init.py" />
+        <option value="$PROJECT_DIR$/regressors/DTR_init.py" />
+        <option value="$PROJECT_DIR$/main_entry/xgboost.py" />
+        <option value="$PROJECT_DIR$/main_entry/process/build_strategy.py" />
+        <option value="$PROJECT_DIR$/main_entry/process/evaluate_strategy.py" />
+        <option value="$PROJECT_DIR$/main_entry/process/train.py" />
+        <option value="$PROJECT_DIR$/main_entry/main_c.py" />
+        <option value="$PROJECT_DIR$/main_entry/main_meta_stacking.py" />
+        <option value="$PROJECT_DIR$/main_entry/process/load_sample_data.py" />
+        <option value="$PROJECT_DIR$/main_entry/process/predict.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
+    <option name="width" value="1440" />
+    <option name="height" value="877" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="mlmodels" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mlmodels" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mlmodels" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mlmodels" type="462c0819:PsiDirectoryNode" />
+              <item name="main_entry" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mlmodels" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mlmodels" type="462c0819:PsiDirectoryNode" />
+              <item name="main_entry" type="462c0819:PsiDirectoryNode" />
+              <item name="process" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mlmodels" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mlmodels" type="462c0819:PsiDirectoryNode" />
+              <item name="regressors" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mlmodels" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mlmodels" type="462c0819:PsiDirectoryNode" />
+              <item name="utilities" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Kww\Desktop\mlmodels\main_entry" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Kww\Desktop\mlmodels\utilities" />
+      <recent name="C:\Users\Kww\Desktop\mlmodels\main_entry\process" />
+      <recent name="C:\Users\Kww\Desktop\mlmodels\main_entry" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.main_r">
+    <configuration name="load_sample_data" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="mlmodels" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/main_etry" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_etry/load_sample_data.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main_c" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="mlmodels" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/main_entry" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_entry/main_c.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main_meta_stacking" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="mlmodels" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/main_etry" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_etry/main_meta_stacking.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main_r" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="mlmodels" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/main_entry" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_entry/main_r.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.load_sample_data" />
+      <item itemvalue="Python.main_c" />
+      <item itemvalue="Python.main_meta_stacking" />
+      <item itemvalue="Python.main_r" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.main_r" />
+        <item itemvalue="Python.main_c" />
+        <item itemvalue="Python.main_meta_stacking" />
+        <item itemvalue="Python.load_sample_data" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration>$USER_HOME$/.subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e7b8910a-cd9d-4785-b5ca-7b55c7459985" name="Default Changelist" comment="" />
+      <created>1554355222087</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1554355222087</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="23" width="1440" height="877" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15997182" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.49731183" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/classifiers/Logistic_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="8" column="5" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classifiers/RFC_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="8" column="5" lean-forward="true" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utilities/PCA_algorithm.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classifiers/DTC_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="312">
+          <caret line="12" column="22" lean-forward="true" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classifiers/SVC_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="20" column="41" lean-forward="true" selection-start-line="20" selection-start-column="41" selection-end-line="20" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classifiers/GaussianNB_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="156">
+          <caret line="8" column="5" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_entry/process/Para.py" />
+    <entry file="file://$PROJECT_DIR$/utilities/performance_index.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="516">
+          <caret line="48" lean-forward="true" selection-start-line="48" selection-end-line="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utilities/cubic_spline.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_entry/main_ave_stacking.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="69" selection-start-line="69" selection-end-line="69" />
+          <folding>
+            <element signature="e#69#87#0" expanded="true" />
+            <element signature="e#479#3120#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/regressors/SVR_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="7" column="15" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/regressors/Ridge_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="8" column="15" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/regressors/RFR_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="7" column="15" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/regressors/Lasso_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="8" column="15" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/regressors/LinearR_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="6" column="15" selection-start-line="6" selection-start-column="15" selection-end-line="6" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/regressors/GBoostR_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="7" column="15" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/regressors/ExraTreeR_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="7" column="15" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/regressors/DTR_init.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="7" column="15" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_entry/main_r.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+          <folding>
+            <element signature="e#71#169#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_entry/Para.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="5" column="4" lean-forward="true" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_entry/xgboost.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="8" column="15" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_entry/main_meta_stacking.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="15" column="15" selection-start-line="15" selection-start-column="15" selection-end-line="15" selection-end-column="15" />
+          <folding>
+            <element signature="e#617#3368#0" />
+            <element signature="e#3445#3996#0" />
+            <element signature="e#4071#4936#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_entry/main_c.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="15" column="15" lean-forward="true" selection-start-line="15" selection-start-column="15" selection-end-line="15" selection-end-column="15" />
+          <folding>
+            <element signature="e#71#169#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_entry/process/evaluate_strategy.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="7" column="15" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_entry/process/load_sample_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="805">
+          <caret line="35" column="40" lean-forward="true" selection-start-line="35" selection-start-column="40" selection-end-line="35" selection-end-column="40" />
+          <folding>
+            <element signature="e#71#90#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_entry/process/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="6" column="15" selection-start-line="6" selection-start-column="15" selection-end-line="6" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_entry/process/build_strategy.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="372">
+          <caret line="51" column="118" selection-start-line="51" selection-start-column="113" selection-end-line="51" selection-end-column="118" />
+          <folding>
+            <element signature="e#71#90#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main_entry/process/predict.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="556">
+          <caret line="127" column="45" selection-start-line="127" selection-start-column="45" selection-end-line="127" selection-end-column="45" />
+          <folding>
+            <element signature="e#70#81#0" expanded="true" />
+            <element signature="e#2713#5647#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

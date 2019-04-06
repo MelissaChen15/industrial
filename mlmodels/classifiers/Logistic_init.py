@@ -4,9 +4,9 @@
 
 
 from sklearn import linear_model
-from sklearn.model_selection import StratifiedShuffleSplit,GridSearchCV, ShuffleSplit
+from sklearn.model_selection import GridSearchCV, ShuffleSplit
 import os
-from mlmodels.main_etry.Para import Para
+from main_entry.process.Para import Para
 para = Para()
 
 def init():

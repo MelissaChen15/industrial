@@ -3,9 +3,8 @@
 # 2019/3/20 10:57
 
 from sklearn import linear_model
-from sklearn.model_selection import StratifiedShuffleSplit,GridSearchCV
 import os
-from mlmodels.main_etry.Para import Para
+from main_entry.Para import Para
 para = Para()
 
 def init():

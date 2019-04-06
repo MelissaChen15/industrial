@@ -3,10 +3,9 @@
 # 2019/3/20 16:37
 
 
-from sklearn import linear_model, tree
-from sklearn.model_selection import StratifiedShuffleSplit,GridSearchCV, ShuffleSplit
+from sklearn import tree
 import os
-from mlmodels.main_etry.Para import Para
+from main_entry.process.Para import Para
 para = Para()
 
 def init():

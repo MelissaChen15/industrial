@@ -3,9 +3,9 @@
 # 2019/3/20 10:57
 
 from sklearn import svm
-from sklearn.model_selection import StratifiedShuffleSplit,GridSearchCV,train_test_split
+from sklearn.model_selection import StratifiedShuffleSplit,GridSearchCV
 import os
-from mlmodels.main_etry.Para import Para
+from main_entry.process.Para import Para
 para = Para()
 
 def init():
@@ -18,7 +18,7 @@ def init():
     cv_split = StratifiedShuffleSplit(n_splits=5, train_size=0.9, test_size=0.1)
 
     #初始化模型
-    model = GridSearchCV(estimator=svm.SVC(), param_grid=param_grid, cv=cv_split, n_jobs=3,scoring='accuracy')
+    model = GridSearchCV(estimator=svm.SVC(), param_grid=param_grid, cv=cv_split, n_jobs=3)
     # 建立新的文件夹用于存储模型和预测结果
     if os.path.exists(para.path_results + "SVC") == False:
         os.mkdir(para.path_results + "SVC")
