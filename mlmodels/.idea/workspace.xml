@@ -1,28 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e7b8910a-cd9d-4785-b5ca-7b55c7459985" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/mlmodels.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/mlmodels.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifiers/DTC_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifiers/DTC_init.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifiers/GaussianNB_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifiers/GaussianNB_init.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifiers/Logistic_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifiers/Logistic_init.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifiers/RFC_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifiers/RFC_init.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifiers/SVC_init.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifiers/SVC_init.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_entry/process/build_strategy.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_entry/process/build_strategy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_entry/process/predict.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_entry/process/predict.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_entry/process/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_entry/process/train.py" afterDir="false" />
-    </list>
+    <list default="true" id="e7b8910a-cd9d-4785-b5ca-7b55c7459985" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="-72190221">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="1" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/main_entry/process/predict.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="303">
+              <caret line="19" column="16" lean-forward="true" selection-start-line="19" selection-start-column="16" selection-end-line="19" selection-end-column="16" />
+              <folding>
+                <element signature="e#70#81#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main_entry/process/build_strategy.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="418">
+              <caret line="53" column="118" selection-start-line="53" selection-start-column="118" selection-end-line="53" selection-end-column="118" />
+              <folding>
+                <element signature="e#71#90#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -34,6 +55,7 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>nan</find>
+      <find>index</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -92,7 +114,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -100,10 +121,32 @@
               <item name="mlmodels" type="b2602c69:ProjectViewProjectNode" />
               <item name="mlmodels" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="mlmodels" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mlmodels" type="462c0819:PsiDirectoryNode" />
+              <item name="main_entry" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mlmodels" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mlmodels" type="462c0819:PsiDirectoryNode" />
+              <item name="main_entry" type="462c0819:PsiDirectoryNode" />
+              <item name="process" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mlmodels" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mlmodels" type="462c0819:PsiDirectoryNode" />
+              <item name="regressors" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="mlmodels" type="b2602c69:ProjectViewProjectNode" />
+              <item name="mlmodels" type="462c0819:PsiDirectoryNode" />
+              <item name="utilities" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -269,9 +312,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
+    <frame x="0" y="23" width="1440" height="877" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14195184" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15997182" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -409,20 +453,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main_entry/process/predict.py">
+    <entry file="file://$PROJECT_DIR$/main_entry/process/build_strategy.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="355">
-          <caret line="123" column="26" lean-forward="true" selection-start-line="123" selection-start-column="26" selection-end-line="123" selection-end-column="26" />
+        <state relative-caret-position="418">
+          <caret line="53" column="118" selection-start-line="53" selection-start-column="118" selection-end-line="53" selection-end-column="118" />
+          <folding>
+            <element signature="e#71#90#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main_entry/process/build_strategy.py">
+    <entry file="file://$PROJECT_DIR$/main_entry/process/predict.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="10" column="10" lean-forward="true" selection-start-line="10" selection-start-column="10" selection-end-line="10" selection-end-column="10" />
+        <state relative-caret-position="303">
+          <caret line="19" column="16" lean-forward="true" selection-start-line="19" selection-start-column="16" selection-end-line="19" selection-end-column="16" />
           <folding>
-            <element signature="e#225#1488#0" />
-            <element signature="e#1466#2284#0" />
+            <element signature="e#70#81#0" expanded="true" />
           </folding>
         </state>
       </provider>
