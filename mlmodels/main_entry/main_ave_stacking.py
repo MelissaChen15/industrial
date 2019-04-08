@@ -8,7 +8,7 @@ from sklearn import metrics,preprocessing,clone
 import h5py
 from main_entry.process import train, load_sample_data, evaluate_strategy, build_strategy
 from utilities import PCA_algorithm
-from main_entry.process.Para import Para
+from main_entry.Para import Para
 para = Para()
 from regressors import Ridge_init, RFR_init, SVR_init
 
@@ -46,15 +46,15 @@ def average_stack_predict(models, weights): # 写成这样子是因为数据的�
                 y_score_curr_day += y_score_a_model * weights[i]
 
             # 保存结果到csv文件
-            result_curr_day = pd.DataFrame(y_curr_day).rename(columns={'pct_chg': 'return_pred'}) # 复制y_curr_day是为了获取股票代码
-            result_curr_day['return_pred'] = y_score_curr_day # 用预测值覆盖掉前面复制的y_curr_day值
+            result_curr_day = pd.DataFrame(y_curr_day.index)
+            result_curr_day['date_pred'] = np.nan
+            result_curr_day['return_true'] = np.nan
+            result_curr_day['return_pred'] = y_score_curr_day
             result_curr_day = result_curr_day.sort_values(by='return_pred', ascending=False)
-            result_curr_day.loc["predict data from:"] = [key]
-            # print(result_curr_day)
             if os.path.exists(para.path_results + "ave_stacking") == False:
                 os.mkdir(para.path_results + "ave_stacking")
             store_path = para.path_results + "ave_stacking\\"+str(n_days_in_test) + ".csv"
-            result_curr_day.to_csv(store_path, sep=',', header=True, index=True)
+            result_curr_day.to_csv(store_path, sep=',', header=True, index=False)
 
             # 计算accuracy，roc
             r2_curr_day =  metrics.r2_score(y_curr_day, y_score_curr_day)

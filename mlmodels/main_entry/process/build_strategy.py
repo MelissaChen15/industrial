@@ -34,7 +34,7 @@ def add_next_day_return(model_name):
                     csv_curr_day.iloc[i,2] = y_next_day[code] * 0.01 # 第2列第return_ture
                 except:
                     pass
-            print(csv_curr_day)
+            # print(csv_curr_day)
             csv_curr_day.to_csv(csv_name + '.csv', sep=',', header=True, index=False)
 
 

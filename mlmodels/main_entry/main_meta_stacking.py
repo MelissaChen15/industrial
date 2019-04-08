@@ -52,15 +52,15 @@ def meta_stack_predict(models_1st_layer, meta_model): # 写成这样子是因为
             y_score_curr_day = meta_model.predict(y_score_1st_layer)
 
             # 保存结果到csv文件
-            result_curr_day = pd.DataFrame(y_curr_day).rename(columns={'pct_chg': 'return_pred'}) # 复制y_curr_day是为了获取股票代码
-            result_curr_day['return_pred'] = y_score_curr_day # 用预测值覆盖掉前面复制的y_curr_day值
+            result_curr_day = pd.DataFrame(y_curr_day.index)
+            result_curr_day['date_pred'] = np.nan
+            result_curr_day['return_true'] = np.nan
+            result_curr_day['return_pred'] = y_score_curr_day
             result_curr_day = result_curr_day.sort_values(by='return_pred', ascending=False)
-            result_curr_day.loc["predict data from:"] = [key]
-            # print(result_curr_day)
-            if os.path.exists(para.path_results + "meta_stacking") == False:
+            if os.path.exists(para.path_results + "ave_stacking") == False:
                 os.mkdir(para.path_results + "meta_stacking")
             store_path = para.path_results + "meta_stacking\\"+str(n_days_in_test) + ".csv"
-            result_curr_day.to_csv(store_path, sep=',', header=True, index=True)
+            result_curr_day.to_csv(store_path, sep=',', header=True, index=False)
 
             # 计算r2, mse
             r2_curr_day =  metrics.r2_score(y_curr_day, y_score_curr_day)
@@ -89,18 +89,18 @@ def first_layer_predict(models_1st_layer, X_in_sample, y_in_sample):
     y_all_meta = y_in_sample
     for i in range(len(models_1st_layer)):
         X_all_meta[:,i] = models_1st_layer[i].predict(X_in_sample)  # 第一层模型的预测值存贮在X_all_meta的列中
-        print("first layer model #%d r2 on all sample data = %6f" %(i,metrics.r2_score(X_all_meta[:,i], y_in_sample)))
-        print("first layer model #%d mse on all sample data = %6f" %(i,metrics.mean_squared_error(X_all_meta[:,i], y_in_sample)))
+        # print("first layer model #%d r2 on all sample data = %6f" %(i,metrics.r2_score(X_all_meta[:,i], y_in_sample)))
+        # print("first layer model #%d mse on all sample data = %6f" %(i,metrics.mean_squared_error(X_all_meta[:,i], y_in_sample)))
     X_train_meta, X_cv_meta, y_train_meta, y_cv_meta = train_test_split(X_all_meta, y_all_meta, test_size=para.seed,
                                                                         random_state=para.seed)
-    y_train_meta, y_cv_meta = y_train_meta.values.ravel(), y_cv_meta.values.ravel()  # 转换为sklearn部分模型需要的格式
+    # y_train_meta, y_cv_meta = y_train_meta.values.ravel(), y_cv_meta.values.ravel()
     return X_train_meta, X_cv_meta, y_train_meta, y_cv_meta
 
 
 if __name__ == '__main__':
 
     # 1. 加载train/cv set数据
-    X_in_sample, y_in_sample = load_sample_data.load2_regress()
+    X_in_sample, y_in_sample = load_sample_data.load_regress()
 
     scalar = preprocessing.StandardScaler().fit(X_in_sample)
     X_in_sample = scalar.transform(X_in_sample)

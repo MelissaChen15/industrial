@@ -3,6 +3,7 @@
 # 2019/3/22 8:32
 
 import xgboost as xgb
+import os
 from main_entry.process import load_sample_data, evaluate_strategy, build_strategy
 from utilities import PCA_algorithm
 from sklearn import preprocessing, metrics
@@ -14,7 +15,7 @@ import pandas as pd
 import numpy as np
 
 # 对于通用的predict进行了修改，适应xgboost
-def predict2(bst, model_name):
+def predict_xgboost(bst, model_name):
     # 模型预测
     n_days_in_test = 0  # 记录test set包含的天数
     accuracy_all_tests = []  # 记录每一天的预测准确度
@@ -35,7 +36,7 @@ def predict2(bst, model_name):
             # 预处理
             X_curr_day = data_curr_day.loc[:, 'close':'amount'] # X的实际值
             y_curr_day = data_curr_day.loc[:, 'return_bin'] # y的实际标签
-            y_true_day = data_curr_day.loc[:, 'pct_chg'] # y的实际值
+            # y_true_day = data_curr_day.loc[:, 'pct_chg'] # y的实际值
 
             scalar = preprocessing.StandardScaler().fit(X_curr_day) # 标准化
             X_curr_day = scalar.transform(X_curr_day)
@@ -50,14 +51,16 @@ def predict2(bst, model_name):
 
 
             # 保存结果到csv文件
-            result_curr_day = pd.DataFrame(y_true_day).rename(columns={'pct_chg': 'return_true'})
-            result_curr_day['return_true_bin'] = y_curr_day # 真实y标签
-            result_curr_day['return_pred_bin'] = y_pred_curr_day # 预测y标签
-            result_curr_day['y_score'] = y_score_curr_day # y score
+            result_curr_day = pd.DataFrame(y_curr_day.index)
+            result_curr_day['date_pred'] = np.nan
+            result_curr_day['return_true'] = np.nan
+            result_curr_day['return_pred_bin'] = y_pred_curr_day  # 预测y标签
+            result_curr_day['y_score'] = y_score_curr_day  # y score
             result_curr_day = result_curr_day.sort_values(by='y_score', ascending=False)
 
-            store_path = para.path_results + model_name+ "\\"+str(n_days_in_test) + ".csv"
-            result_curr_day.to_csv(store_path, sep=',', header=True, index=True)
+
+            store_path = para.path_results + model_name + "\\" + str(n_days_in_test) + ".csv"
+            result_curr_day.to_csv(store_path, sep=',', header=True, index=False)
 
             # 计算accuracy，roc
             accuracy_curr_day =  metrics.accuracy_score(y_curr_day, y_pred_curr_day)
@@ -74,7 +77,7 @@ def predict2(bst, model_name):
 if __name__ == '__main__':
 
     # 加载训练数据
-    X_in_sample, y_in_sample = load_sample_data.load2_class()
+    X_in_sample, y_in_sample = load_sample_data.load_class()
     X_train, X_cv, y_train, y_cv, *args = load_sample_data.preprocess(X_in_sample, y_in_sample)
     print("X_train shape, y_train shape:", X_train.shape, y_train.shape)
     print("X_cv shape, y_cv shape:", X_cv.shape, y_cv.shape)
@@ -94,20 +97,19 @@ if __name__ == '__main__':
     evallist = [(dtrain, 'train'), (dcv, 'cv')]
 
     # 训练模型
-    # num_round = 10
-    # bst = xgb.train(param_grid, dtrain, num_round, evallist)
+    num_round = 10
+    bst = xgb.train(param_grid, dtrain, num_round, evallist)
 
     # 存储模型
     # 需要在存储路径上提前创建文件夹和.model文件
+    if os.path.exists(para.path_results + "xgboost") == False:
+        os.mkdir(para.path_results + "xgboost")
     store_path = para.path_results + "xgboost/xgboost_model.model"
-    # bst.save_model(store_path)
-
-    # 加载模型
-    bst = xgb.Booster({'nthread' : 1}) # init model
-    bst.load_model(store_path)# load data
+    bst.save_model(store_path)
+    # bst.load_model(store_path) # 加载模型
 
     # 模型预测,保存预测结果
-    n_days_in_test = predict2(bst, "xgboost")
+    n_days_in_test = predict_xgboost(bst, "xgboost")
 
     # 策略构建
     build_strategy.add_next_day_return("xgboost")

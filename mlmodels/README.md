@@ -13,7 +13,7 @@ mlmodels/
 |      |-- load_sample_data.py
 |   |
 |   |-- Para.py 参数类
-|   |-- xgboost.py
+|   |-- xgboosting.py
 |   |-- main_r.py 回归模型主函数
 |   |-- main_c.py 分类模型主函数
 |   |-- main_ave_stacking.py
@@ -72,7 +72,7 @@ mlmodels/
 
   Tips: 2d-array变为1d-array 可以使用y.values.ravel()
 
-- 根据你的数据格式，修改main_entry/process/predict.py、main_entry/process/ build_strategy.add_next_day_return() 中涉及数据读取的代码0。
+- 根据你的数据格式，修改main_entry/process/predict.py、main_entry/process/ build_strategy.add_next_day_return() 中涉及数据读取的代码。
 
 ## 3. 设置参数 
 
