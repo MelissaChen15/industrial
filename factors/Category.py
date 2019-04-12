@@ -15,7 +15,24 @@ class ValueFactor(BasicFactor):
 
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
-        self.type = 'value factor'
+        self.type = 'value'
+
+
+# 成长类因子
+class GrowthFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = 'growth'
+
+
+# 财务质量类因子
+class FiancialQualityFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = 'fiancial quality factor'
+
 
 
 

@@ -1,60 +1,36 @@
-class A():
-    def go(self):
-        print ("go A go!")
-    def stop(self):
-        print ("stop A stop!")
-    def pause(self):
-        raise Exception("Not Implemented")
-class B(A):
-    def go(self):
-        super(B, self).go()
-        print ("go B go!")
-class C(A):
-    def go(self):
-        super(C, self).go()
-        print ("go C go!")
-    def stop(self):
-        super(C, self).stop()
-        print ("stop C stop!")
-class D(B,C):
-    def go(self):
-        super(D, self).go()
-        print ("go D go!")
-    def stop(self):
-        super(D, self).stop()
-        print ("stop D stop!")
-    def pause(self):
-        print ("wait D wait!")
-class E(B,C):
-    pass
-a = A()
-b = B()
-c = C()
-d = D()
-e = E()
-# 说明下列代码的输出结果
-a.go()
-print('--------')
-b.go()
-print('--------')
-c.go()
-print('--------')
-d.go()
-print('--------')
-e.go()
-print('--------')
-a.stop()
-print('--------')
-b.stop()
-print('--------')
-c.stop()
-print('--------')
-d.stop()
-print('--------')
-e.stop()
-print(D.mro())
-a.pause()
-b.pause()
-c.pause()
-d.pause()
-e.pause()
+import pandas as pd
+import numpy as np
+import datetime
+import time
+import parser
+
+# df = pd.DataFrame(columns=['a','b'])
+# print(df)
+# row = {'a':1,'b':2}
+#
+# #显示所有列
+# pd.set_option('display.max_columns', None)
+# #显示所有行
+# pd.set_option('display.max_rows', None)
+# #设置value的显示长度为100，默认为50
+# pd.set_option('max_colwidth',100)
+
+d1 = '2019-04-04'
+# dt1 = datetime.datetime.strptime(d1,'%Y-%m-%d')
+
+
+# 返回传入日期的上季度报告日
+def last_season_report_day(date_now):
+    x = datetime.datetime.strptime(date_now, '%Y-%m-%d')
+    y = x + pd.tseries.offsets.DateOffset(months=-((x.month - 1) % 3), days= - x.day)  # 上季第一天
+    return y.strftime("%Y-%m-%d")
+
+# https://www.jb51.net/article/138085.htm
+# print(last_season_report_day(d1))
+# print(type(last_season_report_day(d1)))
+
+# print(1/np.nan)
+
+
+# df1 = pd.DataFrame({'a':1,'b':2})
+# print(df1.iloc['a':])

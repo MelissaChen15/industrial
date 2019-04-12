@@ -21,6 +21,7 @@ desc:
 from factors.sql.dbsynchelper2 import dbsynchelper
 from factors.sql.GetSQLsentence import GetSQLsentence
 import pandas as pd
+import numpy as np
 import datetime
 
 
@@ -28,18 +29,19 @@ import datetime
 class dbData_import(object):
     def __init__(self):
         pass
-    def InputDataPreprocess(self,filepath,FactorName):
+    def InputDataPreprocess(self,filepath,table_name):
         # FactorName=['ROE_ttm','ROE_q','ROA_ttm','ROA_q','GrossProfitMargin_ttm','GrossProfitMargin_ttm_q','AssetTurnover_ttm','AssetTurnover_q']
+        result = {}
         # 1.将sql语句执行得到数据
         data1 = dbsynchelper()
         Getdata1 = GetSQLsentence()
         sql_sentence = Getdata1.readsql(filepath)  # 输入文件的路径,得到整个sql文件里面的语句
         # print(sql_sentence)
-        sentence_length=int(len(sql_sentence)/len(FactorName))
+        sentence_length=int(len(sql_sentence)/len(table_name))
 
         # 一条完整的sql语句换行，将语句进行拼接
         Newsql_sentence=[]
-        for i in range(len(FactorName)):
+        for i in range(len(table_name)):
             tempsentence2 = sql_sentence[sentence_length * i].decode('utf-8')
             for j in range(sentence_length*i+1,sentence_length*(i+1),1):
                 tempsentence2=tempsentence2+ ' '+sql_sentence[j].decode('utf-8')
@@ -53,18 +55,42 @@ class dbData_import(object):
 
         # 将数据赋给某个变量名
         for i in range(len(ValuationDataset)):
-            exec("%s=%s" % (FactorName[i],ValuationDataset[i]))
+            exec("%s=%s" % (table_name[i],ValuationDataset[i]))
+            result[table_name[i]] = pd.DataFrame(eval(table_name[i])).replace([None],np.nan)# 转换成df,并且把None转换为np.nan
 
-        # 转换成df
-        return pd.DataFrame(eval(FactorName[0]))
+        return result
 
 
 
 if __name__ == '__main__':
     # pass
-    FactorName = ['factor1']
-    filepath = r'D:\Meiying\codes\industrial\factors\sql\sql_sentence_template.sql'
+    table_name = ['LC_DIndicesForValuation', 'LC_MainIndexNew']
+    filepath = r'D:\Meiying\codes\industrial\factors\sql\sql_generate_dates.sql'
 
     data = dbData_import()
-    print(data.InputDataPreprocess(filepath, FactorName))
+    table1 = data.InputDataPreprocess(filepath, table_name)['LC_DIndicesForValuation']
+    pd.set_option('display.max_columns', None)
+    print(table1)
 
+
+    # InnerCode是唯一的
+    # |Innercode SecuCode TradingDay 周频日期 EndDate 月频日期  年频日期
+
+
+    # SECUCODE
+    # TRADINGDAY
+    # INNERCODE
+
+
+
+
+
+
+
+
+
+
+
+  # 日频 [7015 rows x 11 columns]
+    # 季频 [90 rows x 4 columns]
+    # 需要inner join的是 ENDDATE和SECUCODE
