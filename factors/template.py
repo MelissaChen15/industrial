@@ -3,14 +3,14 @@
 # # 2019/4/11 13:17
 #
 #
-# from factors.Frequency import SeasonalFrequency
-# from factors.Category import GrowthFactor
+# from factors.Frequency import
+# from factors.Category import
 # from factors.sql import pl_sql_oracle
 #
 # import pandas as pd
 #
 # """
-# 季频、成长类因子
+# 类因子
 #
 # 代码表：
 #
@@ -51,7 +51,7 @@
 #         factor_entities = dict() # 存储实例化的因子
 #
 #         #
-#          = SeasonalGrowthFactor(factor_code='',
+#          = (factor_code='',
 #                                            name='',
 #                                            describe='')
 #         factor_entities[''] =
@@ -63,7 +63,7 @@
 #
 #
 # if __name__ == '__main__':
-#      = SeasonalGrowthFactor(factor_code = '', name = '', describe = '')
+#      = (factor_code = '', name = '', describe = '')
 #     sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\.sql'
 #     data = .find_components(file_path = sql_file_path, table_name = ['='])
 #     # print(data)
@@ -72,11 +72,4 @@
 #     print(factor_values)
 #     pd.set_option('display.max_columns', None)
 #     print(factor_list)
-#
-#
-#
-#
-#
-#
-#
 #

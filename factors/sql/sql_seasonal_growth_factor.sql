@@ -1,7 +1,7 @@
 
 
 --表1： LC_MainIndexNew
-select t2.SecuCode,t1.EndDate,t1.EnterpriseFCFPS,t1.EPSTTM
+select t2.SecuCode,t1.EndDate,t1.NetProfitGrowRate,t1.ROETTM,t1.TotalAssetGrowRate,t1.BasicEPSYOY,t1.GrossIncomeRatioTTM,t1.NetProfitRatioTTM
  from LC_MainIndexNew t1
 inner join SecuMain t2
 on t1.CompanyCode=t2.CompanyCode

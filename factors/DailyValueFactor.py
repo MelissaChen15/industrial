@@ -40,6 +40,9 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
         sql = pl_sql_oracle.dbData_import()
         components = sql.InputDataPreprocess(file_path, table_name)
 
+        monthly_data = self.seasonal_to_monthly(components['LC_MainIndexNew'],['NETPROFITGROWRATE'])
+        components['LC_MainIndexNew_daily'] = self.monthly_to_daily(monthly_data, components['LC_DIndicesForValuation'],['NETPROFITGROWRATE'])
+
         return components
 
     def get_factor_values(self, components):
@@ -120,20 +123,13 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
         factor_values['TotalMV'] = components['LC_DIndicesForValuation']['TOTALMV']
 
 
-        # # TODO: 日频/季频数据的处理
-        # # PEG 市盈率增长率
-        # # 注意，此因子为日频数据/季频数据，分母取上个季度最后一天的数据
-        # PEG = DailyValueFactor(factor_code='0010',
-        #                        name='PEG',
-        #                        describe='市盈率增长率 = 市盈率(PE)/(净利润同比增长率(NetProfitGrowRate)*100)')
-        # factor_entities['PEG'] = PEG
-        # from  factors.util import last_season_value
-        # date_now = components['LC_DIndicesForValuation'][['TRADINGDAY']]
-        # print(date_now)
-        # a['上季报告日'] = last_season_value()
-        # print(a)
-        # factor_values['PEG'] = components['LC_DIndicesForValuation']['PE'] / components['LC_MainIndexNew']['NETPROFITGROWRATE']
-
+        # PEG 市盈率增长率
+        # 注意，此因子为日频数据/季频数据，分母取上个季度最后一天的数据
+        PEG = DailyValueFactor(factor_code='0010',
+                               name='PEG',
+                               describe='市盈率增长率 = 市盈率(PE)/(净利润同比增长率(NetProfitGrowRate)*100)')
+        factor_entities['PEG'] = PEG
+        factor_values['PEG'] = components['LC_DIndicesForValuation']['PE'] / (components['LC_MainIndexNew_daily']['NETPROFITGROWRATE']*100)
 
         return factor_values, factor_entities
 

@@ -65,18 +65,19 @@ class dbData_import(object):
 if __name__ == '__main__':
     # pass
     table_name = ['LC_DIndicesForValuation', 'LC_MainIndexNew']
-    filepath = r'D:\Meiying\codes\industrial\factors\sql\sql_generate_dates.sql'
+    filepath = r'D:\Meiying\codes\industrial\factors\sql\sql_daily_value_factor.sql'
 
-    data = dbData_import()
-    table1 = data.InputDataPreprocess(filepath, table_name)['LC_DIndicesForValuation']
-    pd.set_option('display.max_columns', None)
-    print(table1)
 
+
+    data = dbData_import().InputDataPreprocess(filepath, table_name)
+    table1 = data['LC_DIndicesForValuation']
+    table2 = data['LC_MainIndexNew']
+    # pd.set_option('display.max_columns', None)
 
     # InnerCode是唯一的
-    # |Innercode SecuCode TradingDay 周频日期 EndDate 月频日期  年频日期
-
-
+    # 一个公司就一个companycode
+    # 但是一个公司可以有股票和很多债券，也就有多个SecuCode ，然后每个SecuCode
+    # 对应一个InnerCode
     # SECUCODE
     # TRADINGDAY
     # INNERCODE

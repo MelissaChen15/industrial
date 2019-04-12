@@ -27,7 +27,7 @@ class GrowthFactor(BasicFactor):
 
 
 # 财务质量类因子
-class FiancialQualityFactor(BasicFactor):
+class FinancialQualityFactor(BasicFactor):
 
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
