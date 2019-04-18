@@ -22,6 +22,8 @@ from factors.sql.dbsynchelper2 import dbsynchelper
 from factors.sql.GetSQLsentence import GetSQLsentence
 import pandas as pd
 import numpy as np
+from sqlalchemy import create_engine
+
 import datetime
 
 
@@ -61,37 +63,31 @@ class dbData_import(object):
         return result
 
 
+def df_to_DB(df:pd.DataFrame, table_name, if_exists, data_type):
+    """
+    将DataFrame存储到数据库
+    :param df: pd.DataFrame, 需要存储的DataFrame
+    :param table_name: string， 表名
+    :param if_exists: string, 当表已存在的时候如何处理：
+        fail: Raise a ValueError.
+        replace: Drop the table before inserting new values.
+        append: Insert new values to the existing table.
+    :param data_type: dict, 格式{"A": Integer()}；数据类型参考https://blog.csdn.net/aimill/article/details/81531499
+    """
+    # oracle+cx_oracle://user:pass@host:port/dbname[?key=value&key=value...]
+
+    conn_string = 'oracle+cx_oracle://jydb:jydb@192.168.1.187/JYDB'
+    engine = create_engine(conn_string, echo=False)
+    df.to_sql(name=table_name, if_exists= if_exists, con=engine,index=False,dtype=data_type)
+    # print(engine.execute("SELECT * FROM Test").fetchall())
+
+
 
 if __name__ == '__main__':
-    # pass
-    table_name = ['LC_DIndicesForValuation', 'LC_MainIndexNew']
-    filepath = r'D:\Meiying\codes\industrial\factors\sql\sql_daily_value_factor.sql'
-
-
-
-    data = dbData_import().InputDataPreprocess(filepath, table_name)
-    table1 = data['LC_DIndicesForValuation']
-    table2 = data['LC_MainIndexNew']
-    # pd.set_option('display.max_columns', None)
-
-    # InnerCode是唯一的
-    # 一个公司就一个companycode
-    # 但是一个公司可以有股票和很多债券，也就有多个SecuCode ，然后每个SecuCode
-    # 对应一个InnerCode
-    # SECUCODE
-    # TRADINGDAY
-    # INNERCODE
-
-
-
-
-
-
-
-
-
-
-
-  # 日频 [7015 rows x 11 columns]
-    # 季频 [90 rows x 4 columns]
-    # 需要inner join的是 ENDDATE和SECUCODE
+    pass
+    # df = pd.DataFrame({
+    #     'a':[0.1,1.2,3.4],
+    #     'b':['I','am','Melissa']
+    # })
+    # from sqlalchemy import Float, String
+    # df_to_DB(df, 'aaa','replace',{'a': Float,'b': String(150)})

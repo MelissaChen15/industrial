@@ -24,7 +24,7 @@ class DailyFrequency(BasicFactor):
         self.frequency = 1
 
     def seasonal_to_monthly(self, seasonal_data: pd.DataFrame, seasonal_factor_name: list):
-        # TODO: 插值法会导致收尾没有数据
+        # TODO: 插值法会导致尾部没有数据，目前使用的解决方法是取最近一期报告的值
         """
         应用cubic spline，将季频数据转换成月频数据
         可以同时处理多个特征；多支股票需要将同一支股票的数据放在一起，上下拼接
@@ -92,9 +92,13 @@ class DailyFrequency(BasicFactor):
             for row2 in monthly_data.itertuples(index=True, name='Pandas2'):
                 code2 = getattr(row2, 'SECUCODE')
                 start_day2 = getattr(row2, 'STARTDAY')
-                if (code == code2 and start_day == start_day2):
+                if (code == code2 and start_day == start_day2): # 如果某日期的上季度报告已经发布
                     for f in seasonal_factor_name:
                         daily_data.loc[row.Index, f] = getattr(row2, f)
+
+        # 处理数据尾部空值，目前解决方案是全部等于最近一期报告披露的数值
+        daily_data = daily_data.fillna(method='ffill')
+
 
         return daily_data
 
@@ -142,7 +146,7 @@ if __name__ == '__main__':
     table2_monthly = temp.seasonal_to_monthly(table2_seasonal,['NETPROFITGROWRATE'])
     print(table2_monthly)
     table_2_daily = temp.monthly_to_daily(table2_monthly, table1_daily,['NETPROFITGROWRATE'] )
-    print(table_2_daily.sort_values(by='NETPROFITGROWRATE', ascending=False))
+    print(table_2_daily.sort_values(by='TRADINGDAY', ascending=True))
 
 
 

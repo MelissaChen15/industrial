@@ -56,8 +56,8 @@ def first_day_this_month(date_now):
 
 if __name__ == '__main__':
     # https://www.jb51.net/article/138085.htm
-    date = datetime.datetime.strptime('2019-03-31', '%Y-%m-%d')
+    date = datetime.datetime.strptime('2015-01-01', '%Y-%m-%d')
     # print(last_day_last_season(date))
     # print(first_day_this_season(date))
     # print(last_day_this_season(date))
-    print(first_day_this_month(date))
+    print(last_day_last_season(date))

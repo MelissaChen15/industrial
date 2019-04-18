@@ -127,29 +127,33 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
         # 注意，此因子为日频数据/季频数据，分母取上个季度最后一天的数据
         PEG = DailyValueFactor(factor_code='0010',
                                name='PEG',
-                               describe='市盈率增长率 = 市盈率(PE)/(净利润同比增长率(NetProfitGrowRate)*100)')
+                               describe='市盈率增长率 = 市盈率(PE)/净利润同比增长率(NetProfitGrowRate)')
         factor_entities['PEG'] = PEG
-        factor_values['PEG'] = components['LC_DIndicesForValuation']['PE'] / (components['LC_MainIndexNew_daily']['NETPROFITGROWRATE']*100)
+        factor_values['PEG'] = components['LC_DIndicesForValuation']['PE'] / (components['LC_MainIndexNew_daily']['NETPROFITGROWRATE'])
 
         return factor_values, factor_entities
 
 
 
 if __name__ == '__main__':
+    import  time
+    t1 = time.time()
     dvf = DailyValueFactor(factor_code = '0001-0009', name = 'PE,PELYR,PB,PCFTTM,PCFSTTM,PS,PSTTM,DividendRatio,TotalMV', describe = 'daily value factor')
     sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_daily_value_factor.sql'
     data = dvf.find_components(file_path = sql_file_path, table_name = ['LC_DIndicesForValuation','LC_MainIndexNew'])
+    t2 = time.time()
+    print('read data: ', t2 - t1)
     # pd.set_option('display.max_columns', None)
     # print(data)
     factor_values, factor_entities = dvf.get_factor_values(data)
     factor_list = dvf.get_factor_list(factor_entities)
-    print(factor_values)
-    pd.set_option('display.max_columns', None)
-    print(factor_list)
+    t3 = time.time()
+    print('calculate: ', t3-t2)
 
 
-
-
-
-
-
+    print('start writing data to DB')
+    t4 = time.time()
+    from sqlalchemy import String, Integer
+    pl_sql_oracle.df_to_DB(factor_values, 'fail','append',{'SECUCODE': String(20)})
+    pl_sql_oracle.df_to_DB(factor_list, 'factorlist', 'append', {'FactorCode':String(4), '简称':String(15), '频率':Integer(), '类别': String(20), '描述': String(300)})
+    print('write to DB:',time.time() - t4)

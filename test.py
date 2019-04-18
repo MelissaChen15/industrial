@@ -4,11 +4,14 @@ import datetime
 import time
 import parser
 
-df1 = pd.DataFrame({'a':[1,2],'b':[3,4]})
-
-
-
-
+df = pd.DataFrame([
+    [1,2,3],
+    [np.nan, 3,4],
+    [0, np.nan, 10]
+])
+print(df)
+df2 = df.fillna(method='ffill')
+print(df2)
 
 # df = pd.DataFrame({'a':[0]*100000,'b':[1]*100000})
 # # print(df)
@@ -52,9 +55,9 @@ df1 = pd.DataFrame({'a':[1,2],'b':[3,4]})
 #
 # # df1 = pd.DataFrame({'a':1,'b':2})
 # # print(df1.iloc['a':])
-
-dt1 = datetime.datetime.strptime('2019-04-04','%Y-%m-%d')
-dt2 = datetime.datetime.strptime('2019-03-01','%Y-%m-%d')
-dt3 = datetime.datetime.strptime('2019-01-01','%Y-%m-%d')
-
-print(dt1 >= dt2 and dt2 >= dt3)
+#
+# dt1 = datetime.datetime.strptime('2019-04-04','%Y-%m-%d')
+# dt2 = datetime.datetime.strptime('2019-03-01','%Y-%m-%d')
+# dt3 = datetime.datetime.strptime('2019-01-01','%Y-%m-%d')
+#
+# print(dt1 >= dt2 and dt2 >= dt3)
