@@ -31,7 +31,7 @@ import datetime
 class dbData_import(object):
     def __init__(self):
         pass
-    def InputDataPreprocess(self,filepath,table_name):
+    def InputDataPreprocess(self,filepath,table_name, secucode = ''):
         # FactorName=['ROE_ttm','ROE_q','ROA_ttm','ROA_q','GrossProfitMargin_ttm','GrossProfitMargin_ttm_q','AssetTurnover_ttm','AssetTurnover_q']
         result = {}
         # 1.将sql语句执行得到数据
@@ -47,7 +47,8 @@ class dbData_import(object):
             tempsentence2 = sql_sentence[sentence_length * i].decode('utf-8')
             for j in range(sentence_length*i+1,sentence_length*(i+1),1):
                 tempsentence2=tempsentence2+ ' '+sql_sentence[j].decode('utf-8')
-            Newsql_sentence.append(tempsentence2)
+            Newsql_sentence.append(tempsentence2 + secucode) # 可以设置按股票代码读取
+        # print(Newsql_sentence)
 
         # 从数据库提取出数据，注意输出格式是list
         ValuationDataset = []

@@ -31,14 +31,18 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
         self.type = 'daily value factor'
 
 
-    def find_components(self, file_path, table_name):
+    def find_components(self, file_path, table_name,secucode = ''):
         """
         在数据库中查询计算本类因子需要的数据
 
         :return: pandas.DataFrame, sql语句执行后返回的数据
         """
         sql = pl_sql_oracle.dbData_import()
-        components = sql.InputDataPreprocess(file_path, table_name)
+        components = sql.InputDataPreprocess(file_path, table_name, secucode )
+
+        # TODO: 读取时需要按时间排序
+        components['LC_MainIndexNew']  = components['LC_MainIndexNew'].sort_values(by='ENDDATE')
+        components['LC_DIndicesForValuation'] = components['LC_DIndicesForValuation'].sort_values(by='TRADINGDAY')
 
         monthly_data = self.seasonal_to_monthly(components['LC_MainIndexNew'],['NETPROFITGROWRATE'])
         components['LC_MainIndexNew_daily'] = self.monthly_to_daily(monthly_data, components['LC_DIndicesForValuation'],['NETPROFITGROWRATE'])
@@ -133,27 +137,37 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
 
         return factor_values, factor_entities
 
+    def write_to_DB(self, code_sql_file_path,data_sql_file_path):
+        sql = pl_sql_oracle.dbData_import()
+        s = sql.InputDataPreprocess(code_sql_file_path,['secucodes'])
+        for row in s['secucodes'].itertuples(index=True, name='Pandas'):
+            try:
+                data = self.find_components(file_path=data_sql_file_path,
+                                           table_name=['LC_DIndicesForValuation', 'LC_MainIndexNew'],
+                                           secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'')
+                factor_values, factor_entities = self.get_factor_values(data)
+
+
+                from sqlalchemy import String, Integer
+                if row.Index == 0:
+                    factor_list = self.get_factor_list(factor_entities)
+                    pl_sql_oracle.df_to_DB(factor_list, 'factorlist', 'append',
+                                           {'FactorCode': String(4), '简称': String(32), '频率': Integer(),
+                                            '类别': String(64), '描述': String(512)})
+                pl_sql_oracle.df_to_DB(factor_values, 'dailyvaluefactor','append',{'SECUCODE': String(20)})
+
+                print(getattr(row, 'SECUCODE'),' done')
+
+
+            except Exception as e:
+
+                print(getattr(row, 'SECUCODE'), e)
+
 
 
 if __name__ == '__main__':
-    import  time
-    t1 = time.time()
     dvf = DailyValueFactor(factor_code = '0001-0009', name = 'PE,PELYR,PB,PCFTTM,PCFSTTM,PS,PSTTM,DividendRatio,TotalMV', describe = 'daily value factor')
-    sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_daily_value_factor.sql'
-    data = dvf.find_components(file_path = sql_file_path, table_name = ['LC_DIndicesForValuation','LC_MainIndexNew'])
-    t2 = time.time()
-    print('read data: ', t2 - t1)
-    # pd.set_option('display.max_columns', None)
-    # print(data)
-    factor_values, factor_entities = dvf.get_factor_values(data)
-    factor_list = dvf.get_factor_list(factor_entities)
-    t3 = time.time()
-    print('calculate: ', t3-t2)
+    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_daily_value_factor.sql'
+    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
+    dvf.write_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
 
-
-    print('start writing data to DB')
-    t4 = time.time()
-    from sqlalchemy import String, Integer
-    pl_sql_oracle.df_to_DB(factor_values, 'fail','append',{'SECUCODE': String(20)})
-    pl_sql_oracle.df_to_DB(factor_list, 'factorlist', 'append', {'FactorCode':String(4), '简称':String(15), '频率':Integer(), '类别': String(20), '描述': String(300)})
-    print('write to DB:',time.time() - t4)

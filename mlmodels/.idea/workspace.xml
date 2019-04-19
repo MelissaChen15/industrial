@@ -93,7 +93,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="3" />
     <option name="y" value="9" />
     <option name="width" value="1440" />
@@ -110,7 +110,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -242,10 +242,10 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.xgboost" />
       <item itemvalue="Python.main_ave_stacking" />
       <item itemvalue="Python.main_c" />
       <item itemvalue="Python.main_r" />
+      <item itemvalue="Python.xgboost" />
       <item itemvalue="Python.xgboosting" />
     </list>
     <recent_temporary>

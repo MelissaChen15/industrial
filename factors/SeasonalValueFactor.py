@@ -24,14 +24,16 @@ class SeasonalValueFactor(SeasonalFrequency, ValueFactor):
         self.type = 'seasonal value factor'
 
 
-    def find_components(self, file_path, table_name):
+    def find_components(self, file_path, table_name,secucode = ''):
         """
         在数据库中查询计算本类因子需要的数据
 
         :return: pandas.DataFrame, sql语句执行后返回的数据
         """
         sql = pl_sql_oracle.dbData_import()
-        components = sql.InputDataPreprocess(file_path, table_name)
+        components = sql.InputDataPreprocess(file_path, table_name, secucode)
+        components['LC_MainIndexNew'] = components['LC_MainIndexNew'].sort_values(by='ENDDATE')
+
 
         return components
 
@@ -68,18 +70,36 @@ class SeasonalValueFactor(SeasonalFrequency, ValueFactor):
 
         return factor_values, factor_entities
 
+    def write_to_DB(self, code_sql_file_path,data_sql_file_path):
+        sql = pl_sql_oracle.dbData_import()
+        s = sql.InputDataPreprocess(code_sql_file_path,['secucodes'])
+        for row in s['secucodes'].itertuples(index=True, name='Pandas'):
+            try:
+                data = self.find_components(file_path=data_sql_file_path,
+                                           table_name=['LC_MainIndexNew'],
+                                           secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'')
+                factor_values, factor_entities = self.get_factor_values(data)
 
+                # print(factor_values)
+                from sqlalchemy import String, Integer
+                if row.Index == 0:
+                    factor_list = self.get_factor_list(factor_entities)
+                    pl_sql_oracle.df_to_DB(factor_list, 'factorlist', 'append',
+                                           {'FactorCode': String(4), '简称': String(32), '频率': Integer(),
+                                            '类别': String(64), '描述': String(512)})
+                pl_sql_oracle.df_to_DB(factor_values, 'seasonalvaluefactor', 'append', {'SECUCODE': String(20)})
+
+                print(getattr(row, 'SECUCODE'),' done')
+
+            except Exception as e:
+                print(getattr(row, 'SECUCODE'), e)
 
 if __name__ == '__main__':
+
     svf = SeasonalValueFactor(factor_code = '0011-0012', name = 'EnterpriseFCFPS,EPSTTM', describe = 'seasonal value factor')
-    sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_value_factor.sql'
-    data = svf.find_components(file_path = sql_file_path, table_name = ['LC_MainIndexNew'])
-    # print(data[0])
-    factor_values, factor_entities = svf.get_factor_values(data)
-    factor_list = svf.get_factor_list(factor_entities)
-    print(factor_values)
-    pd.set_option('display.max_columns', None)
-    print(factor_list)
+    data_sql_file_path =  r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_value_factor.sql'
+    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
+    svf.write_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
 
 
 
