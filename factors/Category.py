@@ -15,7 +15,7 @@ class ValueFactor(BasicFactor):
 
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
-        self.type = 'value'
+        self.type = '价值类'
 
 
 # 成长类因子
@@ -23,7 +23,7 @@ class GrowthFactor(BasicFactor):
 
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
-        self.type = 'growth'
+        self.type = '成长类'
 
 
 # 财务质量类因子
@@ -31,8 +31,44 @@ class FinancialQualityFactor(BasicFactor):
 
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
-        self.type = 'fiancial quality factor'
+        self.type = '财务质量类'
+
+
+# 个股指标因子
+class SecuIndexFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '个股指标'
+
+# 偿债能力
+class DebtpayingAbilityFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '偿债能力'
 
 
 
+# 盈利能力
+class ProfitabilityFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '盈利能力'
+
+# 营运能力
+class OperatingFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '营运能力'
+
+
+# 现金状况
+class CashFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '现金状况'
 

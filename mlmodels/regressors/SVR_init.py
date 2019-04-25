@@ -12,11 +12,8 @@ def init():
     # SVR 参数
     #['C', 'cache_size', 'coef0', 'degree', 'epsilon', 'gamma', 'kernel',
     # 'max_iter', 'shrinking', 'tol', 'verbose']
-    # param_grid = {'C': [1e-3, 1e-2, 1e-1, 0.3,1,3, 5, 10],
-    #               'gamma':[1e-4,3e-4,1e-3,3e-3,0.01,0.03,0.1,0.3,1,5,10]
-    #               }
-    param_grid = {'C': [1e-3, 1e-2, 1e-1],
-                  'gamma':[1e-3,3e-3,0.01,0.03]
+    param_grid = {'C': [1e-3, 1e-2, 1e-1, 0.3,1,3, 5, 10],
+                  'gamma':[1e-4,3e-4,1e-3,3e-3,0.01,0.03,0.1,0.3,1,5,10]
                   }
     cv_split = ShuffleSplit(n_splits=5, train_size=0.9, test_size=0.1)
 

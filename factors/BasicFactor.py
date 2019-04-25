@@ -11,19 +11,23 @@ import pandas as pd
 class BasicFactor(object):
 
     def __init__(self, factor_code, name, describe):
-        self.factor_code = factor_code #  string, 因子代码, 主键，不可空
+        self.factor_code = factor_code #  int, 因子代码, 主键，不可空
         self.name = name # string, 因子名, 不可空
         self.describe = describe # string, 因子描述
         self.type = np.nan # string, 因子类型，如：价值类
         self.frequency = np.nan # string, 因子频率
 
-    def get_factor_list(self, factor_entities):
+    def init_factors(self):
+        pass
+
+    def get_factor_list(self):
         """
         获取本类的因子列表
 
         :param factor_entities: dict, 因子实例
         :return: pandas.DataFrame 因子列表，包括FactorCode、简称、频率、类别、描述
         """
+        factor_entities = self.init_factors()
         factor_list = pd.DataFrame(columns=['FactorCode', '简称', '频率', '类别', '描述'])
         for k in factor_entities.keys():
             row = {'FactorCode': factor_entities.get(k).factor_code, '简称': factor_entities.get(k).name,
@@ -43,20 +47,11 @@ class BasicFactor(object):
         :param seasonal_factor_name: list of string，需要转换的因子的名称
         :return: pandas.DataFrame, 列包含 'ENDDATE''SECUCODE'和需要转换的因子
         """
-        all_monthly_data = pd.DataFrame()
-
         from factors.util import months_next_season
-        # 设立flag，对股票代码循环
-        flag = seasonal_data.loc[0, 'SECUCODE']
         a_stock_monthly_data = pd.DataFrame()
         # 循环所有数据
         for row in seasonal_data.itertuples(index=True, name='Pandas'):
             code = getattr(row, 'SECUCODE')
-            if flag != code:
-                a_stock_monthly_data = a_stock_monthly_data.interpolate(method='cubic', axis=0)  # cubic spline
-                all_monthly_data = pd.concat([all_monthly_data, a_stock_monthly_data], axis=0, ignore_index=True)
-                flag = code
-                a_stock_monthly_data = pd.DataFrame()
 
             months_start = months_next_season(getattr(row, 'ENDDATE'))
             row1_dict = {'STARTDAY': months_start[0],
@@ -74,11 +69,8 @@ class BasicFactor(object):
 
             a_stock_monthly_data = pd.concat([a_stock_monthly_data, row1.append(row2)], axis=0, ignore_index=True)
 
-        # 因为flag循环没有办法处理列表中最后一只股票，这里手动处理
         a_stock_monthly_data = a_stock_monthly_data.interpolate(method='cubic', axis=0)  # cubic spline
-        all_monthly_data = pd.concat([all_monthly_data, a_stock_monthly_data], axis=0, ignore_index=True)
-
-        return all_monthly_data
+        return a_stock_monthly_data
 
     def monthly_to_daily(self, monthly_data: pd.DataFrame, daily_data: pd.DataFrame, seasonal_factor_name: list):
         """
@@ -111,4 +103,5 @@ class BasicFactor(object):
 
 
         return daily_data
+
 

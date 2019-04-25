@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from main_entry.Para import Para
 from sklearn import  clone
 para = Para()
-from regressors import Ridge_init, RFR_init
+from regressors import Ridge_init, RFR_init, SVR_init, DTR_init, ExtraTreeR_init, RFR_init, GBoostR_init
 
 if __name__ == '__main__':
     # 1. 加载train/cv set数据
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     print("X_cv shape, y_cv shape:", X_cv.shape,y_cv.shape)
 
     # 2. 初始化模型
-    inits = [Ridge_init.init()]
+    inits = [GBoostR_init.init()]
 
     for init in inits:
         model_name = init[1]

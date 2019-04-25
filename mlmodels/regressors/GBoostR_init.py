@@ -4,6 +4,8 @@
 
 
 from sklearn import ensemble
+from sklearn.model_selection import ShuffleSplit,GridSearchCV
+
 import os
 from main_entry.Para import Para
 para = Para()
@@ -14,10 +16,20 @@ def init():
     # 'min_impurity_decrease', 'min_impurity_split', 'min_samples_leaf', 'min_samples_split', 'min_weight_fraction_leaf',
     # 'n_estimators', 'n_iter_no_change', 'presort', 'random_state', 'subsample', 'tol',
     #   'validation_fraction', 'verbose', 'warm_start']
+    param_grid = {
+        'loss' : ['ls'], # loss function
+        'n_estimators': list(range(10, 110, 10)),  # The number of boosting stages to perform, default=100, 只要计算能力足够，越大越好
+        'min_samples_leaf': list(range(50, 500, 10)),  # 叶子节点最小样本数，太小容易过拟合
+        'max_depth': list(range(10, 100, 10))  # 限制这个最大深度,防止过拟合
+    }
+    cv_split = ShuffleSplit(n_splits=5, train_size=0.9, test_size=0.1)
+
     # 初始化模型
-    model = ensemble.GradientBoostingRegressor(random_state=para.seed)
+    model = GridSearchCV(estimator=ensemble.GradientBoostingRegressor(random_state=para.seed), param_grid=param_grid, cv=cv_split, n_jobs=3)
+
     # 建立新的文件夹用于存储模型和预测结果
     if os.path.exists(para.path_results + "GBoostR") == False:
         os.mkdir(para.path_results + "GBoostR")
 
     return model, "GBoostR"
+

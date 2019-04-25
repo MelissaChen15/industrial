@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from main_entry.Para import Para
 from sklearn import  clone
 para = Para()
-from classifiers import Logistic_init, SVC_init, RFC_init
+from classifiers import Logistic_init, SVC_init, RFC_init, DTC_init
 
 if __name__ == '__main__':
     # 1. 加载train/cv set数据
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     print("X_cv shape, y_cv shape:", X_cv.shape,y_cv.shape)
 
     # 2. 初始化模型
-    inits = [Logistic_init.init(), RFC_init.init()]
+    inits = [Logistic_init.init()]
 
     for init in inits:
         model_name = init[1]

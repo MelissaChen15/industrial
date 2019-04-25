@@ -4,60 +4,54 @@ import datetime
 import time
 import parser
 
-df = pd.DataFrame([
-    [1,2,3],
-    [np.nan, 3,4],
-    [0, np.nan, 10]
-])
-print(df)
-df2 = df.fillna(method='ffill')
-print(df2)
+pd.set_option('display.max_columns', None)
 
-# df = pd.DataFrame({'a':[0]*100000,'b':[1]*100000})
-# # print(df)
-# # df1 = df.interpolate(method='cubic',axis=0)
-# # print(df1)
-# import time
-# tic = time.time()
-# for row in df.itertuples(index=True, name='Pandas'):
-#     getattr(row, 'a'), getattr(row, 'b')
-# tok = time.time()
-# for index, row in df.iterrows():
-#     a = row['a']
-#     b = row['b']
-# tok2 = time.time()
-# print(tok-tic, tok2-tok)
+df = pd.read_excel(r'C:\Users\Kww\Desktop\数据库索引.xlsx', sheet_name = '因子')
+df = df[['factor_code','英文简写','因子名称','说明']].iloc[100:,:]
 
-#
-# #显示所有列
-# pd.set_option('display.max_columns', None)
-# #显示所有行
-# pd.set_option('display.max_rows', None)
-# #设置value的显示长度为100，默认为50
-# pd.set_option('max_colwidth',100)
 
-# d1 = '2019-04-04'
-# # dt1 = datetime.datetime.strptime(d1,'%Y-%m-%d')
-#
-#
-# # 返回传入日期的上季度报告日
-# def last_season_report_day(date_now):
-#     x = datetime.datetime.strptime(date_now, '%Y-%m-%d')
-#     y = x + pd.tseries.offsets.DateOffset(months=-((x.month - 1) % 3), days= - x.day)  # 上季第一天
-#     return y.strftime("%Y-%m-%d")
-#
-# # https://www.jb51.net/article/138085.htm
-# # print(last_season_report_day(d1))
-# # print(type(last_season_report_day(d1)))
-#
-# # print(1/np.nan)
-#
-#
-# # df1 = pd.DataFrame({'a':1,'b':2})
-# # print(df1.iloc['a':])
-#
-# dt1 = datetime.datetime.strptime('2019-04-04','%Y-%m-%d')
-# dt2 = datetime.datetime.strptime('2019-03-01','%Y-%m-%d')
-# dt3 = datetime.datetime.strptime('2019-01-01','%Y-%m-%d')
-#
-# print(dt1 >= dt2 and dt2 >= dt3)
+# for init
+for row in df.itertuples(index=True, name='Pandas'):
+    print('# ' + str(getattr(row, '英文简写')) + ' '+ getattr(row, '因子名称') )
+    print('     '+ getattr(row, '英文简写')  + ' = SeasonalCashFactor(factor_code=\'' + str(getattr(row, 'factor_code')) + '\',')
+    print('                                 name= \'' + getattr(row, '英文简写') + '\',')
+    print('                                 describe= \'' + getattr(row, '说明') + '\')')
+    print('     factor_entities[\''+ getattr(row, '英文简写') + '\'] = ' +getattr(row, '英文简写'))
+    print()
+    print()
+
+
+# for sql
+for row in df.itertuples(index=True, name='Pandas'):
+    print('t1.'+ str(getattr(row, '英文简写')) + ', ',end="" )
+print()
+print()
+
+# for find components
+for row in df.itertuples(index=True, name='Pandas'):
+    print('\''+ str(getattr(row, '英文简写')).upper() + '\', ',end="" )
+print()
+print()
+
+
+# for get factor values
+for row in df.itertuples(index=True, name='Pandas'):
+    print('factor_values[\''+ str(getattr(row, '英文简写')) + '\'] = components[\'LC_MainIndexNew_monthly\'][\''+ str(getattr(row, '英文简写')).upper() + '\']')
+print()
+print()
+
+
+
+# 测试数据库读取
+# sql = pl_sql_oracle.dbData_import()
+# s = sql.InputDataPreprocess(code_sql_file_path,
+#                             ['secucodes'])
+# for row in s['secucodes'].itertuples(index=True, name='Pandas'):
+#     pd.set_option('display.max_columns', None)
+#     data = .find_components(file_path=data_sql_file_path,
+#                                 table_name=['LC_MainIndexNew'],
+#                                 secucode='and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'')
+#     print(data)
+
+
+

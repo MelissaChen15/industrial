@@ -12,7 +12,7 @@ para = Para()
 def init():
     # Ridge 参数
     #['alpha', 'copy_X', 'fit_intercept', 'max_iter', 'normalize', 'random_state', 'solver', 'tol']
-    param_grid = {'alpha': [0.01,0.02,0.1,0.5,1.0,2.0,5.0]
+    param_grid = {'alpha': [1e-4,3e-4,1e-3,3e-3,0.01,0.03,0.1,0.3,1,5,10]
                   }
     cv_split = ShuffleSplit(n_splits=5, train_size=0.9, test_size=0.1)
 
