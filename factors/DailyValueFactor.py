@@ -136,7 +136,7 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
 
         return factor_values.drop(axis=0, index=0)
 
-    def write_values_to_DB(self, mode, code_sql_file_path,data_sql_file_path):
+    def write_values_to_DB(self, code_sql_file_path,data_sql_file_path):
         sql = pl_sql_oracle.dbData_import()
         s = sql.InputDataPreprocess(code_sql_file_path,['secucodes'])
         for row in s['secucodes'].itertuples(index=True, name='Pandas'):
@@ -148,7 +148,7 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
 
 
                 from sqlalchemy import String, Integer
-                pl_sql_oracle.df_to_DB(factor_values, 'dailyvaluefactor',if_exists= mode,data_type={'SECUCODE': String(20)})
+                pl_sql_oracle.df_to_DB(factor_values, 'dailyvaluefactor',if_exists= 'append',data_type={'SECUCODE': String(20)})
 
                 print(getattr(row, 'SECUCODE'),' done')
 

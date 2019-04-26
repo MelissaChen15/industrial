@@ -72,3 +72,41 @@ class CashFactor(BasicFactor):
         super().__init__(factor_code, name, describe)
         self.type = '现金状况'
 
+# 分红能力
+class DividendFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '分红能力'
+
+# 资本结构
+class CapitalStructureFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '资本结构'
+
+
+# 收益质量
+class EarningQualityFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '收益质量'
+
+
+# 杜邦分析体系
+class DuPontFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '杜邦分析体系'
+
+
+
+# 技术指标类
+class TechnicalIndicatorFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '技术指标类'

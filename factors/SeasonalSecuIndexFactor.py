@@ -155,7 +155,7 @@ class SeasonalSecuIndexFactor(SeasonalFrequency, SecuIndexFactor):
         return factor_values
 
 
-    def write_values_to_DB(self, mode, code_sql_file_path, data_sql_file_path):
+    def write_values_to_DB(self, code_sql_file_path, data_sql_file_path):
         sql = pl_sql_oracle.dbData_import()
         s = sql.InputDataPreprocess(code_sql_file_path,
                                             ['secucodes'])
@@ -167,16 +167,16 @@ class SeasonalSecuIndexFactor(SeasonalFrequency, SecuIndexFactor):
                                            table_name=['LC_MainIndexNew'],
                                            secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'')
                 factor_values = self.get_factor_values(data)
-                print(factor_values)
+                # print(factor_values)
 
 
                 from sqlalchemy import String, Integer
-                pl_sql_oracle.df_to_DB(factor_values, 'seasonalsecuindexfactor',if_exists= mode,data_type={'SECUCODE': String(20)})
-                print(getattr(row, 'SECUCODE'),' done')
+                pl_sql_oracle.df_to_DB(factor_values, 'seasonalsecuindexfactor',if_exists= 'append',data_type={'SECUCODE': String(20)})
+                print(self.type, getattr(row, 'SECUCODE'),' done')
 
 
             except Exception as e:
-                print(getattr(row, 'SECUCODE'), e)
+                print("write to database failed, error: ", getattr(row, 'SECUCODE'), e)
 
 
 
@@ -196,7 +196,7 @@ if __name__ == '__main__':
     #     print(data)
 
 
-    # ssif.write_values_to_DB(mode='append',data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
+    ssif.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
 
 
 

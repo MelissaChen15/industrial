@@ -121,7 +121,8 @@ class SeasonalFinancialQualityFactor(SeasonalFrequency, FinancialQualityFactor):
         """
         sql = pl_sql_oracle.dbData_import()
         components = sql.InputDataPreprocess(file_path, table_name,secucode)
-        components['LC_MainIndexNew']  = components['LC_MainIndexNew'].sort_values(by='ENDDATE')
+        components['LC_MainIndexNew'] = components['LC_MainIndexNew'].sort_values(by='ENDDATE')
+        components['LC_MainIndexNew_monthly'] = self.seasonal_to_monthly(components['LC_MainIndexNew'],['ROEAVG', 'ROA', 'GROSSINCOMERATIO', 'TOTALPROFITCOSTRATIO', 'ROIC', 'OPERATINGNITOTP', 'NETPROFITCUT','NETPROFIT', 'CASHRATEOFSALES', 'NOCFTOOPERATINGNITTM', 'CURRENTLIABILITYTOTL', 'CURRENTRATIO', 'TOTALASSETTRATE'])
 
         return components
 
@@ -137,25 +138,24 @@ class SeasonalFinancialQualityFactor(SeasonalFrequency, FinancialQualityFactor):
 
         factor_values = pd.DataFrame(components['LC_MainIndexNew'][['SECUCODE','ENDDATE']]) # 存储因子值
 
-
-        factor_values['ROEAvg'] = components['LC_MainIndexNew']['ROEAVG']
-        factor_values['ROA'] = components['LC_MainIndexNew']['ROA']
-        factor_values['GrossIncomeRatio'] = components['LC_MainIndexNew']['GROSSINCOMERATIO']
-        factor_values['TotalProfitCostRatio'] = components['LC_MainIndexNew']['TOTALPROFITCOSTRATIO']
-        factor_values['ROIC'] = components['LC_MainIndexNew']['ROIC']
-        factor_values['OperatingNIToTP'] = components['LC_MainIndexNew']['OPERATINGNITOTP']
-        factor_values['DPtoP'] = components['LC_MainIndexNew']['NETPROFITCUT'] / components['LC_MainIndexNew']['NETPROFIT']
-        factor_values['CashRateOfSales'] = components['LC_MainIndexNew']['CASHRATEOFSALES']
-        factor_values['NOCFToOperatingNITTM'] = components['LC_MainIndexNew']['NOCFTOOPERATINGNITTM']
-        factor_values['CurrentLiabilityToTL'] = components['LC_MainIndexNew']['CURRENTLIABILITYTOTL']
-        factor_values['CurrentRatio'] = components['LC_MainIndexNew']['CURRENTRATIO']
-        factor_values['TotalAssetTRate'] = components['LC_MainIndexNew']['TOTALASSETTRATE']
+        factor_values['ROEAvg'] = components['LC_MainIndexNew_monthly']['ROEAVG']
+        factor_values['ROA'] = components['LC_MainIndexNew_monthly']['ROA']
+        factor_values['GrossIncomeRatio'] = components['LC_MainIndexNew_monthly']['GROSSINCOMERATIO']
+        factor_values['TotalProfitCostRatio'] = components['LC_MainIndexNew_monthly']['TOTALPROFITCOSTRATIO']
+        factor_values['ROIC'] = components['LC_MainIndexNew_monthly']['ROIC']
+        factor_values['OperatingNIToTP'] = components['LC_MainIndexNew_monthly']['OPERATINGNITOTP']
+        factor_values['DPtoP'] = components['LC_MainIndexNew_monthly']['NETPROFITCUT']/components['LC_MainIndexNew_monthly']['NETPROFIT']
+        factor_values['CashRateOfSales'] = components['LC_MainIndexNew_monthly']['CASHRATEOFSALES']
+        factor_values['NOCFToOperatingNITTM'] = components['LC_MainIndexNew_monthly']['NOCFTOOPERATINGNITTM']
+        factor_values['CurrentLiabilityToTL'] = components['LC_MainIndexNew_monthly']['CURRENTLIABILITYTOTL']
+        factor_values['CurrentRatio'] = components['LC_MainIndexNew_monthly']['CURRENTRATIO']
+        factor_values['TotalAssetTRate'] = components['LC_MainIndexNew_monthly']['TOTALASSETTRATE']
 
 
         return factor_values
 
 
-    def write_values_to_DB(self,mode,  code_sql_file_path,data_sql_file_path):
+    def write_values_to_DB(self,code_sql_file_path,data_sql_file_path):
         sql = pl_sql_oracle.dbData_import()
         s = sql.InputDataPreprocess(code_sql_file_path,['secucodes'])
         for row in s['secucodes'].itertuples(index=True, name='Pandas'):
@@ -166,21 +166,21 @@ class SeasonalFinancialQualityFactor(SeasonalFrequency, FinancialQualityFactor):
                 factor_values = self.get_factor_values(data)
 
                 from sqlalchemy import String, Integer
-                pl_sql_oracle.df_to_DB(factor_values, 'seasonalfinancialqualityfactor',if_exists= mode,data_type={'SECUCODE': String(20)})
+                pl_sql_oracle.df_to_DB(factor_values, 'seasonalfinancialqualityfactor',if_exists= 'append',data_type={'SECUCODE': String(20)})
                 # print(factor_values)
 
-                print(getattr(row, 'SECUCODE'),' done')
+                print(self.type, getattr(row, 'SECUCODE'),' done')
 
 
             except Exception as e:
 
-                print(getattr(row, 'SECUCODE'), e)
+                print("write to database failed, error: ", getattr(row, 'SECUCODE'), e)
 
 
 if __name__ == '__main__':
     sfqf = SeasonalFinancialQualityFactor(factor_code = '0019-0030', name = 'ROEAvg,ROA,GrossIncomeRatio,TotalProfitCostRatio,ROIC,OperatingNIToTP,DPtoP,CashRateOfSales,NOCFToOperatingNITTM,CurrentLiabilityToTL,CurrentRatio,TotalAssetTRate', describe = 'seasonal financial quality factor')
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_financial_quality_factor.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    sfqf.write_values_to_DB(mode='append',data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
+    sfqf.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
 
 

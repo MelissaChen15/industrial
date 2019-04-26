@@ -153,13 +153,13 @@ class SeasonalCashFactor(SeasonalFrequency, CashFactor):
 
                 from sqlalchemy import String, Integer
                 # print(factor_values)
-                pl_sql_oracle.df_to_DB(factor_values, '',if_exists= mode,data_type={'SECUCODE': String(20)})
+                pl_sql_oracle.df_to_DB(factor_values, 'SeasonalCashFactor'.lower(),if_exists= mode,data_type={'SECUCODE': String(20)})
 
-                print(getattr(row, 'SECUCODE'),' done')
+                print(self.type, getattr(row, 'SECUCODE'),' done')
 
 
             except Exception as e:
-                print(getattr(row, 'SECUCODE'), e)
+                print("write to database failed, error: ", getattr(row, 'SECUCODE'), e)
 
 
 

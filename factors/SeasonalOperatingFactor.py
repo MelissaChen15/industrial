@@ -30,7 +30,7 @@ class SeasonalOperatingFactor(SeasonalFrequency, OperatingFactor):
 
     def __init__(self, factor_code= '', name= '', describe= ''):
         super().__init__(factor_code, name, describe)
-        self.type = ''
+        self.type = '季频营运能力类'
 
     def init_factors(self):
         factor_entities = dict()  # 存储实例化的因子
@@ -153,13 +153,13 @@ class SeasonalOperatingFactor(SeasonalFrequency, OperatingFactor):
 
                 from sqlalchemy import String, Integer
                 # print(factor_values)
-                pl_sql_oracle.df_to_DB(factor_values, '',if_exists= mode,data_type={'SECUCODE': String(20)})
+                pl_sql_oracle.df_to_DB(factor_values, 'SeasonalOperatingFactor'.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
 
-                print(getattr(row, 'SECUCODE'),' done')
+                print(self.type, getattr(row, 'SECUCODE'),' done')
 
 
             except Exception as e:
-                print(getattr(row, 'SECUCODE'), e)
+                print("write to database failed, error: ", getattr(row, 'SECUCODE'), e)
 
 
 

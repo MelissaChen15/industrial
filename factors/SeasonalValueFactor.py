@@ -50,6 +50,8 @@ class SeasonalValueFactor(SeasonalFrequency, ValueFactor):
         sql = pl_sql_oracle.dbData_import()
         components = sql.InputDataPreprocess(file_path, table_name, secucode)
         components['LC_MainIndexNew'] = components['LC_MainIndexNew'].sort_values(by='ENDDATE')
+        components['LC_MainIndexNew_monthly'] = self.seasonal_to_monthly(components['LC_MainIndexNew'],['EnterpriseFCFPS'.upper(),'EPSTTM'])
+
 
 
         return components
@@ -66,14 +68,14 @@ class SeasonalValueFactor(SeasonalFrequency, ValueFactor):
             factor_values： pandas.DataFrame, 因子值
         """
 
-        factor_values = pd.DataFrame(components['LC_MainIndexNew'][['SECUCODE','ENDDATE']]) # 存储因子值
-        factor_values['EnterpriseFCFPS'] = components['LC_MainIndexNew']['ENTERPRISEFCFPS']
-        factor_values['EPSTTM'] = components['LC_MainIndexNew']['EPSTTM']
+        factor_values = pd.DataFrame(components['LC_MainIndexNew_monthly'][['SECUCODE','STARTDAY']]) # 存储因子值
+        factor_values['EnterpriseFCFPS'] = components['LC_MainIndexNew_monthly']['ENTERPRISEFCFPS']
+        factor_values['EPSTTM'] = components['LC_MainIndexNew_monthly']['EPSTTM']
 
 
         return factor_values
 
-    def write_values_to_DB(self,mode,code_sql_file_path,data_sql_file_path):
+    def write_values_to_DB(self,code_sql_file_path,data_sql_file_path):
         sql = pl_sql_oracle.dbData_import()
         s = sql.InputDataPreprocess(code_sql_file_path,['secucodes'])
         for row in s['secucodes'].itertuples(index=True, name='Pandas'):
@@ -84,13 +86,13 @@ class SeasonalValueFactor(SeasonalFrequency, ValueFactor):
                 factor_values = self.get_factor_values(data)
 
                 from sqlalchemy import String, Integer
-                pl_sql_oracle.df_to_DB(factor_values, 'seasonalvaluefactor', if_exists= mode,data_type={'SECUCODE': String(20)})
+                pl_sql_oracle.df_to_DB(factor_values, 'seasonalvaluefactor', if_exists= 'append',data_type={'SECUCODE': String(20)})
                 # print(factor_values)
 
-                print(getattr(row, 'SECUCODE'),' done')
+                print(self.type, getattr(row, 'SECUCODE'),' done')
 
             except Exception as e:
-                print(getattr(row, 'SECUCODE'), e)
+                print("write to database failed, error: ", getattr(row, 'SECUCODE'), e)
 
 
 

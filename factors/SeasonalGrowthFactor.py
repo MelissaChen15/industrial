@@ -203,6 +203,8 @@ class SeasonalGrowthFactor(SeasonalFrequency, GrowthFactor):
         components['LC_MainIndexNew'] = components['LC_MainIndexNew'].sort_values(by='ENDDATE')
         # 如果需要转换
         components['LC_MainIndexNew_monthly'] = self.seasonal_to_monthly(components['LC_MainIndexNew'],['NETPROFITGROWRATE', 'ROETTM', 'TOTALASSETGROWRATE', 'BASICEPSYOY', 'GROSSINCOMERATIOTTM', 'NETPROFITRATIOTTM', 'DILUTEDEPSYOY', 'OPERATINGREVENUEGROWRATE', 'ORCOMGROWRATE3Y', 'OPERPROFITGROWRATE', 'TOTALPROFEIGROWRATE', 'NPPARENTCOMPANYYOY', 'NPPARENTCOMPANYCUTYOY', 'NPPCCGROWRATE3Y', 'AVGNPYOYPASTFIVEYEAR', 'NETOPERATECASHFLOWYOY', 'OPERCASHPSGROWRATE', 'NAORYOY', 'NETASSETGROWRATE', 'EPSGROWRATEYTD', 'SEWITHOUTMIGROWRATEYTD', 'TAGROWRATEYTD', 'SUSTAINABLEGROWRATE'])
+        # components['LC_MainIndexNew_monthly'] = self.seasonal_to_monthly(components['LC_MainIndexNew'],['NETPROFITGROWRATE'])
+
         return components
 
 
@@ -244,7 +246,7 @@ class SeasonalGrowthFactor(SeasonalFrequency, GrowthFactor):
         return factor_values
 
 
-    def write_values_to_DB(self, mode, code_sql_file_path,data_sql_file_path):
+    def write_values_to_DB(self, code_sql_file_path,data_sql_file_path):
         sql = pl_sql_oracle.dbData_import()
         s = sql.InputDataPreprocess(code_sql_file_path,['secucodes'])
         for row in s['secucodes'].itertuples(index=True, name='Pandas'):
@@ -255,21 +257,31 @@ class SeasonalGrowthFactor(SeasonalFrequency, GrowthFactor):
                 factor_values = self.get_factor_values(data)
 
                 from sqlalchemy import String, Integer
-                # pl_sql_oracle.df_to_DB(factor_values, 'seasonalgrowthfactor', if_exists= mode,data_type={'SECUCODE': String(20)})
-                print(factor_values)
+                pl_sql_oracle.df_to_DB(factor_values, 'seasonalgrowthfactor', if_exists= 'append',data_type={'SECUCODE': String(20)})
+                # print(factor_values)
 
-                print(getattr(row, 'SECUCODE'),' done')
+                print(self.type, getattr(row, 'SECUCODE'),' done')
 
 
             except Exception as e:
 
-                print(getattr(row, 'SECUCODE'), e)
+                print("write to database failed, error: ", getattr(row, 'SECUCODE'), e)
 
 
 
 
 if __name__ == '__main__':
-    sgv = SeasonalGrowthFactor(factor_code = '0013-0018', name = 'NetProfitGrowRate,ROETTM,TotalAssetGrowRate,BasicEPSYOY,GrossIncomeRatioTTM,NetProfitRatioTTM', describe = 'seasonal growth vector')
+    sgv = SeasonalGrowthFactor()
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_growth_factor.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    sgv.write_values_to_DB(mode='append',data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
+    sgv.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
+
+    # 修改报错：
+    # 000008 The number of derivatives at boundaries does not match: expected 1, got 0+0
+    # sql = pl_sql_oracle.dbData_import()
+    # s = sql.InputDataPreprocess(code_sql_file_path, ['secucodes'])
+    # data = sgv.find_components(file_path=data_sql_file_path,
+    #                                     table_name=['LC_MainIndexNew'],
+    #                                     secucode='and t2.Secucode = \'000008\'')
+    # factor_values = sgv.get_factor_values(data)
+    # print(factor_values)

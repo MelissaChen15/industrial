@@ -195,7 +195,7 @@ class SeasonalProfitabilityFactor(SeasonalFrequency, ProfitabilityFactor):
 
 
 
-    def write_values_to_DB(self,mode, code_sql_file_path, data_sql_file_path):
+    def write_values_to_DB(self, code_sql_file_path, data_sql_file_path):
         sql = pl_sql_oracle.dbData_import()
         s = sql.InputDataPreprocess(code_sql_file_path,
                                             ['secucodes'])
@@ -209,13 +209,13 @@ class SeasonalProfitabilityFactor(SeasonalFrequency, ProfitabilityFactor):
 
                 from sqlalchemy import String, Integer
                 # print(factor_values)
-                pl_sql_oracle.df_to_DB(factor_values, '',if_exists= mode,data_type={'SECUCODE': String(20)})
+                pl_sql_oracle.df_to_DB(factor_values, 'SeasonalProfitabilityFactor'.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
 
-                print(getattr(row, 'SECUCODE'),' done')
+                print(self.type, getattr(row, 'SECUCODE'),' done')
 
 
             except Exception as e:
-                print(getattr(row, 'SECUCODE'), e)
+                print("write to database failed, error: ", getattr(row, 'SECUCODE'), e)
 
 
 
@@ -223,5 +223,5 @@ if __name__ == '__main__':
     spf = SeasonalProfitabilityFactor()
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_profitability_factor.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    spf.write_values_to_DB(mode= 'append', data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
+    spf.write_values_to_DB( data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
 

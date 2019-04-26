@@ -6,14 +6,14 @@ import parser
 
 pd.set_option('display.max_columns', None)
 
-df = pd.read_excel(r'C:\Users\Kww\Desktop\数据库索引.xlsx', sheet_name = '因子')
-df = df[['factor_code','英文简写','因子名称','说明']].iloc[100:,:]
+df = pd.read_excel(r'./factors/因子库索引.xlsx', sheet_name = '因子表')
+df = df[['factor_code','英文简写','因子名称','说明']].iloc[35:47,:]
 
 
 # for init
 for row in df.itertuples(index=True, name='Pandas'):
     print('# ' + str(getattr(row, '英文简写')) + ' '+ getattr(row, '因子名称') )
-    print('     '+ getattr(row, '英文简写')  + ' = SeasonalCashFactor(factor_code=\'' + str(getattr(row, 'factor_code')) + '\',')
+    print('     '+ getattr(row, '英文简写')  + ' = SeasonalDuPontFactor(factor_code=\'' + str(getattr(row, 'factor_code')) + '\',')
     print('                                 name= \'' + getattr(row, '英文简写') + '\',')
     print('                                 describe= \'' + getattr(row, '说明') + '\')')
     print('     factor_entities[\''+ getattr(row, '英文简写') + '\'] = ' +getattr(row, '英文简写'))
@@ -41,17 +41,4 @@ print()
 print()
 
 
-
-# 测试数据库读取
-# sql = pl_sql_oracle.dbData_import()
-# s = sql.InputDataPreprocess(code_sql_file_path,
-#                             ['secucodes'])
-# for row in s['secucodes'].itertuples(index=True, name='Pandas'):
-#     pd.set_option('display.max_columns', None)
-#     data = .find_components(file_path=data_sql_file_path,
-#                                 table_name=['LC_MainIndexNew'],
-#                                 secucode='and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'')
-#     print(data)
-
-
-
+# print('IAmMelissa'.lower())

@@ -68,8 +68,15 @@ class BasicFactor(object):
             row2 = pd.DataFrame(row2_dict)
 
             a_stock_monthly_data = pd.concat([a_stock_monthly_data, row1.append(row2)], axis=0, ignore_index=True)
-
-        a_stock_monthly_data = a_stock_monthly_data.interpolate(method='cubic', axis=0)  # cubic spline
+        # 因为cubic spline要求第一个值非空，所以一列一列的插值，输出报错的列
+        for c in a_stock_monthly_data.columns:
+            try:
+                a_stock_monthly_data[c] = a_stock_monthly_data[c].interpolate(method='cubic', axis=0)  # cubic spline 三次样条插值
+            except ValueError:
+                try:
+                    a_stock_monthly_data[c] = a_stock_monthly_data[c].interpolate(method='slinear', axis=0)  # slinear 线性插值
+                except Exception as e:
+                    print('factor', c, 'error: ',e)
         return a_stock_monthly_data
 
     def monthly_to_daily(self, monthly_data: pd.DataFrame, daily_data: pd.DataFrame, seasonal_factor_name: list):
