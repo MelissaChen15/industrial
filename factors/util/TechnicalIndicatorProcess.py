@@ -7,8 +7,7 @@ Application : machine learning for investment
 date: 2019/4/26  8:44
 desc:
 '''
-import numpy as np
-from factors.TechnicalIndicatorFunc import TechnicalIndicatorFunc
+from factors.util.TechnicalIndicatorFunc import TechnicalIndicatorFunc
 
 def TechnicalIndicatorProcess():
     target_methods = [x for x in dir(TechnicalIndicatorFunc) if not x.startswith('_')]  # 返回非内置方法

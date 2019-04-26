@@ -47,7 +47,7 @@ class BasicFactor(object):
         :param seasonal_factor_name: list of string，需要转换的因子的名称
         :return: pandas.DataFrame, 列包含 'ENDDATE''SECUCODE'和需要转换的因子
         """
-        from factors.util import months_next_season
+        from factors.util.datetime_ops import months_next_season
         a_stock_monthly_data = pd.DataFrame()
         # 循环所有数据
         for row in seasonal_data.itertuples(index=True, name='Pandas'):
@@ -89,7 +89,7 @@ class BasicFactor(object):
         :return: pd.DataFrame 转换好的日频数据，列包含 'ENDDATE''SECUCODE'和需要转换的因子
         """
         # TODO: 看一下源码concat_inner 或者 to list之后用binary search
-        from factors.util import first_day_this_month
+        from factors.util.datetime_ops import first_day_this_month
         daily_data = pd.DataFrame(daily_data[['SECUCODE', 'TRADINGDAY']])
         for f in seasonal_factor_name:
             daily_data[f] = np.nan

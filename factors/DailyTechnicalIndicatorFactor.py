@@ -13,8 +13,8 @@ from factors.Frequency import DailyFrequency
 from factors.Category import TechnicalIndicatorFactor
 from factors.sql import pl_sql_oracle
 
-from factors.TechnicalIndicatorProcess import TechnicalIndicatorProcess
-from factors.TechnicalIndicatorFunc import TechnicalIndicatorFunc
+from factors.util.TechnicalIndicatorProcess import TechnicalIndicatorProcess
+from factors.util.TechnicalIndicatorFunc import TechnicalIndicatorFunc
 import pandas as pd
 
 """

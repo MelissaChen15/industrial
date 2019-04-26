@@ -3,7 +3,7 @@
 # 2019/4/11 14:54
 
 """
-工具类
+时间戳处理工具类
 """
 
 import datetime
@@ -53,6 +53,9 @@ def months_next_season(date_now):
 def first_day_this_month(date_now):
     y = date_now+pd.tseries.offsets.DateOffset(days=1-date_now.day)
     return y
+
+
+
 
 if __name__ == '__main__':
     # https://www.jb51.net/article/138085.htm
