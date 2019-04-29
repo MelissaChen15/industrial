@@ -4,3 +4,5 @@
  -- A股代码
 select secucode from SecuMain t
 where (t.SecuMarket='83' or t.SecuMarket='90') and t.SecuCategory = 1 order by secucode
+
+

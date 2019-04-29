@@ -83,7 +83,7 @@ class (, ):
                 from sqlalchemy import String, Integer
                 print(factor_values)
                 # TODO: 表名必须是小写
-                # pl_sql_oracle.df_to_DB(factor_values, '',if_exists= mode,data_type={'SECUCODE': String(20)})
+                # pl_sql_oracle.df_to_DB(factor_values, '',if_exists= 'append',data_type={'SECUCODE': String(20)})
 
                 print(self.type, getattr(row, 'SECUCODE'),' done')
 

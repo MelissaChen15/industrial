@@ -126,7 +126,6 @@ class SeasonalFinancialQualityFactor(SeasonalFrequency, FinancialQualityFactor):
 
         return components
 
-
     def get_factor_values(self, components):
         """
         计算本类所有的因子

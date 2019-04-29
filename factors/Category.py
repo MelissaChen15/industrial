@@ -110,3 +110,11 @@ class TechnicalIndicatorFactor(BasicFactor):
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
         self.type = '技术指标类'
+
+
+# 组合基本面因子， Form1, X/AT形式
+class ComposedBasicFactorForm1(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '组合基本面因子， Form1, X/AT形式'
