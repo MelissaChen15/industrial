@@ -77,6 +77,7 @@ def df_to_DB(df:pd.DataFrame, table_name, if_exists, data_type):
     """
     # oracle+cx_oracle://user:pass@host:port/dbname[?key=value&key=value...]
 
+    assert(table_name.islower()) #数据库要求写入时表民必须是小写
     conn_string = 'oracle+cx_oracle://jydb:jydb@192.168.1.187/JYDB'
     engine = create_engine(conn_string, echo=False)
     df.to_sql(name=table_name, if_exists= if_exists, con=engine,index=False,dtype=data_type)

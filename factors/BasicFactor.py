@@ -18,7 +18,12 @@ class BasicFactor(object):
         self.frequency = np.nan # string, 因子频率
 
     def init_factors(self):
-        pass
+        """
+        初始化因子的基础特征,包括factor name, factor code和description
+
+        :return: dict, key为因子名,value为因子类的一个实例
+        """
+        return factor_entities
 
     def get_factor_list(self):
         """
@@ -40,7 +45,7 @@ class BasicFactor(object):
     def seasonal_to_monthly(self, seasonal_data: pd.DataFrame, seasonal_factor_name: list):
         # TODO: 插值法会导致尾部没有数据，目前使用的解决方法是取最近一期报告的值
         """
-        应用cubic spline，将季频数据转换成月频数据
+        应用cubic spline或者线性插值法，将季频数据转换成月频数据
         可以同时处理多个特征；多支股票需要将同一支股票的数据放在一起，上下拼接
 
         :param seasonal_data:  pandas.DataFrame, 列包含 'ENDDATE''SECUCODE'和需要转换的因子
