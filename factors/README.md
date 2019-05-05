@@ -231,16 +231,16 @@ factor_list = factor_list.append(curr_list, ignore_index=True)
    - ​	如果新因子与本类已有的因子使用的是**相同的聚源数据表**, 并且需要插值处理, 则**修改**以下语句中带感叹号的地方:
 
    ```python
-   components['已有的聚源表名_monthly']  = self.seasonal_to_monthly(components['已有的聚源表名'],['已有的字段1','已有的字段2', '!新因子的字段'])
+   components['已有的聚源表名_monthly']  = self.seasonal_to_monthly(components['已有的聚源表名'],['已有的字段1','已有的字段2(全大写)', '!新因子的字段(全大写)'])
    ```
 
    - ​	如果新因子用到了与本类已经有的因子**不同的聚源数据表**, 则在函数中**追加**:
 
    ```python
-   components['!表1名, 同聚源数据库']  = components['!表1名, 同聚源数据库'].sort_values(by='!表1时间标识符')
+   components['!表1名, 同聚源数据库']  = components['!表1名, 同聚源数据库'].sort_values(by='!表1时间标识符(全大写)')
    
    # 如果需要插值转换
-   components['!表1名_monthly']  = self.seasonal_to_monthly(components['!表1名, 同聚源数据库'],['!需要转换的字段1','!需要转换的字段2'])
+   components['!表1名_monthly']  = self.seasonal_to_monthly(components['!表1名, 同聚源数据库'],['!需要转换的字段1(全大写)','!需要转换的字段2(全大写)'])
    ```
 
    c.  找到 **get_factor_values()** 函数
@@ -248,7 +248,7 @@ factor_list = factor_list.append(curr_list, ignore_index=True)
    在已经写好的因子后面追加:
 
    ```python
-   factor_values['!新因子简称'] = components['!表名']['!字段名'] + components['!表名']['!字段名']
+   factor_values['!新因子简称'] = components['!表名']['!字段名(全大写)'] + components['!表名']['!字段名(全大写)']
    ```
 
 ### 更新因子主表
@@ -269,11 +269,12 @@ pl_sql_oracle.df_to_DB(df=factor_list, table_name='factorlist',if_exists= 'repla
 
 ### 异常处理
 
-| 错误内容            | 实际报错位置 | 报错原因                                       | 解决方法 |
-| ------------------- | ------------ | ---------------------------------------------- | -------- |
-| TRADINGDAY/ ENDDATE | sql查询语句  | 聚源数据库的制定数据表没有当前这只的股票的数据 | 忽略     |
-|                     |              |                                                |          |
-|                     |              |                                                |          |
+| 错误内容                                   | 实际报错位置      | 报错原因                                       | 解决方法                                   |
+| ------------------------------------------ | ----------------- | ---------------------------------------------- | ------------------------------------------ |
+| TRADINGDAY/ ENDDATE 部分股票报错           | sql查询语句       | 聚源数据库的制定数据表没有当前这只的股票的数据 | 忽略                                       |
+| TRADINGDAY/ ENDDATE 所有股票报错           | find_components() | 时间标识写错                                   | 查看时间标识符是否和频率匹配，是否全部大写 |
+| x and y array must have at least 2 entries | 线性插值          | 数据点过少，连线性插值都不能使用               | 使用原数据                                 |
+| derivatives not match cubic spline         | cubic spline插值  | 数据点过少，不能应用三次样条插值               | 改用其他插值方法                           |
 
 ### 其他注意事项
 

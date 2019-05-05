@@ -52,11 +52,11 @@ class !因子类名(!继承的评率类名, !继承的经济类别类名):
         components = sql.InputDataPreprocess(file_path, table_name, secucode )
 
         # TODO: 读取时需要按时间排序
-        components['!表1名, 同聚源数据库']  = components['!表1名, 同聚源数据库'].sort_values(by='!表1时间标识符')
-        components['!表2名, 同聚源数据库'] = components['!表2名, 同聚源数据库'].sort_values(by='!表2时间标识符')
+        components['!表1名, 同聚源数据库']  = components['!表1名, 同聚源数据库'].sort_values(by='!表1时间标识符(全大写)')
+        components['!表2名, 同聚源数据库'] = components['!表2名, 同聚源数据库'].sort_values(by='!表2时间标识符(全大写)'')
 
         # 如果需要插值转换
-        components['!表1名_monthly']  = self.seasonal_to_monthly(components['!表1名, 同聚源数据库'],['!需要转换的字段1','!需要转换的字段2'])
+        components['!表1名_monthly']  = self.seasonal_to_monthly(components['!表1名, 同聚源数据库'],['!需要转换的字段1(全大写)','!需要转换的字段2(全大写)'])
         # components['!LC_MainIndexNew_daily'] = self.monthly_to_daily(!monthly_data, !components['LC_DIndicesForValuation'],['NETPROFITGROWRATE'])
 
         return components
@@ -70,9 +70,9 @@ class !因子类名(!继承的评率类名, !继承的经济类别类名):
             factor_values： pandas.DataFrame, 因子值
         """
 
-        factor_values = pd.DataFrame(components['!表1名, 同聚源数据库, 如果经过插值转换,则为转换后的表名'][['SECUCODE','!表1的时间标识']]) # 存储因子值
-        factor_values['!因子简称1'] = components['!表名']['!字段名'] + components['!表名']['!字段名']
-        factor_values['!因子简称2'] = components['!表名']['!字段名'] / components['!表名']['!字段名']
+        factor_values = pd.DataFrame(components['!表1名, 同聚源数据库, 如果经过插值转换,则为转换后的表名'][['SECUCODE','!表1的时间标识(全大写)']]) # 存储因子值
+        factor_values['!因子简称1'] = components['!表名']['!字段名(全大写)'] + components['!表名']['!字段名(全大写)']
+        factor_values['!因子简称2'] = components['!表名']['!字段名(全大写)'] / components['!表名']['!字段名(全大写)']
 
         return factor_values
 
