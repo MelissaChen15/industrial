@@ -70,7 +70,7 @@ class !因子类名(!继承的评率类名, !继承的经济类别类名):
             factor_values： pandas.DataFrame, 因子值
         """
 
-        factor_values = pd.DataFrame(components['!表1名, 同聚源数据库, 如果经过插值转换,则为转换后的表名'][['SECUCODE','!表1的时间标识符']]) # 存储因子值
+        factor_values = pd.DataFrame(components['!表1名, 同聚源数据库, 如果经过插值转换,则为转换后的表名'][['SECUCODE','!表1的时间标识']]) # 存储因子值
         factor_values['!因子简称1'] = components['!表名']['!字段名'] + components['!表名']['!字段名']
         factor_values['!因子简称2'] = components['!表名']['!字段名'] / components['!表名']['!字段名']
 

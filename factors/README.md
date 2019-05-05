@@ -34,6 +34,16 @@
 
 ### 因子库数据表
 
+**因子主表 factorlist**重要字段：
+
+| 字段名     | 中文名       | 说明                                       | 例如                                    | 数据类型      |
+| ---------- | ------------ | ------------------------------------------ | --------------------------------------- | ------------- |
+| FactorCode | 因子代码     | 详情见因子库索引.xlsx                      | '000001'                                | VARCHAR2(16)  |
+| 简称       | 因子英文简称 | 同上                                       | 'TotalMV'                               | VARCHAR2(64)  |
+| 频率       | 因子频率     | 1代表日频, 2— 周频, 3—月频, 4—季频, 5—年频 | 1                                       | Integer       |
+| 类别       | 因子类别     | 说明因子的经济特征和频率特征               | '季频技术类'                            | VARCHAR2(128) |
+| 描述       | 因子描述     | 包含因子的计算方法等说明性内容             | '市销率（PS）＝股票市值/去年营业收入。' | VARCHAR2(512) |
+
 **日频数据表**重要字段：
 
 | 字段名     | 中文名   | 备注                  | 例如         | 数据类型     |
@@ -167,7 +177,7 @@ F--data-->L
 | 日期标识                                                     | /                  | 日频数据: TRADINGDAY, 月频数据: STARTDAY, 季频数据: ENDDATE  | /                                                            | /             |
 | find_components(),  get_factor_values()函数中的列表components | components\[\]\[\] | 索引0:表名, 同聚源数据库,或者在其后加\_monthly或_daily表示经过插值处理,大小写均可; 索引1: 列名, 同聚源数据库, 必须大写 | components['LC_MainIndexNew_monthly']['GROSSINCOMERATIO']    | /             |
 | 所有sql语句                                                  | SecuMain           | 所有SecuMain都命名为t2                                       | --表1： LC_MainIndexNew select t2.SecuCode,t1.EndDate,t1.SaleServiceCashToORTTM, inner join SecuMain t2 on t1.CompanyCode=t2.CompanyCode where (t2.SecuMarket='83' or t2.SecuMarket='90') and (t1.enddate >= to_date( '2004-12-31 00:00:00','yyyy-mm-dd hh24:mi:ss') ) | /             |
-| sql文件                                                      | /                  | sql_因子类名.sql, 全小写,下划线命名法                        | sql_daily_value_factor.sql                                   | /             |
+| sql文件名                                                    | /                  | sql_因子类名.sql, 全小写,下划线命名法                        | sql_daily_value_factor.sql                                   | /             |
 
 ## Part 5： 使用步骤 
 
@@ -177,44 +187,114 @@ F--data-->L
 
    a. 找出计算新类别因子需要从聚源数据库中取出的表名和字段名
 
-   b. 复制./sql/sql_template.py, 按照新类别的名字更名
+   b. 复制 **./sql/sql_template.py**, 按照新类别的名字更名
 
    c. 按照sql_template中的提示, 对于每一个需要从数据库中取出的数据表写一个sql查询语句, 注意必须以where语句结尾.
 
 2. 因子类操作
 
-   a. 在 category.py 文件中加入相应的类别
+   a. 在 **category.py** 文件中加入相应的类别
 
-   b. 复制./factor_template.py, 按照新类别的名字更名
+   b. 复制 **./factor_template.py**, 按照新类别的名字更名
 
-   c. 按照./factor_template.py文件中的注释修改相应的内容, 需要修改的地方已经在代码中逐个注释, 并且以!开头标识了出来
+   c. 按照 **./factor_template.py **文件中的注释修改相应的内容, 需要修改的地方已经在代码中逐个注释, 并且已经以 **! **开头标识了出来
+
+3. 在 **./upate.py **文件中追加:
+
+```python
+!因子类名的initials = !因子类名()
+data_sql_file_path = !r'D:\Meiying\codes\industrial\factors\sql\.sql' # 读取数据库数据的sql代码文件路径
+code_sql_file_path = !r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'  # 查询股票代码的sql文件路径
+!因子类名的initials.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
+curr_list = !因子类名的initials.get_factor_list()
+factor_list = factor_list.append(curr_list, ignore_index=True)
+```
 
 ### 在已有的类别中添加新的因子
 
+1. 在路径 **./sql/sql_因子类名.sql** 下找出对应的sql文件并按照其中的提示修改, 注意sql查询语句必须以where结尾
+
+2. **./因子类名.py** 文件中:
+
+   a. 找到 **init_factors()** 函数, 在已经写好的因子后面追加:
+
+   ```python
+   # !因子简称 !因子中文名
+    !因子简称 = !因子类名(factor_code='!因子代码',
+                         name='!因子英文简称',
+                         describe='!中文描述, 如何计算因子等内容')
+   factor_entities['!因子简称'] = !因子简称
+   ```
+
+   b. 找到 **find_components()** 函数
+
+   - ​	如果新因子与本类已有的因子使用的是**相同的聚源数据表**, 并且需要插值处理, 则**修改**以下语句中带感叹号的地方:
+
+   ```python
+   components['已有的聚源表名_monthly']  = self.seasonal_to_monthly(components['已有的聚源表名'],['已有的字段1','已有的字段2', '!新因子的字段'])
+   ```
+
+   - ​	如果新因子用到了与本类已经有的因子**不同的聚源数据表**, 则在函数中**追加**:
+
+   ```python
+   components['!表1名, 同聚源数据库']  = components['!表1名, 同聚源数据库'].sort_values(by='!表1时间标识符')
+   
+   # 如果需要插值转换
+   components['!表1名_monthly']  = self.seasonal_to_monthly(components['!表1名, 同聚源数据库'],['!需要转换的字段1','!需要转换的字段2'])
+   ```
+
+   c.  找到 **get_factor_values()** 函数
+
+   在已经写好的因子后面追加:
+
+   ```python
+   factor_values['!新因子简称'] = components['!表名']['!字段名'] + components['!表名']['!字段名']
+   ```
+
 ### 更新因子主表
+
+找到 **./upate.py** , 注释掉所有含有write_to_DB()函数的语句, 运行update.py中下面这段代码, 即可将更新后的因子主表写入数据库:
+
+```python
+from sqlalchemy import String, Integer
+pl_sql_oracle.df_to_DB(df=factor_list, table_name='factorlist',if_exists= 'replace',
+                           data_type={'FactorCode': String(16), '简称': String(64), '频率': Integer(),'类别': String(128), '描述': String(512)})
+```
 
 ### 更新因子值
 
-#### 单个因子
-
-#### 所有因子
+找到 **./upate.py** , 运行需要更新的因子类的write_to_DB()函数
 
 ## Part 6： 异常处理与其他注意事项
 
-异常处理
+### 异常处理
 
-### sql文件
+| 错误内容            | 实际报错位置 | 报错原因                                       | 解决方法 |
+| ------------------- | ------------ | ---------------------------------------------- | -------- |
+| TRADINGDAY/ ENDDATE | sql查询语句  | 聚源数据库的制定数据表没有当前这只的股票的数据 | 忽略     |
+|                     |              |                                                |          |
+|                     |              |                                                |          |
 
-取2005-01-01及之后的数据，要设置date >= 2004-12-31, 否则季度数据无法插值就会有缺失的情况
+### 其他注意事项
 
-### 数据预处理
+#### sql文件
 
-季度数据使用插值法之后，临近现在的一个季度没有数据，暂时用上一个季度的报告值代替
+- 写sql语句时, 如果要取2005-01-01及之后的数据，要设置date >= 2004-12-31, 否则第一季度数据无法插值
 
-### 数据库
 
-同时读写、频繁读写数据库会导致数据表锁死（阀值未知）
+#### 数据预处理
 
-数据库有session数上限，多个程序访问可能导致超时
+- 季度数据使用插值法之后，临近现在时间的一个季度没有数据，暂时用上一个季度的报告值代替
 
-写入时，数据超过数据字段字符数上限不会报错
+
+#### 数据库写入
+
+- 同时读写、频繁读写数据库会导致数据表锁死（阀值未知）
+
+
+- 数据库有session数上限，多个程序访问可能导致超时
+
+
+- 写入时，数据超过数据字段字符数上限不会报错
+
+  
