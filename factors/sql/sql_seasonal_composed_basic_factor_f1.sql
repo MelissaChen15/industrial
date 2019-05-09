@@ -1,7 +1,7 @@
  -- 表2：SecuMain
 
 --表1： LC_BalanceSheetAll
-select t2.SecuCode,t1.EndDate,t1.OtherCurrentAssets,  t1.OtherAssets, t1.ShortTermLoan, t1.CapitalReserveFund, t1.DeferredProceeds, t1.DividendPayable, t1.FixedAssets, t1.GoodWill, t1.OtherCurrentLiability, t1.NotesPayable, t1.IntangibleAssets, t1.MinorityInterests, t1.AccountReceivable, t1.TreasuryStock, t1.AdvancePayment
+select  t2.SecuCode,t1.EndDate,t1.OtherCurrentAssets,  t1.OtherAssets, t1.ShortTermLoan, t1.CapitalReserveFund, t1.DeferredProceeds, t1.DividendPayable, t1.FixedAssets, t1.GoodWill, t1.OtherCurrentLiability, t1.NotesPayable, t1.IntangibleAssets, t1.MinorityInterests, t1.AccountReceivable, t1.TreasuryStock, t1.AdvancePayment
  from LC_BalanceSheetAll t1
 inner join SecuMain t2
 on t1.CompanyCode=t2.CompanyCode

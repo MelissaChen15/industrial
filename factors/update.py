@@ -19,6 +19,11 @@ from factors.SeasonalCapitalStructureFactor import  SeasonalCapitalStructureFact
 from factors.SeasonalEarningQualityFactor import SeasonalEarningQualityFactor
 from factors.SeasonalDuPontFactor import SeasonalDuPontFactor
 from factors.DailyTechnicalIndicatorFactor import DailyTechnicalIndicatorFactor
+from factors.SeasonalComposedBasicFactor.form1 import SeasonalComposedBasicFactorF1
+from factors.SeasonalComposedBasicFactor.form2 import SeasonalComposedBasicFactorF2
+from factors.SeasonalComposedBasicFactor.form3 import SeasonalComposedBasicFactorF3
+
+
 
 
 def update():
@@ -55,7 +60,7 @@ def update():
     factor_list = factor_list.append(curr_list, ignore_index=True)
 
 
-    # 4. 季频成长类 未写入
+    # 4. 季频成长类
     sgv = SeasonalGrowthFactor()
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_growth_factor.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
@@ -64,7 +69,7 @@ def update():
     factor_list = factor_list.append(curr_list, ignore_index=True)
 
 
-    # 5. 季频每股指标 未写入
+    # 5. 季频每股指标
     ssif = SeasonalSecuIndexFactor()
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_secu_index_factor.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
@@ -73,7 +78,7 @@ def update():
     factor_list = factor_list.append(curr_list, ignore_index=True)
 
 
-    # 6. 季频偿债能力 未写入
+    # 6. 季频偿债能力
     sdaf = SeasonalDebtpayingAbilityFactor()
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_debtpaying_ability_factor.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
@@ -82,7 +87,7 @@ def update():
     factor_list = factor_list.append(curr_list, ignore_index=True)
 
 
-    # 7. 季频盈利能力 未写入
+    # 7. 季频盈利能力
     spf = SeasonalProfitabilityFactor()
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_profitability_factor.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
@@ -90,7 +95,7 @@ def update():
     curr_list = spf.get_factor_list()
     factor_list = factor_list.append(curr_list, ignore_index=True)
 
-    # 8. 季频营运能力 未写入
+    # 8. 季频营运能力
     sof = SeasonalOperatingFactor()
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_operating_factor.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
@@ -99,7 +104,7 @@ def update():
     factor_list = factor_list.append(curr_list, ignore_index=True)
 
 
-    # 9. 季频现金状况 未写入
+    # 9. 季频现金状况
     scf = SeasonalCashFactor()
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_cash_factor.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
@@ -107,7 +112,7 @@ def update():
     curr_list = scf.get_factor_list()
     factor_list = factor_list.append(curr_list, ignore_index=True)
 
-    # 10. 季频分红能力 未写入
+    # 10. 季频分红能力
     sdf = SeasonalDividendFactor()
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_dividend_factor .sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
@@ -115,7 +120,7 @@ def update():
     curr_list = sdf.get_factor_list()
     factor_list = factor_list.append(curr_list, ignore_index=True)
 
-    # 11. 季频资本结构 未写入
+    # 11. 季频资本结构
     scsf = SeasonalCapitalStructureFactor()
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_capital_structure_factor.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
@@ -123,7 +128,7 @@ def update():
     curr_list = scsf.get_factor_list()
     factor_list = factor_list.append(curr_list, ignore_index=True)
 
-    # 12. 季频收益质量 未写入
+    # 12. 季频收益质量
     seqf = SeasonalEarningQualityFactor()
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_earning_quality_factor.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
@@ -131,7 +136,7 @@ def update():
     curr_list = seqf.get_factor_list()
     factor_list = factor_list.append(curr_list, ignore_index=True)
 
-    # 13. 季频杜邦分析体系 未写入
+    # 13. 季频杜邦分析体系
     sdpf = SeasonalDuPontFactor()
     data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_dupont_factor.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
@@ -147,12 +152,36 @@ def update():
     curr_list = dtif.get_factor_list()
     factor_list = factor_list.append(curr_list, ignore_index=True)
 
+    # 15. 季频组合基本面因子， Form1, X/AT形式
+    scbf_f1 = SeasonalComposedBasicFactorF1()
+    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f1.sql'
+    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
+    # scbf_f1.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
+    curr_list = scbf_f1.get_factor_list()
+    factor_list = factor_list.append(curr_list, ignore_index=True)
+
+    # 16. 季频组合基本面因子， Form2, (X_change/AT)_pct形式
+    scbf_f2 = SeasonalComposedBasicFactorF2()
+    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f2.sql'
+    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
+    # scbf_f2.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
+    curr_list = scbf_f2.get_factor_list()
+    factor_list = factor_list.append(curr_list, ignore_index=True)
+
+    # 17. 季频组合基本面因子， Form3, X_change_pct - AT_change_pct形式
+    scbf_f3 = SeasonalComposedBasicFactorF3()
+    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f2.sql'
+    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
+    # scbf_f3.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
+    curr_list = scbf_f3.get_factor_list()
+    factor_list = factor_list.append(curr_list, ignore_index=True)
+
     # 将因子表写入数据库
     print(factor_list)
-    from sqlalchemy import String, Integer
-    pl_sql_oracle.df_to_DB(df=factor_list, table_name='factorlist',if_exists= 'replace',
-                               data_type={'FactorCode': String(16), '简称': String(64), '频率': Integer(),
-                                '类别': String(128), '描述': String(512)})
+    # from sqlalchemy import String, Integer
+    # pl_sql_oracle.df_to_DB(df=factor_list, table_name='factorlist',if_exists= 'replace',
+    #                            data_type={'FactorCode': String(16), '简称': String(64), '频率': Integer(),
+    #                             '类别': String(128), '描述': String(512)})
 
 
 if __name__ == '__main__':

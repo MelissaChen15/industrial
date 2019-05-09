@@ -11,25 +11,26 @@ import numpy as np
 import pandas as pd
 
 """
-季频组合基本面因子， Form1, X/AT形式
+季频组合基本面因子， Form2, (X_change/AT)_pct形式
+
 
 代码表：
-    CB0000 - CB0362
+    CB0363 - CB725
 
 """
 
 
 
 
-class SeasonalComposedBasicFactorF1(SeasonalFrequency, ComposedBasicFactorForm1):
+class SeasonalComposedBasicFactorF2(SeasonalFrequency, ComposedBasicFactorForm1):
 
     def __init__(self, factor_code= '', name= '', describe= ''):
         super().__init__(factor_code, name, describe)
-        self.type = '季频组合基本面因子， Form1, X/AT形式'
+        self.type = '季频组合基本面因子， Form2, (X_change/AT)_pct形式'
 
-    # 形式1： X/AT
+    # 形式2, (X_change/AT)_pct
     def init_factors(self):
-        factor_code = 0
+        factor_code = 363
         factor_entities = {}
 
         numerator = pd.read_excel(r'./SeasonalComposedBasicFactor/组合基本面因子.xlsx', sheet_name='分子')
@@ -38,13 +39,18 @@ class SeasonalComposedBasicFactorF1(SeasonalFrequency, ComposedBasicFactorForm1)
         denominator = pd.read_excel(r'./SeasonalComposedBasicFactor/组合基本面因子.xlsx', sheet_name='分母')
         denominator = denominator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
 
+        # numerator = pd.read_excel(r'./组合基本面因子.xlsx', sheet_name='分子')
+        # numerator = numerator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
+        #
+        # denominator = pd.read_excel(r'./组合基本面因子.xlsx', sheet_name='分母')
+        # denominator = denominator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
+
 
         for n in numerator.itertuples(index=True, name='Pandas'):  # 分子
             for d in denominator.itertuples(index=True, name='Pandas2'):  # 分母
-                factor_name = str(getattr(n, '英文简写')) + 'to' + str(getattr(d, '英文简写'))
-                factor_des = str(getattr(n, '描述')) + '/' + str(getattr(d, '描述'))
-                # print('# ' + factor_name+ ' '+factor_des)
-                factor_entity = SeasonalComposedBasicFactorF1(factor_code='CB%04d' % factor_code,
+                factor_name = str(getattr(n, '英文简写')) + 'chgto' + str(getattr(d, '英文简写') + 'pct')
+                factor_des = str('('+ getattr(n, '描述')) + '的变化值/' + str(getattr(d, '描述') +')较上期变化的百分数')
+                factor_entity = SeasonalComposedBasicFactorF2(factor_code='CB%04d' % factor_code,
                                                                   name=factor_name,
                                                                  describe=factor_des)
                 factor_entities[factor_name] = factor_entity
@@ -52,6 +58,24 @@ class SeasonalComposedBasicFactorF1(SeasonalFrequency, ComposedBasicFactorForm1)
 
         return factor_entities
 
+    def calculate_change(self,component):
+        """
+        计算字段相较于上期的改变量
+        :param components:  pd.DataFrame, 原始数据
+        :return: pd.DataFrame, 已经转换好的数据
+        """
+        import datetime
+        desired_date = datetime.datetime.strptime('2004-12-01', '%Y-%m-%d')
+
+        change =  component.drop(columns=['SECUCODE', 'STARTDAY']).diff(axis=0)
+        change[['SECUCODE', 'STARTDAY']] = component[['SECUCODE', 'STARTDAY']]
+        change = change.sort_values(by='STARTDAY')
+        for row in change.itertuples(index=True, name='Pandas'):  # 将2005年1月1日前的数据drop掉
+            if getattr(row, 'STARTDAY') < desired_date:
+                change = change.drop(index=change[change.STARTDAY < desired_date].index[0])
+            else:
+                break
+        return change
 
     def find_components(self, file_path, table_name,secucode = ''):
         """
@@ -70,30 +94,32 @@ class SeasonalComposedBasicFactorF1(SeasonalFrequency, ComposedBasicFactorForm1)
         # LC_DerivativeData
         # LC_BalanceSheet
         # LC_Staff
+
         try:
+            # t1 LC_BalanceSheetAll
             components['LC_BalanceSheetAll']  = components['LC_BalanceSheetAll'].sort_values(by='ENDDATE')
-            components['LC_BalanceSheetAll_monthly'] = self.seasonal_to_monthly(components['LC_BalanceSheetAll'],
-                                                                                ['OTHERCURRENTASSETS', 'OTHERASSETS',
-                                                                                 'SHORTTERMLOAN', 'CAPITALRESERVEFUND',
-                                                                                 'DEFERREDPROCEEDS', 'DIVIDENDPAYABLE',
+            components['LC_BalanceSheetAll_monthly'] = self.seasonal_to_monthly(components['LC_BalanceSheetAll'],['OTHERCURRENTASSETS', 'OTHERASSETS', 'CAPITALRESERVEFUND','DEFERREDPROCEEDS', 'DIVIDENDPAYABLE',
                                                                                  'FIXEDASSETS', 'GOODWILL',
                                                                                  'OTHERCURRENTLIABILITY',
                                                                                  'NOTESPAYABLE', 'INTANGIBLEASSETS',
                                                                                  'MINORITYINTERESTS',
                                                                                  'ACCOUNTRECEIVABLE', 'TREASURYSTOCK',
-                                                                                 'ADVANCEPAYMENT'])
-
+                                                                                  'ADVANCEPAYMENT','SHORTTERMLOAN'])
+            # print(components['LC_BalanceSheetAll_monthly'])
+            components['LC_BalanceSheetAll_monthly_chg'] = self.calculate_change(components['LC_BalanceSheetAll_monthly'])
+            # print(components['LC_BalanceSheetAll_monthly_chg']['STARTDAY'])
         except: pass
-        try:
+
+
+        try: # t3 LC_IncomeStatementAll
             components['LC_IncomeStatementAll'] = components['LC_IncomeStatementAll'].sort_values(by='ENDDATE')
-            components['LC_IncomeStatementAll_monthly'] = self.seasonal_to_monthly(components['LC_IncomeStatementAll'],
-                                                                                   ['NETPROFIT', 'OTHERNETREVENUE',
-                                                                                    'RANDD', 'OPERATINGREVENUE',
-                                                                                    'OPERATINGPAYOUT',
-                                                                                    'ADMINISTRATIONEXPENSE'])
+            components['LC_IncomeStatementAll_monthly'] = self.seasonal_to_monthly(components['LC_IncomeStatementAll'],['NETPROFIT', 'OTHERNETREVENUE','RANDD', 'OPERATINGREVENUE', 'OPERATINGPAYOUT', 'ADMINISTRATIONEXPENSE'])
+            components['LC_IncomeStatementAll_monthly_chg'] = self.calculate_change(components['LC_IncomeStatementAll_monthly'])
+            # print(components['LC_IncomeStatementAll_monthly_chg'])
 
-        except: pass
-        try:
+        except Exception as e: print(e)
+        #
+        try: # t4 LC_MainDataNew
             components['LC_MainDataNew'] = components['LC_MainDataNew'].sort_values(by='ENDDATE')
             components['LC_MainDataNew_monthly'] = self.seasonal_to_monthly(components['LC_MainDataNew'],
                                                                             ['TOTALASSETS', 'TOTALCURRENTLIABILITY',
@@ -101,16 +127,20 @@ class SeasonalComposedBasicFactorF1(SeasonalFrequency, ComposedBasicFactorForm1)
                                                                              'TOTALCURRENTASSETS', 'INVENTORIES',
                                                                              'TOTALLIABILITY', 'TOTALCURRENTLIABILITY',
                                                                              'TOTALSHAREHOLDEREQUITY'])
-
+            components['LC_MainDataNew_monthly_chg'] = self.calculate_change(components['LC_MainDataNew_monthly'])
+            # print(components['LC_MainDataNew_monthly_chg'])
         except: pass
-        try:
+
+        try: # t5 LC_CashFlowStatementAll 只有分子
             components['LC_CashFlowStatementAll'] = components['LC_CashFlowStatementAll'].sort_values(by='ENDDATE')
-            components['LC_CashFlowStatementAll_monthly'] = self.seasonal_to_monthly(
-                components['LC_CashFlowStatementAll'],['CASHEQUIVALENTINCREASE', 'INVENTORYDECREASE', 'NETOPERATECASHFLOW', 'INTANGIBLEASSETAMORTIZATION',
+            components['LC_CashFlowStatementAll_monthly'] = self.seasonal_to_monthly(components['LC_CashFlowStatementAll'],['CASHEQUIVALENTINCREASE', 'INVENTORYDECREASE', 'NETOPERATECASHFLOW', 'INTANGIBLEASSETAMORTIZATION',
                  'NETINVESTCASHFLOW'])
-
+            components['LC_CashFlowStatementAll_monthly_chg'] = self.calculate_change(components['LC_CashFlowStatementAll_monthly'])
+            # print(components['LC_CashFlowStatementAll_monthly_chg'])
         except: pass
-        try:
+
+
+        try: # t6 LC_DerivativeData
             components['LC_DerivativeData'] = components['LC_DerivativeData'].sort_values(by='ENDDATE')
             components['LC_DerivativeData_monthly'] = self.seasonal_to_monthly(components['LC_DerivativeData'],
                                                                                ['TOTALOPERATINGCOSTTTM',
@@ -119,15 +149,19 @@ class SeasonalComposedBasicFactorF1(SeasonalFrequency, ComposedBasicFactorForm1)
                                                                                 'TOTALOPERATINGREVENUETTM',
                                                                                 'TOTALPAIDINCAPITAL',
                                                                                 'TOTALOPERATINGCOSTTTM'])
+            components['LC_DerivativeData_monthly_chg'] = self.calculate_change(components['LC_DerivativeData_monthly'])
+            # print(components['LC_DerivativeData_monthly_chg'])
+
 
         except: pass
-        try:
+
+        try: # t7 LC_BalanceSheet
             components['LC_BalanceSheet'] = components['LC_BalanceSheet'].sort_values(by='ENDDATE')
             components['LC_BalanceSheet_monthly'] = self.seasonal_to_monthly(components['LC_BalanceSheet'],
-                                                                             ['TOTALLONGTERMLIABILITY'])
+                                                                         ['TOTALLONGTERMLIABILITY'])
 
         except: pass
-        try:
+        try:# t8 LC_Staff
             components['LC_Staff'] = components['LC_Staff'].sort_values(by='ENDDATE')
             components['LC_Staff_monthly'] = self.seasonal_to_monthly(components['LC_Staff'], ['EMPLOYEESUM'])
 
@@ -148,7 +182,7 @@ class SeasonalComposedBasicFactorF1(SeasonalFrequency, ComposedBasicFactorForm1)
         for n in numerator.itertuples(index=True, name='Pandas'):  # 分子
             for d in denominator.itertuples(index=True, name='Pandas2'):  # 分母
                 factor_name = str(getattr(n, '英文简写')) + 'to' + str(getattr(d, '英文简写')) # 因子名
-                n_table = getattr(n,'聚源表名') + '_monthly' #分子表名
+                n_table = getattr(n,'聚源表名') + '_monthly_chg' #分子表名
                 d_table = getattr(d,'聚源表名') + '_monthly'#分母表名
                 factor_values[factor_name] = np.nan # 使不同股票因子的个数对齐
                 try:
@@ -161,6 +195,10 @@ class SeasonalComposedBasicFactorF1(SeasonalFrequency, ComposedBasicFactorForm1)
                 except Exception as e:
                     print('factor', factor_name, 'error: ', e)
 
+        # 计算与上期的变化百分比
+        temp = factor_values.drop(columns=['SECUCODE', 'STARTDAY']).diff(axis=0)
+        temp[['SECUCODE', 'STARTDAY']] = factor_values[['SECUCODE', 'STARTDAY']]
+        factor_values = temp
 
         return factor_values
 
@@ -180,13 +218,13 @@ class SeasonalComposedBasicFactorF1(SeasonalFrequency, ComposedBasicFactorForm1)
                 data = self.find_components(file_path= data_sql_file_path,
                                            table_name=['LC_BalanceSheetAll','LC_IncomeStatementAll','LC_MainDataNew','LC_CashFlowStatementAll' ,'LC_DerivativeData','LC_BalanceSheet','LC_Staff'],
                                            secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'')
+                # print(data['LC_IncomeStatementAll_monthly_chg'])
                 factor_values = self.get_factor_values_2(data,numerator,denominator)
 
                 from sqlalchemy import String, Integer
-                # print(factor_values)
+                print(factor_values)
                 # TODO: 表名必须是小写
-                pl_sql_oracle.df_to_DB(factor_values, 'seasonalcomposedbasicfactorf1',if_exists= 'append',data_type={'SECUCODE': String(20), })
-
+                # pl_sql_oracle.df_to_DB(factor_values, 'seasonalcomposedbasicfactorf2',if_exists= 'append',data_type={'SECUCODE': String(20), })
                 print(self.type, getattr(row, 'SECUCODE'),' done')
 
 
@@ -196,28 +234,19 @@ class SeasonalComposedBasicFactorF1(SeasonalFrequency, ComposedBasicFactorForm1)
 
 
 if __name__ == '__main__':
-    scbf_f1 = SeasonalComposedBasicFactorF1()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # scbf_f1 .write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
-    print(scbf_f1.get_factor_list())
-
-
-
-
-    # numerator = pd.read_excel(r'./组合基本面因子.xlsx', sheet_name='分子')
-    # numerator = numerator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
-    #
-    # denominator = pd.read_excel(r'./组合基本面因子.xlsx', sheet_name='分母')
-    # denominator = denominator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
-    #
-    # data = scbf_f1.find_components(file_path=data_sql_file_path,
+    pass
+    # scbf_f2 = SeasonalComposedBasicFactorF2()
+    # data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f2.sql'
+    # code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
+    # data = scbf_f2.find_components(file_path=data_sql_file_path,
     #                             table_name=['LC_BalanceSheetAll', 'LC_IncomeStatementAll', 'LC_MainDataNew',
     #                                         'LC_CashFlowStatementAll', 'LC_DerivativeData', 'LC_BalanceSheet',
     #                                         'LC_Staff'],
-    #                             secucode='and t2.Secucode = \'' +  '000001\'')
-    # factor_values = scbf_f1.get_factor_values_2(data, numerator, denominator)
-    # print(factor_values)
+    #                             secucode='and t2.Secucode = \'000001\' ')
+    # print(data)
+
+
+
 
 
 

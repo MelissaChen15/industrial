@@ -24,3 +24,16 @@
 # pd.set_option('display.max_columns', None) #显示所有列
 # pd.set_option('display.max_rows', None) #显示所有行
 # pd.set_option('max_colwidth',100) #设置value的显示长度为100，默认为50
+
+
+# 判断是不是nan
+# a = pd.DataFrame(np.array([np.nan, 1, None, 1, 1]))
+# b = pd.DataFrame(np.array([1, np.nan, 1,None, 1]))
+#
+# c = a/b
+# print(c)
+#
+# print(c == None)
+# print(c == np.nan)
+# print(c == c)
+# print(pd.isnull(c))

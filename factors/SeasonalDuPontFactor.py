@@ -119,7 +119,7 @@ class SeasonalDuPontFactor(SeasonalFrequency,DuPontFactor ):
 
 
                 from sqlalchemy import String, Integer
-                print(factor_values)
+                # print(factor_values)
                 pl_sql_oracle.df_to_DB(factor_values, 'seasonaldupontfactor',if_exists= 'append',data_type={'SECUCODE': String(20)})
 
                 print(self.type, getattr(row, 'SECUCODE'),' done')
