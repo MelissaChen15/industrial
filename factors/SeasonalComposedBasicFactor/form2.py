@@ -86,6 +86,11 @@ class SeasonalComposedBasicFactorF2(SeasonalFrequency, ComposedBasicFactorForm1)
         sql = pl_sql_oracle.dbData_import()
         components = sql.InputDataPreprocess(file_path, table_name, secucode )
 
+        # 因为资产负债表数据存在追溯调整的情况,所以同一个报告期会有很多份数据
+        # 此处去重
+        for key in components.keys():
+            components[key] = components[key].drop_duplicates(['ENDDATE', 'SECUCODE'], keep='first')
+
         # TODO: 读取时需要按时间排序
         # LC_BalanceSheetAll
         # LC_IncomeStatementAll
@@ -236,7 +241,7 @@ class SeasonalComposedBasicFactorF2(SeasonalFrequency, ComposedBasicFactorForm1)
 if __name__ == '__main__':
     pass
     # scbf_f2 = SeasonalComposedBasicFactorF2()
-    # data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f2.sql'
+    # data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f2n3.sql'
     # code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
     # data = scbf_f2.find_components(file_path=data_sql_file_path,
     #                             table_name=['LC_BalanceSheetAll', 'LC_IncomeStatementAll', 'LC_MainDataNew',

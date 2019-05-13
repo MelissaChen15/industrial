@@ -53,10 +53,10 @@
 
 **季频**插值到**月频**数据表重要字段：
 
-| 字段名    | 中文名   | 说明                  | 例如         | 数据类型     |
-| --------- | -------- | --------------------- | ------------ | ------------ |
-| SecuCode  | 证券代码 | 对应SecuMain.SecuCode | '000001'     | VARCHAR2(20) |
-| StartDate | 日期     | 每月第一天            | '2019-03-01' | DATE         |
+| 字段名   | 中文名   | 说明                  | 例如         | 数据类型     |
+| -------- | -------- | --------------------- | ------------ | ------------ |
+| SecuCode | 证券代码 | 对应SecuMain.SecuCode | '000001'     | VARCHAR2(20) |
+| StartDay | 日期     | 每月第一天            | '2019-03-01' | DATE         |
 
 **季频**数据插值到**月频**思路：
 
@@ -78,14 +78,14 @@ E--不可以插值-->G(使用原数据,保留np.nan)
 
 ```bash
 ./factors
-|- BasicFactor.py 				基础因子类，定义所有因子应该的有的基本特征和基本操作
+|- BasicFactor.py 					基础因子类，定义所有因子应该的有的基本特征和基本操作
 |- Category.py 						因子类别类
 |- Frequency.py 					因子频率类
-|- factor_template.py 		新类别因子模板
-|- update.py 							因子写入/更新主入口, 批量操作因子
-|- 因子库索引.xlsx		
-|- README.md
-
+|- factor_template.py 				新类别因子模板
+|- update.py 						因子写入/更新主入口, 批量操作因子
+|- 因子库索引.xlsx					excel版因子库索引
+|- README.md						本文件
+	
 |- DailyTechnicalIndicatorFactor.py		日频技术指标类因子
 |- DailyValueFactor.py								日频价值类因子
 |- SeasonalCapitalStructureFactor.py	季频资本结构类因子
@@ -101,17 +101,21 @@ E--不可以插值-->G(使用原数据,保留np.nan)
 |- SeasonalSecuIndexFactor.py					季频每股指标因子
 |- SeasonalValueFactor.py							季频价值类因子
 
+|- SeasonalComposedBasicFactor		组合基本面因子
+	|- form1.py 						第一种组合形式
+	|- form2.py							第二种组合形式	
+	|- form3.py							第三种组合形式
+	|- 组合基本面因子.xlsx    				excel版组合资本面类因子说明
+
 |- util						工具包
-	|- datetime_ops.py								时间戳操作
-	|- TechnicalIndicatorFunc.py			技术指标类因子计算
+	|- datetime_ops.py					时间戳操作
+	|- TechnicalIndicatorFunc.py		技术指标类因子计算
 	|- TechnicalIndicatorProcess.py		技术指标类因子计算
 
 |- sql 				数据库操作
-	|- dbsynchelper2.py				数据库读取
-	|- GetSQLsentence.py			数据库读取
 	|- pl_sql_oracle.py				数据库读取
-	|- sql_template.sql				sql查询模板
-	|- sql_get_secucode.sql		获取聚源数据库中所有的股票代码
+	|- sql_template.sql				sql模板
+	|- sql_get_secucode.sql			获取聚源数据库中所有的股票代码
 	
 	以下是从聚源数据库中查询各类因子的sql代码，文件名与因子类名对应：
 	|- sql_daily_technicalIndicator_factor.sql
@@ -128,6 +132,8 @@ E--不可以插值-->G(使用原数据,保留np.nan)
 	|- sql_seasonal_profitability_factor.sql
 	|- sql_seasonal_secu_index_factor.sql
 	|- sql_seasonal_value_factor.sql
+	|- sql_seasonal_composed_basic_factor_f1.sql
+	|- sql_seasonal_composed_basic_factor_f2n3.sql
 
 ```
 
@@ -167,17 +173,17 @@ F--data-->L
 
 ## Part 4： 命名规范
 
-| 类型                                                         | 英文               | 命名规范                                                     | 例如                                                         | 数据类型      |
-| :----------------------------------------------------------- | ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------- |
-| 因子类                                                       | /                  | 频率+经济特征+Factor, 大驼峰命名法                           | DailyValueFactor                                             | /             |
-| 因子简称                                                     | name               | 64个字符以内, 全字母,不能含有符号; 如果是聚源数据库中计算好的因子, 名称与聚源数据库中的名称一致 | TotalMV                                                      | VARCHAR2(64)  |
-| 因子代码                                                     | factor_code        | 16个字符以内, 不能以0开头, 字母数字可以混编; 同一类别的因子通常连续编号 | CB0002                                                       | VARCHAR2(16)  |
-| 因子频率                                                     | Frequency          | 1代表日频, 2— 周频, 3—月频, 4—季频, 5—年频                   | 1                                                            | Integer()     |
-| 因子类别                                                     | type               | 128个字符以内, 中文, 不含有特殊字符                          | 季频财务质量类                                               | VARCHAR2(128) |
-| 日期标识                                                     | /                  | 日频数据: TRADINGDAY, 月频数据: STARTDAY, 季频数据: ENDDATE  | /                                                            | /             |
-| find_components(),  get_factor_values()函数中的列表components | components\[\]\[\] | 索引0:表名, 同聚源数据库,或者在其后加\_monthly或_daily表示经过插值处理,大小写均可; 索引1: 列名, 同聚源数据库, 必须大写 | components['LC_MainIndexNew_monthly']['GROSSINCOMERATIO']    | /             |
-| 所有sql语句                                                  | SecuMain           | 所有SecuMain都命名为t2                                       | --表1： LC_MainIndexNew select t2.SecuCode,t1.EndDate,t1.SaleServiceCashToORTTM, inner join SecuMain t2 on t1.CompanyCode=t2.CompanyCode where (t2.SecuMarket='83' or t2.SecuMarket='90') and (t1.enddate >= to_date( '2004-12-31 00:00:00','yyyy-mm-dd hh24:mi:ss') ) | /             |
-| sql文件名                                                    | /                  | sql_因子类名.sql, 全小写,下划线命名法                        | sql_daily_value_factor.sql                                   | /             |
+| 类型                                                         | 英文                    | 命名规范                                                     | 例如                                                         | 数据类型      |
+| :----------------------------------------------------------- | ----------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------- |
+| 因子类                                                       | /                       | 频率+经济特征+Factor, 大驼峰命名法                           | DailyValueFactor                                             | /             |
+| 因子简称                                                     | name                    | 64个字符以内, 全字母,不能含有符号; 如果是聚源数据库中计算好的因子, 名称与聚源数据库中的名称一致 | TotalMV                                                      | VARCHAR2(64)  |
+| 因子代码                                                     | factor_code/ FactorCode | 16个字符以内, 不能以0开头, 字母数字可以混编; 同一类别的因子通常连续编号 | CB0002                                                       | VARCHAR2(16)  |
+| 因子频率                                                     | Frequency               | 1代表日频, 2— 周频, 3—月频, 4—季频, 5—年频                   | 1                                                            | Integer()     |
+| 因子类别                                                     | type                    | 128个字符以内, 中文, 不含有特殊字符                          | 季频财务质量类                                               | VARCHAR2(128) |
+| 日期标识                                                     | /                       | 日频数据: TRADINGDAY, 月频数据: STARTDAY, 季频数据: ENDDATE  | /                                                            | /             |
+| find_components(),  get_factor_values()函数中的列表components | components\[\]\[\]      | 索引0:表名, 同聚源数据库,或者在其后加\_monthly或_daily表示经过插值处理,大小写均可; 索引1: 列名, 同聚源数据库, 必须大写 | components\['LC_MainIndexNew_monthly']['GROSSINCOMERATIO']   | /             |
+| 所有sql语句                                                  | SecuMain                | 所有SecuMain都命名为t2                                       | --表1： LC_MainIndexNew select t2.SecuCode,t1.EndDate,t1.SaleServiceCashToORTTM, inner join SecuMain t2 on t1.CompanyCode=t2.CompanyCode where (t2.SecuMarket='83' or t2.SecuMarket='90') and (t1.enddate >= to_date( '2004-12-31 00:00:00','yyyy-mm-dd hh24:mi:ss') ) | /             |
+| sql文件名                                                    | /                       | sql_因子类名.sql, 全小写,下划线命名法                        | sql_daily_value_factor.sql                                   | /             |
 
 ## Part 5： 使用步骤 
 
@@ -203,7 +209,7 @@ F--data-->L
 
 ```python
 !因子类名的initials = !因子类名()
-data_sql_file_path = !r'D:\Meiying\codes\industrial\factors\sql\.sql' # 读取数据库数据的sql代码文件路径
+data_sql_file_path = !r'D:\Meiying\codes\industrial\factors\sql\xxx.sql' # 读取数据库数据的sql代码文件路径
 code_sql_file_path = !r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'  # 查询股票代码的sql文件路径
 !因子类名的initials.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
 curr_list = !因子类名的initials.get_factor_list()
@@ -248,7 +254,7 @@ factor_list = factor_list.append(curr_list, ignore_index=True)
    在已经写好的因子后面追加:
 
    ```python
-   factor_values['!新因子简称'] = components['!表名']['!字段名(全大写)'] + components['!表名']['!字段名(全大写)']
+   factor_values['!新因子简称'] = components['!表名']['!字段名(全大写)'] +/或者其他操作 components['!表名']['!字段名(全大写)']
    ```
 
 ### 更新因子主表
@@ -263,24 +269,34 @@ pl_sql_oracle.df_to_DB(df=factor_list, table_name='factorlist',if_exists= 'repla
 
 ### 更新因子值
 
-找到 **./upate.py** , 运行需要更新的因子类的write_to_DB()函数
+a. 检查因子类中write_to_DB()一下语句中的 **表名** 参数:
+
+```python
+pl_sql_oracle.df_to_DB(factor_values,table_name='seasonalfinancialqualityfactor',if_exists= 'append',data_type={'SECUCODE': String(20)})
+
+```
+
+b. 找到 **./update.py** , 运行需要更新的因子类的write_to_DB()函数
 
 ## Part 6： 异常处理与其他注意事项
 
 ### 异常处理
 
-| 错误内容                                   | 实际报错位置      | 报错原因                                       | 解决方法                                   |
-| ------------------------------------------ | ----------------- | ---------------------------------------------- | ------------------------------------------ |
-| TRADINGDAY/ ENDDATE 部分股票报错           | sql查询语句       | 聚源数据库的制定数据表没有当前这只的股票的数据 | 忽略                                       |
-| TRADINGDAY/ ENDDATE 所有股票报错           | find_components() | 时间标识写错                                   | 查看时间标识符是否和频率匹配，是否全部大写 |
-| x and y array must have at least 2 entries | 线性插值          | 数据点过少，连线性插值都不能使用               | 使用原数据                                 |
-| derivatives not match cubic spline         | cubic spline插值  | 数据点过少，不能应用三次样条插值               | 改用其他插值方法                           |
+| 错误内容                                      | 实际报错位置                                         | 报错原因                                            | 解决方法                                           |
+| --------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------- |
+| TRADINGDAY/ ENDDATE 部分股票报错              | sql查询语句                                          | 聚源数据库的指定数据表没有当前这只的股票的数据      | 忽略                                               |
+| TRADINGDAY/ ENDDATE 所有股票报错              | find_components()                                    | 时间标识写错                                        | 查看时间标识符是否和频率匹配，是否全部大写         |
+| x and y array must have at least 2 entries    | 线性插值                                             | 数据点过少，连线性插值都不能使用                    | 使用原数据                                         |
+| derivatives not match cubic spline            | 三次样条插值                                         | 数据点过少，不能应用三次样条插值                    | 改用其他插值方法                                   |
+| FutureWarning: convert_objects is deprecated. | InputDataPreprocess(),将非float格式的数据转换为float | convert_objects()函数在更新的pandas版本中将不再支持 | 因为没有找到新版本pandas中的替代方法, 此处忽略即可 |
+| factor error                                  | 具体分析                                             | 具体分析                                            | 具体分析                                           |
 
 ### 其他注意事项
 
 #### sql文件
 
 - 写sql语句时, 如果要取2005-01-01及之后的数据，要设置date >= 2004-12-31, 否则第一季度数据无法插值
+- 周频数据查询时, 因为时间列表是截止到2049年而非当前日期, 所以需要限制时间到 <=today
 
 
 #### 数据预处理
@@ -298,4 +314,8 @@ pl_sql_oracle.df_to_DB(df=factor_list, table_name='factorlist',if_exists= 'repla
 
 - 写入时，数据超过数据字段字符数上限不会报错
 
-  
+#### pandas使用
+
+- 在pandas中,所有的缺失数据, 无论是None还是np.nan都会显示为Nah
+
+- 如果要判断pandas中某个位置的数据是不是缺失, 使用 pd.isnull(DataFrame) 函数

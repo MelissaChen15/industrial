@@ -64,7 +64,7 @@ class SeasonalComposedBasicFactorF1(SeasonalFrequency, ComposedBasicFactorForm1)
         # 因为资产负债表数据存在追溯调整的情况,所以同一个报告期会有很多份数据
         # 此处去重
         for key in components.keys():
-            components[key] = components[key].drop_duplicates(['ENDDATE', 'SECUCODE'], keep="last")
+            components[key] = components[key].drop_duplicates(['ENDDATE', 'SECUCODE'], keep='first')
 
         # TODO: 读取时需要按时间排序
         # LC_BalanceSheetAll

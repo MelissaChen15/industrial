@@ -165,14 +165,13 @@ class SeasonalFinancialQualityFactor(SeasonalFrequency, FinancialQualityFactor):
                 factor_values = self.get_factor_values(data)
 
                 from sqlalchemy import String, Integer
-                pl_sql_oracle.df_to_DB(factor_values, 'seasonalfinancialqualityfactor',if_exists= 'append',data_type={'SECUCODE': String(20)})
+                pl_sql_oracle.df_to_DB(factor_values,table_name= 'seasonalfinancialqualityfactor',if_exists= 'append',data_type={'SECUCODE': String(20)})
                 # print(factor_values)
 
                 print(self.type, getattr(row, 'SECUCODE'),' done')
 
 
             except Exception as e:
-
                 print("write to database failed, error: ", getattr(row, 'SECUCODE'), e)
 
 

@@ -162,7 +162,7 @@ def update():
 
     # 16. 季频组合基本面因子， Form2, (X_change/AT)_pct形式
     scbf_f2 = SeasonalComposedBasicFactorF2()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f2.sql'
+    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f2n3.sql'
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
     # scbf_f2.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
     curr_list = scbf_f2.get_factor_list()
@@ -170,9 +170,9 @@ def update():
 
     # 17. 季频组合基本面因子， Form3, X_change_pct - AT_change_pct形式
     scbf_f3 = SeasonalComposedBasicFactorF3()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f2.sql'
+    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f2n3.sql' # form2 and form3 use the same sql file
     code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # scbf_f3.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
+    scbf_f3.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
     curr_list = scbf_f3.get_factor_list()
     factor_list = factor_list.append(curr_list, ignore_index=True)
 
