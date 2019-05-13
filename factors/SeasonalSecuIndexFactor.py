@@ -157,10 +157,7 @@ class SeasonalSecuIndexFactor(SeasonalFrequency, SecuIndexFactor):
 
     def write_values_to_DB(self, code_sql_file_path, data_sql_file_path):
         sql = pl_sql_oracle.dbData_import()
-        s = sql.InputDataPreprocess(code_sql_file_path,
-                                            ['secucodes'])
-
-
+        s = sql.InputDataPreprocess(code_sql_file_path,['secucodes'])
         for row in s['secucodes'].itertuples(index=True, name='Pandas'):
             try:
                 data = self.find_components(file_path= data_sql_file_path,
@@ -169,11 +166,9 @@ class SeasonalSecuIndexFactor(SeasonalFrequency, SecuIndexFactor):
                 factor_values = self.get_factor_values(data)
                 # print(factor_values)
 
-
                 from sqlalchemy import String, Integer
                 pl_sql_oracle.df_to_DB(factor_values, 'seasonalsecuindexfactor',if_exists= 'append',data_type={'SECUCODE': String(20)})
                 print(self.type, getattr(row, 'SECUCODE'),' done')
-
 
             except Exception as e:
                 print("write to database failed, error: ", getattr(row, 'SECUCODE'), e)

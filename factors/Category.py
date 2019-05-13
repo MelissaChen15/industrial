@@ -118,3 +118,17 @@ class ComposedBasicFactorForm1(BasicFactor):
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
         self.type = '组合基本面因子， Form1, X/AT形式'
+
+# 组合基本面因子， Form2, X/AT形式
+class ComposedBasicFactorForm2(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '组合基本面因子，Form2, (X_change/AT)_pct形式'
+
+# 组合基本面因子， Form3, X/AT形式
+class ComposedBasicFactorForm3(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '组合基本面因子, Form3, X_change_pct - AT_change_pct形式'

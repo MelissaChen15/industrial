@@ -1,7 +1,5 @@
 # Tutorial
 
-- [ ] TODO: 代码改好之后，更新组合基本面因子相关说明
-
 ## Part 1： 数据库概览
 
 ### 聚源数据库原有数据表
@@ -319,3 +317,11 @@ b. 找到 **./update.py** , 运行需要更新的因子类的write_to_DB()函数
 - 在pandas中,所有的缺失数据, 无论是None还是np.nan都会显示为Nah
 
 - 如果要判断pandas中某个位置的数据是不是缺失, 使用 pd.isnull(DataFrame) 函数
+
+
+To be added:
+新增加了一个类DailyDivideValueFactor来写入peg
+修改了InputDataPreprocess,以用于限定sql查询的时间范围
+重构了write_values_to_DB函数, 删除了code_sql_file_path和data_sql_file_path, 新添加了daterange字段
+因为上面这一个write_values_to_DB的改动, 修改find_components以适应daterange的增加和table_name的修改
+将原来的两个file path放入init self里面

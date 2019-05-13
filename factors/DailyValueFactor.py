@@ -21,7 +21,8 @@ import pandas as pd
     1007	PSTTM
     1008	DividendRatio
     1009	TotalMV
-    1010	PEG
+    
+    1010	PEG  特殊处理, 见文件DailyDivideSeasonalFactor
 """
 
 class DailyValueFactor(DailyFrequency, ValueFactor):
@@ -29,6 +30,9 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
     def __init__(self, factor_code= '', name= '', describe= ''):
         super().__init__(factor_code, name, describe)
         self.type = '日频价值类'
+        self.data_sql_file_path = r'.\sql\sql_daily_value_factor.sql'
+        self.code_sql_file_path = r'.\sql\sql_get_secucode.sql'
+        self.table_name = ['LC_DIndicesForVaaluation']
 
     def init_factors(self):
         factor_entities = dict()  # 存储实例化的因子
@@ -87,30 +91,21 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
                                    describe='A股总市值')
         factor_entities['TotalMV'] = TotalMV
 
-        # PEG 市盈率增长率
-        # 注意，此因子为日频数据/季频数据，分母取上个季度最后一天的数据
-        PEG = DailyValueFactor(factor_code='1010',
-                               name='PEG',
-                               describe='市盈率增长率 = 市盈率(PE)/净利润同比增长率(NetProfitGrowRate)')
-        factor_entities['PEG'] = PEG
 
         return factor_entities
 
-    def find_components(self, file_path, table_name,secucode = ''):
+    def find_components(self, file_path,secucode,date):
         """
         在数据库中查询计算本类因子需要的数据
 
         :return: pandas.DataFrame, sql语句执行后返回的数据
         """
         sql = pl_sql_oracle.dbData_import()
-        components = sql.InputDataPreprocess(file_path, table_name, secucode )
+        components = sql.InputDataPreprocess(filepath=file_path, table_name = self.table_name, secucode = secucode,date=date)
 
-        # TODO: 读取时需要按时间排序
-        components['LC_MainIndexNew']  = components['LC_MainIndexNew'].sort_values(by='ENDDATE')
+        # TODO: 需要按时间排序
         components['LC_DIndicesForValuation'] = components['LC_DIndicesForValuation'].sort_values(by='TRADINGDAY')
 
-        monthly_data = self.seasonal_to_monthly(components['LC_MainIndexNew'],['NETPROFITGROWRATE'])
-        components['LC_MainIndexNew_daily'] = self.monthly_to_daily(monthly_data, components['LC_DIndicesForValuation'],['NETPROFITGROWRATE'])
 
         return components
 
@@ -132,34 +127,10 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
         factor_values['PSTTM'] = components['LC_DIndicesForValuation']['PSTTM']
         factor_values['DividendRatio'] = components['LC_DIndicesForValuation']['DIVIDENDRATIO']
         factor_values['TotalMV'] = components['LC_DIndicesForValuation']['TOTALMV']
-        factor_values['PEG'] = components['LC_DIndicesForValuation']['PE'] / (components['LC_MainIndexNew_daily']['NETPROFITGROWRATE'])
 
-        return factor_values.drop(axis=0, index=0)
-
-    def write_values_to_DB(self, code_sql_file_path,data_sql_file_path):
-        sql = pl_sql_oracle.dbData_import()
-        s = sql.InputDataPreprocess(code_sql_file_path,['secucodes'])
-        for row in s['secucodes'].itertuples(index=True, name='Pandas'):
-            try:
-                data = self.find_components(file_path=data_sql_file_path,
-                                           table_name=['LC_DIndicesForValuation', 'LC_MainIndexNew'],
-                                           secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'')
-                factor_values = self.get_factor_values(data)
-
-
-                from sqlalchemy import String, Integer
-                pl_sql_oracle.df_to_DB(factor_values, 'dailyvaluefactor',if_exists= 'append',data_type={'SECUCODE': String(20)})
-
-                print(getattr(row, 'SECUCODE'),' done')
-
-            except Exception as e:
-
-                print(getattr(row, 'SECUCODE'), e)
+        return factor_values
 
 
 if __name__ == '__main__':
-    dvf = DailyValueFactor(factor_code = '0001-0009', name = 'PE,PELYR,PB,PCFTTM,PCFSTTM,PS,PSTTM,DividendRatio,TotalMV', describe = 'daily value factor')
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_daily_value_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    dvf.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
+    pass
 

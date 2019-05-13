@@ -148,14 +148,29 @@ pd.set_option('display.max_columns', None)
 #     print(InputDataPreprocess(filepath, table_name,secucode))
 #
 
-a = pd.DataFrame(np.array([np.nan, 1, None, 1, 1]))
-b = pd.DataFrame(np.array([1, np.nan, 1,None, 1]))
+# a = pd.DataFrame(np.array([np.nan, 1, None, 1, 1]))
+# b = pd.DataFrame(np.array([1, np.nan, 1,None, 1]))
+#
+# c = a/b
+# print(c)
+#
+# print(c == None)
+# print(c == np.nan)
+# print(c == c)
+# print(pd.isnull(c))
 
-c = a/b
-print(c)
+# df = pd.DataFrame({
+#     'a':[1,2,3],
+#     'b':[2,2,2]
+# })
+# print(df)
+#
+# df['c'] = df['a'] * df['b']
+# print( df['a'] * df['b'])
 
-print(c == None)
-print(c == np.nan)
-print(c == c)
-print(pd.isnull(c))
+# print(pd.DataFrame(np.random.random(200),columns=['a']))
+# print(pd.DataFrame(np.random.random(200),columns=['b']))
 
+# pd.DataFrame(np.random.random(200),columns=['a'])['a']*pd.DataFrame(np.random.random(200),columns=['b'])['b']
+
+print(pd.Series(np.random.random(200))*pd.Series(np.random.random(200)))

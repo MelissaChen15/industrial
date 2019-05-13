@@ -37,3 +37,10 @@
 # print(c == np.nan)
 # print(c == c)
 # print(pd.isnull(c))
+
+
+# 快速从数据库中读表
+# from sqlalchemy import create_engine
+# engine = create_engine('oracle+cx_oracle://jydb:jydb@192.168.1.187/JYDB')
+# df = pd.DataFrame(engine.execute("SELECT * FROM DailyValueFactor").fetchall())
+# print(df.shape)

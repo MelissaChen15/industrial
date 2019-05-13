@@ -4,7 +4,7 @@
 
 
 from factors.Frequency import SeasonalFrequency
-from factors.Category import ComposedBasicFactorForm1
+from factors.Category import ComposedBasicFactorForm2
 from factors.sql import pl_sql_oracle
 
 import numpy as np
@@ -15,39 +15,33 @@ import pandas as pd
 
 
 代码表：
-    CB0363 - CB725
+    CB1000开始
 
 """
 
 
 
 
-class SeasonalComposedBasicFactorF2(SeasonalFrequency, ComposedBasicFactorForm1):
+class SeasonalComposedBasicFactorF2(SeasonalFrequency, ComposedBasicFactorForm2):
 
     def __init__(self, factor_code= '', name= '', describe= ''):
         super().__init__(factor_code, name, describe)
         self.type = '季频组合基本面因子， Form2, (X_change/AT)_pct形式'
+        self.data_sql_file_path = r'.\sql\sql_seasonal_composed_basic_factor_f2n3.sql'
+        self.code_sql_file_path = r'.\sql\sql_get_secucode.sql'
+        # 特别的, 本类需要读取 组合基本面因子.xlsx 文件来获取分子分母
+        numerator = pd.read_excel(r'./SeasonalComposedBasicFactor/组合基本面因子.xlsx', sheet_name='分子')
+        self.numerator = numerator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
+        denominator = pd.read_excel(r'./SeasonalComposedBasicFactor/组合基本面因子.xlsx', sheet_name='分母')
+        self.denominator = denominator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
 
     # 形式2, (X_change/AT)_pct
     def init_factors(self):
-        factor_code = 363
+        factor_code = 1000
         factor_entities = {}
 
-        numerator = pd.read_excel(r'./SeasonalComposedBasicFactor/组合基本面因子.xlsx', sheet_name='分子')
-        numerator = numerator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
-
-        denominator = pd.read_excel(r'./SeasonalComposedBasicFactor/组合基本面因子.xlsx', sheet_name='分母')
-        denominator = denominator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
-
-        # numerator = pd.read_excel(r'./组合基本面因子.xlsx', sheet_name='分子')
-        # numerator = numerator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
-        #
-        # denominator = pd.read_excel(r'./组合基本面因子.xlsx', sheet_name='分母')
-        # denominator = denominator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
-
-
-        for n in numerator.itertuples(index=True, name='Pandas'):  # 分子
-            for d in denominator.itertuples(index=True, name='Pandas2'):  # 分母
+        for n in self.numerator.itertuples(index=True, name='Pandas'):  # 分子
+            for d in self.denominator.itertuples(index=True, name='Pandas2'):  # 分母
                 factor_name = str(getattr(n, '英文简写')) + 'chgto' + str(getattr(d, '英文简写') + 'pct')
                 factor_des = str('('+ getattr(n, '描述')) + '的变化值/' + str(getattr(d, '描述') +')较上期变化的百分数')
                 factor_entity = SeasonalComposedBasicFactorF2(factor_code='CB%04d' % factor_code,
@@ -77,14 +71,14 @@ class SeasonalComposedBasicFactorF2(SeasonalFrequency, ComposedBasicFactorForm1)
                 break
         return change
 
-    def find_components(self, file_path, table_name,secucode = ''):
+    def find_components(self, file_path, table_name,secucode, date):
         """
         在数据库中查询计算本类因子需要的数据
 
         :return: pandas.DataFrame, sql语句执行后返回的数据
         """
         sql = pl_sql_oracle.dbData_import()
-        components = sql.InputDataPreprocess(file_path, table_name, secucode )
+        components = sql.InputDataPreprocess(file_path, table_name, secucode, date)
 
         # 因为资产负债表数据存在追溯调整的情况,所以同一个报告期会有很多份数据
         # 此处去重
@@ -174,7 +168,7 @@ class SeasonalComposedBasicFactorF2(SeasonalFrequency, ComposedBasicFactorForm1)
 
         return components
 
-    def get_factor_values_2(self, components,numerator, denominator):
+    def get_factor_values_2(self, components,):
         """
         计算本类所有的因子
 
@@ -184,8 +178,8 @@ class SeasonalComposedBasicFactorF2(SeasonalFrequency, ComposedBasicFactorForm1)
         """
         factor_values = pd.DataFrame(components['LC_BalanceSheetAll_monthly'][['SECUCODE','STARTDAY']]) # 存储因子值
 
-        for n in numerator.itertuples(index=True, name='Pandas'):  # 分子
-            for d in denominator.itertuples(index=True, name='Pandas2'):  # 分母
+        for n in self.numerator.itertuples(index=True, name='Pandas'):  # 分子
+            for d in self.denominator.itertuples(index=True, name='Pandas2'):  # 分母
                 factor_name = str(getattr(n, '英文简写')) + 'to' + str(getattr(d, '英文简写')) # 因子名
                 n_table = getattr(n,'聚源表名') + '_monthly_chg' #分子表名
                 d_table = getattr(d,'聚源表名') + '_monthly'#分母表名
@@ -207,24 +201,19 @@ class SeasonalComposedBasicFactorF2(SeasonalFrequency, ComposedBasicFactorForm1)
 
         return factor_values
 
-    def write_values_to_DB(self,  code_sql_file_path, data_sql_file_path):
-
-        numerator = pd.read_excel(r'./SeasonalComposedBasicFactor/组合基本面因子.xlsx', sheet_name='分子')
-        numerator = numerator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
-
-        denominator = pd.read_excel(r'./SeasonalComposedBasicFactor/组合基本面因子.xlsx', sheet_name='分母')
-        denominator = denominator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
+    def write_values_to_DB(self, date = ''):
 
         sql = pl_sql_oracle.dbData_import()
-        s = sql.InputDataPreprocess(code_sql_file_path,
+        s = sql.InputDataPreprocess(self.code_sql_file_path,
                                             ['secucodes'])
         for row in s['secucodes'].itertuples(index=True, name='Pandas'):
             try:
-                data = self.find_components(file_path= data_sql_file_path,
+                data = self.find_components(file_path= self.data_sql_file_path,
                                            table_name=['LC_BalanceSheetAll','LC_IncomeStatementAll','LC_MainDataNew','LC_CashFlowStatementAll' ,'LC_DerivativeData','LC_BalanceSheet','LC_Staff'],
-                                           secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'')
+                                           secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'',
+                                            date = date)
                 # print(data['LC_IncomeStatementAll_monthly_chg'])
-                factor_values = self.get_factor_values_2(data,numerator,denominator)
+                factor_values = self.get_factor_values_2(data)
 
                 from sqlalchemy import String, Integer
                 print(factor_values)
@@ -240,15 +229,7 @@ class SeasonalComposedBasicFactorF2(SeasonalFrequency, ComposedBasicFactorForm1)
 
 if __name__ == '__main__':
     pass
-    # scbf_f2 = SeasonalComposedBasicFactorF2()
-    # data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f2n3.sql'
-    # code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # data = scbf_f2.find_components(file_path=data_sql_file_path,
-    #                             table_name=['LC_BalanceSheetAll', 'LC_IncomeStatementAll', 'LC_MainDataNew',
-    #                                         'LC_CashFlowStatementAll', 'LC_DerivativeData', 'LC_BalanceSheet',
-    #                                         'LC_Staff'],
-    #                             secucode='and t2.Secucode = \'000001\' ')
-    # print(data)
+
 
 
 

@@ -100,6 +100,9 @@ class DailyTechnicalIndicatorFactor(DailyFrequency,TechnicalIndicatorFactor ):
         super().__init__(factor_code, name, describe)
         self.type = '日频技术指标类'
         self.target_methods, self.nameGroup = TechnicalIndicatorProcess()
+        self.data_sql_file_path = r'.\sql\sql_daily_technicalIndicator_factor.sql'
+        self.code_sql_file_path = r'.\sql\sql_get_secucode.sql'
+        self.table_name = ['QT_DailyQuote']
 
     def init_factors(self):
         factor_entities = dict()  # 存储实例化的因子
@@ -108,16 +111,16 @@ class DailyTechnicalIndicatorFactor(DailyFrequency,TechnicalIndicatorFactor ):
 
         return factor_entities
 
-    def find_components(self, file_path, table_name,secucode = ''):
+    def find_components(self, file_path, secucode, date):
         """
         在数据库中查询计算本类因子需要的数据
 
         :return: pandas.DataFrame, sql语句执行后返回的数据
         """
         sql = pl_sql_oracle.dbData_import()
-        components = sql.InputDataPreprocess(file_path, table_name, secucode )
+        components = sql.InputDataPreprocess(file_path, self.table_name, secucode, date)
 
-        # TODO: 读取时需要按时间排序
+        # TODO: 按时间排序
         components['QT_DailyQuote']  = components['QT_DailyQuote'].sort_values(by='TRADINGDAY') # 计算所需数据在这个表内
 
         return components
@@ -144,33 +147,6 @@ class DailyTechnicalIndicatorFactor(DailyFrequency,TechnicalIndicatorFactor ):
 
 
 
-    def write_values_to_DB(self,  code_sql_file_path, data_sql_file_path):
-        sql = pl_sql_oracle.dbData_import()
-        s = sql.InputDataPreprocess(code_sql_file_path,
-                                            ['secucodes'])
-        for row in s['secucodes'].itertuples(index=True, name='Pandas'):
-            try:
-                data = self.find_components(file_path= data_sql_file_path,
-                                           table_name=['QT_DailyQuote'],
-                                           secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'')
-                factor_values = self.get_factor_values(data)
-                # print(factor_values)
-
-                from sqlalchemy import String, Integer
-                pl_sql_oracle.df_to_DB(factor_values, 'dailytechnicalindicatorfactor',if_exists= 'append',data_type={'SECUCODE': String(20)})
-
-                print(getattr(row, 'SECUCODE'),' done')
-
-
-            except Exception as e:
-                print(getattr(row, 'SECUCODE'), e)
-
-
-
-
 if __name__ == '__main__':
-    dtif = DailyTechnicalIndicatorFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_daily_technicalIndicator_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    dtif.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
+    pass
 

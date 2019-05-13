@@ -4,6 +4,7 @@
 
 import numpy as np
 import pandas as pd
+from factors.sql import pl_sql_oracle
 
 """
 基础因子类
@@ -16,6 +17,9 @@ class BasicFactor(object):
         self.describe = describe # string, 因子描述
         self.type = np.nan # string, 因子类型，如：价值类
         self.frequency = np.nan # string, 因子频率
+        self.data_sql_file_path = '' # string, 读取数据库数据的文件相对路径
+        self.code_sql_file_path = '' # string,  读取股票代码的sql文件的相对路径
+        self.table_name = [] # list, 需要读取的数据库中的表名
 
     def init_factors(self):
         """
@@ -23,6 +27,8 @@ class BasicFactor(object):
 
         :return: dict, key为因子名,value为因子类的一个实例
         """
+        factor_entities = {}
+
         return factor_entities
 
     def get_factor_list(self):
@@ -41,6 +47,47 @@ class BasicFactor(object):
             factor_list = factor_list.append(row, ignore_index=True)
         return factor_list
 
+    def write_values_to_DB(self, date):
+        sql = pl_sql_oracle.dbData_import()
+        s = sql.InputDataPreprocess(self.code_sql_file_path,['secucodes'])
+        for row in s['secucodes'].itertuples(index=True, name='Pandas'):
+            try:
+                data = self.find_components(file_path=self.data_sql_file_path,
+                                           secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'',
+                                            date = date)
+                factor_values = self.get_factor_values(data)
+
+                from sqlalchemy import String, Integer
+                print(factor_values)
+                # pl_sql_oracle.df_to_DB(factor_values, self.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
+                print(self.type,'secucode' ,getattr(row, 'SECUCODE'),' done')
+
+
+            except Exception as e:
+                print(getattr(row, 'SECUCODE'), e)
+
+    def find_components(self, file_path,secucode,date):
+        """
+        在数据库中查询计算本类因子需要的数据
+
+        :return: pandas.DataFrame, sql语句执行后返回的数据
+        """
+        components = {}
+
+
+        return components
+
+    def get_factor_values(self, components):
+        """
+        计算本类所有的因子
+
+        :param components: pandas.DataFrame,计算需要的数据
+        :return:
+            factor_values： pandas.DataFrame, 因子值
+        """
+        factor_values = pd.DataFrame()
+
+        return factor_values
 
     def seasonal_to_monthly(self, seasonal_data: pd.DataFrame, seasonal_factor_name: list):
         # TODO: 插值法会导致尾部没有数据，目前使用的解决方法是取最近一期报告的值

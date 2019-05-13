@@ -26,7 +26,7 @@ class dbData_import(object):
     def __init__(self):
         pass
 
-    def InputDataPreprocess(self, filepath, table_name, secucode=''):
+    def InputDataPreprocess(self, filepath, table_name, secucode='',date = ''):
         # 获取 sql 代码， 存入sql_sentences中
         sql_sentences = []
         sentence = ''
@@ -36,10 +36,13 @@ class dbData_import(object):
                 sentence = ''
             sentence += line
             if 'where' in line:
-                sql_sentences.append(sentence + secucode)
+                sql_sentences.append(sentence + secucode + date)
 
         # for sentence in sql_sentences:
         #     print(sentence)
+
+        # for name in table_name:
+        #     print(name)
 
         # 循环执行 sql 代码
         data = {}
@@ -58,10 +61,12 @@ class dbData_import(object):
                 data[table_name[i]] = data[table_name[i]].replace([None],np.nan)
                 # 将非float格式的数据转换为float
                 if table_name[i] != 'secucodes':
-                    temp = data[table_name[i]]['SECUCODE']
-                    data[table_name[i]] = data[table_name[i]].drop(columns='SECUCODE').convert_objects(convert_numeric=True)
-                    data[table_name[i]]['SECUCODE'] = temp
-                    # print(data[table_name[i]].sort_values(by='ENDDATE'))
+                    try:
+                        temp = data[table_name[i]]['SECUCODE']
+                        data[table_name[i]] = data[table_name[i]].drop(columns='SECUCODE').convert_objects(convert_numeric=True)
+                        data[table_name[i]]['SECUCODE'] = temp
+                        # print(data[table_name[i]].sort_values(by='ENDDATE'))
+                    except: pass
 
         # print(data)
         return data
