@@ -101,13 +101,21 @@ def update_ordinary_daily_factors(daterange:list, factor_classes:list):
         print(c.type,' is up to date')
 
 
-
-
-
-
-
 def update_interpolation_seasonal_factors():
     pass
+
+def first_time_write_interpolation_seasonal_factors():
+    pass
+
+
+
+
+
+
+
+
+
+
 def update_PEG():
     pass
 def update_rolling_daily_factors():
@@ -276,12 +284,13 @@ if __name__ == '__main__':
     # update_factor_list(factor_classes=all_classes)
 
     # ordinary_daily_classes = [DailyValueFactor(),DailyTechnicalIndicatorFactor()]
-    # 首次写入 日频非rolling和非interpolation因子
     # first_time_write_ordinary_daily_factors(daterange = ['2005-01-01', datetime.date.today()], factor_classes= ordinary_daily_classes)
-    # 更新 日频非rolling和非interpolation因子
     # update_ordinary_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes)
 
+    interpolation_seasonal_classes = [SeasonalValueFactor()]
+    # first_time_write_interpolation_seasonal_factors(daterange = ['2005-01-01', datetime.date.today()], factor_classes= ordinary_daily_classes)
+    # update_interpolation_seasonal_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes)
 
-    # 更新
+
 
 
