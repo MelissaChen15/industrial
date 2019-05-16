@@ -47,9 +47,9 @@ def update_factor_list(factor_classes:list):
     print('factor list is up to date')
 
 
-def first_time_write_ordinary_daily_factors(daterange:list, factor_classes:list):
+def multidays_write_to_DB(daterange:list, factor_classes:list, mode = 'print'):
     """
-    第一次将日频非rolling和非interpolation因子写入数据库
+    第一次将因子写入数据库
     为了加快速度, 因为单只股票的数据较大, 所以数据库读写按照股票代码循环, 每次只读写一只股票
     :param daterange: list, 时间范围
     :param factor_classes:list, 因子类别
@@ -62,16 +62,22 @@ def first_time_write_ordinary_daily_factors(daterange:list, factor_classes:list)
 
     # 循环因子类
     for c in factor_classes:
-        print('start first time writing ',c.type,'to DB')
-        c.write_values_to_DB(date='and t1.TradingDay <= to_date( \''+ end + '\',\'yyyy-mm-dd\')  '
-                                                                            'and t1.TradingDay >= to_date( \''+ start + '\',\'yyyy-mm-dd\')')
+        print('start writing ',c.type,'to DB, date range: ', daterange)
+        date_symbol = 'TradingDay' # 日频时间标识符
+        if 'Seasonal' in c.__class__.__name__:
+            date_symbol = 'EndDate' # 季频时间标识符
+        # 其他频率时间标识符加在这里
+        ###########################
+        c.write_values_to_DB(date='and t1.'+date_symbol+ '<= to_date( \''+ end + '\',\'yyyy-mm-dd\')  '
+                                                                            'and t1.'+date_symbol+'>= to_date( \''+ start + '\',\'yyyy-mm-dd\')',mode = mode)
         print(c.type,' is up to date')
 
 
-def update_ordinary_daily_factors(daterange:list, factor_classes:list):
+def update_ordinary_daily_factors(daterange:list, factor_classes:list, mode = 'print'):
     """
     更新将日频非rolling和非interpolation因子
     为了加快速度, 因为日期范围小, 单只股票的数据不多, 所以每次读写所有的股票在整个datarange上的数据
+    如果只需要更新今天的数据, 设置date_range = [datetime.date.today(),datetime.date.today()]
     :param daterange: list, 时间范围
     :param factor_classes:list, 因子类别
     """
@@ -83,213 +89,102 @@ def update_ordinary_daily_factors(daterange:list, factor_classes:list):
 
     # 循环因子类
     for c in factor_classes:
-        print('start updating ', c.type)
+        print('start updating ', c.type, '; date range: ', daterange)
         # 因为因子没有做运算,是直接读取的数据库中的某个字段,所以不用write_values_to_DB方法,而是直接加载出所有股票在这一时间段上的值
         try:
             data = c.find_components(file_path=c.data_sql_file_path,
                                         secucode='',
-                                        date='and t1.TradingDay <= to_date( \''+ end + '\',\'yyyy-mm-dd\')  '
+                                        date='and t1.TradingDay = to_date( \''+ end + '\',\'yyyy-mm-dd\')  '
                                                                             'and t1.TradingDay >= to_date( \''+ start + '\',\'yyyy-mm-dd\')'
                                         )
             factor_values = c.get_factor_values(data)
-            print(factor_values)
+            factor_values = factor_values.reset_index(drop=True) # 重排索引
+
             from sqlalchemy import String, Integer
-            # pl_sql_oracle.df_to_DB(factor_values,c.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
+            if mode == 'print':
+                print(factor_values)
+            if mode == 'write':
+                pl_sql_oracle.df_to_DB(factor_values,c.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
 
         except Exception as e:
             print(e)
         print(c.type,' is up to date')
 
 
-def update_interpolation_seasonal_factors():
-    pass
+def update_interpolation_seasonal_factors(date:datetime.date, factor_classes:list, mode = 'print'):
 
-def first_time_write_interpolation_seasonal_factors():
-    pass
+    for c in factor_classes:
+        print('start updating ', c.type, '; date: ', date)
+        # 为了满足三次样条插值的要求, 从最近的报告日算起, 向前回滚三个报告期, 也就是9个月. e.g. 今天是19.4.5, 读取19.3.31, 18.12.31/9.30/6.30 的数据, 为中间没有数据的月份插值
+        start = datetime_ops.last_4th_report_day(date).strftime("%Y-%m-%d")
+        end = date.strftime("%Y-%m-%d") # 格式转换
+        # print(earliest_report_day, now)
 
+        # 因为必须一只一只股票的插值, 所以虽然速度很慢, 但是只能循环股票代码
+        sql = pl_sql_oracle.dbData_import()
+        s = sql.InputDataPreprocess(c.code_sql_file_path, ['secucodes'])
+        for row in s['secucodes'].itertuples(index=True, name='Pandas'):
+            try:
+                data = c.find_components(file_path=c.data_sql_file_path,
+                                            secucode='and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'',
+                                            date='and t1.EndDate<= to_date( \''+ end + '\',\'yyyy-mm-dd\')  '
+                                                                                'and t1.EndDate>= to_date( \''+ start + '\',\'yyyy-mm-dd\')')
+                factor_values = c.get_factor_values(data)
+                from sqlalchemy import String, Integer
 
-
-
-
-
-
-
-
-
-def update_PEG():
-    pass
-def update_rolling_daily_factors():
-    pass
-def trash():
-    # TODO: 写入数据表之前检查写入方式是replace还是append
-    # TODO: 写入数据表之前检查时间戳
-
-    factor_list = pd.DataFrame()
-
-
-    # 1. 日频价值类
-    dvf = DailyValueFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_daily_value_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # dvf.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = dvf.get_factor_list()
-    factor_list = factor_list.append(curr_list,ignore_index=True)
+                # 生成删除已有数据的sql
+                delete_sql = 'delete from '+c.__class__.__name__.lower() + ' where secucode = \''+ getattr(row, 'SECUCODE') \
+                             + '\''+'and startday <= to_date( \''+ end + '\',\'yyyy-mm-dd\')'\
+                             +'and startday >= to_date( \''+ start + '\',\'yyyy-mm-dd\')'
 
 
-    # 2. 季频价值类
-    svf = SeasonalValueFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_value_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # svf.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = svf.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
+                # print(factor_values)
+                # print(delete_sql)
+
+                if mode == 'print':
+                    print(factor_values)
+                    print(delete_sql)
+                if mode == 'write':
+                    pl_sql_oracle.delete_existing_records(delete_sql)
+                    pl_sql_oracle.df_to_DB(factor_values,c.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
 
 
-    # 3. 季频财务质量类
-    sfqf = SeasonalFinancialQualityFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_financial_quality_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # sfqf.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = sfqf.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
+                print(c.type, 'secucode', getattr(row, 'SECUCODE'), ' done')
 
 
-    # 4. 季频成长类
-    sgv = SeasonalGrowthFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_growth_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # sgv.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
-    curr_list = sgv.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
+            except Exception as e:
+                print(getattr(row, 'SECUCODE'), e)
 
 
-    # 5. 季频每股指标
-    ssif = SeasonalSecuIndexFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_secu_index_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # ssif.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = ssif.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
+        print(c.type,' is up to date')
 
 
-    # 6. 季频偿债能力
-    sdaf = SeasonalDebtpayingAbilityFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_debtpaying_ability_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # sdaf.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = sdaf.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
-
-
-    # 7. 季频盈利能力
-    spf = SeasonalProfitabilityFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_profitability_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # spf.write_values_to_DB( data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = spf.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
-
-    # 8. 季频营运能力
-    sof = SeasonalOperatingFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_operating_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # sof.write_values_to_DB( data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = sof.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
-
-
-    # 9. 季频现金状况
-    scf = SeasonalCashFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_cash_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # scf.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = scf.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
-
-    # 10. 季频分红能力
-    sdf = SeasonalDividendFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_dividend_factor .sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # sdf.write_values_to_DB( data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = sdf.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
-
-    # 11. 季频资本结构
-    scsf = SeasonalCapitalStructureFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_capital_structure_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # scsf.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = scsf.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
-
-    # 12. 季频收益质量
-    seqf = SeasonalEarningQualityFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_earning_quality_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # seqf.write_values_to_DB( data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = seqf.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
-
-    # 13. 季频杜邦分析体系
-    sdpf = SeasonalDuPontFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_dupont_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # sdpf.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
-    curr_list = sdpf.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
-
-    # 14. 日频技术指标
-    dtif = DailyTechnicalIndicatorFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_daily_technicalIndicator_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # dtif.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = dtif.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
-
-    # 15. 季频组合基本面因子， Form1, X/AT形式
-    scbf_f1 = SeasonalComposedBasicFactorF1()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f1.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # scbf_f1.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = scbf_f1.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
-
-    # 16. 季频组合基本面因子， Form2, (X_change/AT)_pct形式
-    scbf_f2 = SeasonalComposedBasicFactorF2()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f2n3.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    # scbf_f2.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = scbf_f2.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
-
-    # 17. 季频组合基本面因子， Form3, X_change_pct - AT_change_pct形式
-    scbf_f3 = SeasonalComposedBasicFactorF3()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_composed_basic_factor_f2n3.sql' # form2 and form3 use the same sql file
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    scbf_f3.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path=code_sql_file_path)
-    curr_list = scbf_f3.get_factor_list()
-    factor_list = factor_list.append(curr_list, ignore_index=True)
 
 
 if __name__ == '__main__':
     import warnings
     warnings.filterwarnings("ignore")
 
-    all_classes = [DailyValueFactor(),SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),SeasonalSecuIndexFactor(),
-    SeasonalDebtpayingAbilityFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
-    SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor(),DailyTechnicalIndicatorFactor(),
-    SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3(),DailyDivideSeasonalFactor()]
+    # all_classes = [DailyValueFactor(),SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),SeasonalSecuIndexFactor(),
+    # SeasonalDebtpayingAbilityFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
+    # SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor(),DailyTechnicalIndicatorFactor(),
+    # SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3(),DailyDivideSeasonalFactor()]
 
     # 更新 因子主表
     # update_factor_list(factor_classes=all_classes)
 
+    # 更新日频非rolling非interpolation
     # ordinary_daily_classes = [DailyValueFactor(),DailyTechnicalIndicatorFactor()]
-    # first_time_write_ordinary_daily_factors(daterange = ['2005-01-01', datetime.date.today()], factor_classes= ordinary_daily_classes)
-    # update_ordinary_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes)
+    # multidays_write_to_DB(daterange = ['2005-01-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'print') # 日频直接使用05-01-01的数据即可
+    # update_ordinary_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'print')
 
-    interpolation_seasonal_classes = [SeasonalValueFactor()]
-    # first_time_write_interpolation_seasonal_factors(daterange = ['2005-01-01', datetime.date.today()], factor_classes= ordinary_daily_classes)
-    # update_interpolation_seasonal_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes)
+
+    interpolation_seasonal_classes = [SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),SeasonalSecuIndexFactor()
+        ,SeasonalDebtpayingAbilityFactor()]
+    temp = []
+    multidays_write_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= temp, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
+    update_interpolation_seasonal_factors(date = datetime.date.today(), factor_classes= temp, mode='print')
+
 
 
 

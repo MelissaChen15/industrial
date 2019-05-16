@@ -173,4 +173,59 @@ pd.set_option('display.max_columns', None)
 
 # pd.DataFrame(np.random.random(200),columns=['a'])['a']*pd.DataFrame(np.random.random(200),columns=['b'])['b']
 
-print(pd.Series(np.random.random(200))*pd.Series(np.random.random(200)))
+# print(pd.Series(np.random.random(200))*pd.Series(np.random.random(200)))
+
+# df = pd.DataFrame([
+#     [1,2,3],
+#     [4,5,6]
+# ]
+# )
+# print(df)
+#
+# df = df.reset_index(drop=True)
+#
+# print(df)
+#
+# df.index = df[0]
+#
+# print(df)
+
+# 验证cubic spline的插值要求
+# df1 = pd.DataFrame([
+#     [1.0],
+#     [np.nan],
+#     [np.nan],
+#     [2.0],
+#     [np.nan],
+#     [np.nan],
+#     [3.0]
+# ])
+#
+# print(df1)
+# try:
+#     print(df1.interpolate(method='linear'))
+#     print(df1.interpolate(method='cubic'))
+# except Exception as e:
+#     print(e)
+#
+# df2 = pd.DataFrame([[0.0],
+#     [np.nan],
+#     [np.nan],
+#     [1.0],
+#     [np.nan],
+#     [np.nan],
+#     [2.0],
+#     [np.nan],
+#     [np.nan],
+#     [3.0]
+# ])
+#
+# print(df2)
+# try:
+#     print(df2.interpolate(method='linear'))
+#     print(df2.interpolate(method='cubic'))
+# except Exception as e:
+#     print(e)
+
+
+print(str(1e-3))

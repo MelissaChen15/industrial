@@ -21,6 +21,7 @@ desc:
 import pandas as pd
 import numpy as np
 from sqlalchemy import create_engine
+import cx_Oracle
 
 class dbData_import(object):
     def __init__(self):
@@ -40,7 +41,7 @@ class dbData_import(object):
 
         # for sentence in sql_sentences:
         #     print(sentence)
-
+        #
         # for name in table_name:
         #     print(name)
 
@@ -72,6 +73,20 @@ class dbData_import(object):
         return data
 
 
+def delete_existing_records(sql: str):
+    """
+    执行sql,  删除原数据表中已有的记录
+    :param sql:
+    :return:
+    """
+    conn = cx_Oracle.connect('jydb/jydb@192.168.1.187/JYDB')
+    cur = conn.cursor()
+    # sql = "delete from seasonalvaluefactor where secucode = '000001' and startday = to_date( '2019-05-01','yyyy-mm-dd')"
+    cur.execute(sql)
+    conn.commit()
+    cur.close()
+
+
 def df_to_DB(df:pd.DataFrame, table_name, if_exists, data_type):
     """
     将DataFrame存储到数据库
@@ -95,9 +110,4 @@ def df_to_DB(df:pd.DataFrame, table_name, if_exists, data_type):
 
 if __name__ == '__main__':
     pass
-    # df = pd.DataFrame({
-    #     'a':[0.1,1.2,3.4],
-    #     'b':['I','am','Melissa']
-    # })
-    # from sqlalchemy import Float, String
-    # df_to_DB(df, 'aaa','replace',{'a': Float,'b': String(150)})
+    update_table('seasonalvaluefactor')

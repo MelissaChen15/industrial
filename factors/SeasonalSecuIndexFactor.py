@@ -33,6 +33,9 @@ class SeasonalSecuIndexFactor(SeasonalFrequency, SecuIndexFactor):
     def __init__(self, factor_code= '', name= '', describe= ''):
         super().__init__(factor_code, name, describe)
         self.type = '季频每股指标'
+        self.data_sql_file_path = r'.\sql\sql_seasonal_secu_index_factor.sql'
+        self.code_sql_file_path = r'.\sql\sql_get_secucode.sql'
+        self.table_name = ['LC_MainIndexNew']
 
     def init_factors(self):
         factor_entities = dict()  # 存储实例化的因子
@@ -111,19 +114,16 @@ class SeasonalSecuIndexFactor(SeasonalFrequency, SecuIndexFactor):
 
         return factor_entities
 
-    def find_components(self, file_path, table_name,secucode = ''):
+    def find_components(self, file_path,secucode,date):
         """
         在数据库中查询计算本类因子需要的数据
 
         :return: pandas.DataFrame, sql语句执行后返回的数据
         """
         sql = pl_sql_oracle.dbData_import()
-        components = sql.InputDataPreprocess(file_path, table_name, secucode )
+        components = sql.InputDataPreprocess(filepath=file_path, table_name=self.table_name, secucode=secucode, date= date)
 
-        # TODO: 读取时需要按时间排序
         components['LC_MainIndexNew']  = components['LC_MainIndexNew'].sort_values(by='ENDDATE')
-
-        # 季频数据转为月频
         components['LC_MainIndexNew_monthly'] = self.seasonal_to_monthly(components['LC_MainIndexNew'],['NETASSETPS', 'OPERATINGREVENUEPSTTM', 'OPERPROFITPS', 'EBITPS', 'CAPITALSURPLUSFUNDPS', 'SURPLUSRESERVEFUNDPS', 'ACCUMULATIONFUNDPS', 'UNDIVIDEDPROFIT', 'RETAINEDEARNINGSPS', 'OPERCASHFLOWPSTTM', 'CASHFLOWPSTTM', 'SHAREHOLDERFCFPS'])
 
         return components
@@ -155,43 +155,13 @@ class SeasonalSecuIndexFactor(SeasonalFrequency, SecuIndexFactor):
         return factor_values
 
 
-    def write_values_to_DB(self, code_sql_file_path, data_sql_file_path):
-        sql = pl_sql_oracle.dbData_import()
-        s = sql.InputDataPreprocess(code_sql_file_path,['secucodes'])
-        for row in s['secucodes'].itertuples(index=True, name='Pandas'):
-            try:
-                data = self.find_components(file_path= data_sql_file_path,
-                                           table_name=['LC_MainIndexNew'],
-                                           secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'')
-                factor_values = self.get_factor_values(data)
-                # print(factor_values)
-
-                from sqlalchemy import String, Integer
-                pl_sql_oracle.df_to_DB(factor_values, 'seasonalsecuindexfactor',if_exists= 'append',data_type={'SECUCODE': String(20)})
-                print(self.type, getattr(row, 'SECUCODE'),' done')
-
-            except Exception as e:
-                print("write to database failed, error: ", getattr(row, 'SECUCODE'), e)
-
-
 
 if __name__ == '__main__':
-    ssif = SeasonalSecuIndexFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_secu_index_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
+    pass
+    # ssif = SeasonalSecuIndexFactor()
+    # data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_secu_index_factor.sql'
+    # code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
 
-    # 查看插值后的数据
-    # sql = pl_sql_oracle.dbData_import()
-    # s = sql.InputDataPreprocess(code_sql_file_path,['secucodes'])
-    #
-    # for row in s['secucodes'].itertuples(index=True, name='Pandas'):
-    #     data = ssif.find_components(file_path=data_sql_file_path,
-    #                                     table_name=['LC_MainIndexNew'],
-    #                                     secucode='and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'')
-    #     print(data)
-
-
-    ssif.write_values_to_DB(data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
 
 
 

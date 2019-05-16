@@ -32,7 +32,7 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
         self.type = '日频价值类'
         self.data_sql_file_path = r'.\sql\sql_daily_value_factor.sql'
         self.code_sql_file_path = r'.\sql\sql_get_secucode.sql'
-        self.table_name = ['LC_DIndicesForVaaluation']
+        self.table_name = ['LC_DIndicesForValuation']
 
     def init_factors(self):
         factor_entities = dict()  # 存储实例化的因子
@@ -102,8 +102,6 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
         """
         sql = pl_sql_oracle.dbData_import()
         components = sql.InputDataPreprocess(filepath=file_path, table_name = self.table_name, secucode = secucode,date=date)
-
-        # TODO: 需要按时间排序
         components['LC_DIndicesForValuation'] = components['LC_DIndicesForValuation'].sort_values(by='TRADINGDAY')
 
 

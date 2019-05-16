@@ -10,15 +10,13 @@ import datetime
 import pandas as pd
 import calendar
 
-def last_day_last_season(date_now):
+def last_report_day(date_now):
     """
     返回传入日期的上季度报告日
     :param date_now: Timestamp, 传入日期，格式：2019-01-01
-    :return: Timestamp，上季度最后一天，格式同传入日期
+    :return: Timestamp，上季度最后一天，即上季度的报告日, 格式同传入日期
     """
-    # x = datetime.datetime.strptime(date_now, '%Y-%m-%d')
     y = date_now + pd.tseries.offsets.DateOffset(months=-((date_now.month - 1) % 3), days= - date_now.day)  # 上季最后一天
-    # return y.strftime("%Y-%m-%d")
     return y
 
 def first_day_this_season(date_now):
@@ -69,13 +67,22 @@ def getEveryDay(begin_date,end_date):
         begin_date += datetime.timedelta(days=1)
     return date_list
 
+def last_4th_report_day(date_now):
+    """
+    返回传入日期三个报告期之前的报告日数据
+    比如: 传入19-04-05, 返回18-06-30
+    :param date_now: Timestamp, 传入日期，格式：2019-01-01
+    :return: Timestamp
+    """
+    y = date_now + pd.tseries.offsets.DateOffset(months=-((date_now.month - 1) % 3) - 9, days= - date_now.day)  # 上季最后一天
+    return y
 
 
 
 if __name__ == '__main__':
     # https://www.jb51.net/article/138085.htm
-    date = datetime.datetime.strptime('2015-01-01', '%Y-%m-%d')
+    date = datetime.datetime.strptime('2019-04-01', '%Y-%m-%d')
     # print(last_day_last_season(date))
     # print(first_day_this_season(date))
     # print(last_day_this_season(date))
-    print(last_day_last_season(date))
+    print(last_4th_report_day(date))

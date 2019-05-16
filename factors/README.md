@@ -325,3 +325,9 @@ To be added:
 重构了write_values_to_DB函数, 删除了code_sql_file_path和data_sql_file_path, 新添加了daterange字段
 因为上面这一个write_values_to_DB的改动, 修改find_components以适应daterange的增加和table_name的修改
 将原来的两个file path放入init self里面
+修改了sql操作文件: 重写了读取数据库的函数InputDataPreprocess, 新增加了修改数据表的函数delete_existing_records
+修正插值方法里面的fillna
+修正插值方法里面会导致出现超过今日日期记录的代码
+删掉sql文件里面的日期
+新增to sql 函数的mode模式, 指定将结果打在terminal上还是直接写入数据库
+因为上面的这一大堆修改, 修改了所有因子类的py和sql文件引用上述函数的地方

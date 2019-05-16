@@ -44,3 +44,13 @@
 # engine = create_engine('oracle+cx_oracle://jydb:jydb@192.168.1.187/JYDB')
 # df = pd.DataFrame(engine.execute("SELECT * FROM DailyValueFactor").fetchall())
 # print(df.shape)
+
+
+# 修改索引
+# df = df.reset_index(drop=True) # 重排索引
+# df.index = df[0] # 指定列作为索引
+
+# 按条件修改某些行
+# df.mask
+# 按条件删除行
+# df = df.drop(df[df.score < 50].index)

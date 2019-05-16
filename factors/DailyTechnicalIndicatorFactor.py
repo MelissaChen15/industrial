@@ -119,8 +119,6 @@ class DailyTechnicalIndicatorFactor(DailyFrequency,TechnicalIndicatorFactor ):
         """
         sql = pl_sql_oracle.dbData_import()
         components = sql.InputDataPreprocess(file_path, self.table_name, secucode, date)
-
-        # TODO: 按时间排序
         components['QT_DailyQuote']  = components['QT_DailyQuote'].sort_values(by='TRADINGDAY') # 计算所需数据在这个表内
 
         return components

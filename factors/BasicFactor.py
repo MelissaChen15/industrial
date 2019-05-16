@@ -5,6 +5,7 @@
 import numpy as np
 import pandas as pd
 from factors.sql import pl_sql_oracle
+import datetime
 
 """
 基础因子类
@@ -47,7 +48,7 @@ class BasicFactor(object):
             factor_list = factor_list.append(row, ignore_index=True)
         return factor_list
 
-    def write_values_to_DB(self, date):
+    def write_values_to_DB(self, date, mode = 'print'):
         sql = pl_sql_oracle.dbData_import()
         s = sql.InputDataPreprocess(self.code_sql_file_path,['secucodes'])
         for row in s['secucodes'].itertuples(index=True, name='Pandas'):
@@ -58,8 +59,10 @@ class BasicFactor(object):
                 factor_values = self.get_factor_values(data)
 
                 from sqlalchemy import String, Integer
-                print(factor_values)
-                # pl_sql_oracle.df_to_DB(factor_values, self.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
+                if mode == 'print':
+                    print(factor_values)
+                if mode == 'write':
+                    pl_sql_oracle.df_to_DB(factor_values, self.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
                 print(self.type,'secucode' ,getattr(row, 'SECUCODE'),' done')
 
 
@@ -90,7 +93,7 @@ class BasicFactor(object):
         return factor_values
 
     def seasonal_to_monthly(self, seasonal_data: pd.DataFrame, seasonal_factor_name: list):
-        # TODO: 插值法会导致尾部没有数据，目前使用的解决方法是取最近一期报告的值
+        # 插值法会导致尾部没有数据，目前使用的解决方法是取最近一期报告的值
         """
         应用cubic spline或者线性插值法，将季频数据转换成月频数据
         可以同时处理多个特征；多支股票需要将同一支股票的数据放在一起，上下拼接
@@ -101,6 +104,7 @@ class BasicFactor(object):
         """
         from factors.util.datetime_ops import months_next_season
         a_stock_monthly_data = pd.DataFrame()
+        seasonal_data = seasonal_data.sort_values(by='ENDDATE') # 排序
         # 循环所有数据
         for row in seasonal_data.itertuples(index=True, name='Pandas'):
             code = getattr(row, 'SECUCODE')
@@ -129,6 +133,10 @@ class BasicFactor(object):
                     a_stock_monthly_data[c] = a_stock_monthly_data[c].interpolate(method='slinear', axis=0)  # slinear 线性插值
                 except Exception as e:
                     print('factor', c, 'error: ',e)
+        # 如果插值的日期超过了今日, 则删除
+        a_stock_monthly_data = a_stock_monthly_data.drop(a_stock_monthly_data[a_stock_monthly_data.STARTDAY > datetime.date.today()].index)
+        # 最后一个报告日至现在日期, 无法插值, 沿用最后一个报告日的数据
+        a_stock_monthly_data = a_stock_monthly_data.fillna(method='ffill')
         return a_stock_monthly_data
 
     def monthly_to_daily(self, monthly_data: pd.DataFrame, daily_data: pd.DataFrame, seasonal_factor_name: list):
@@ -140,7 +148,6 @@ class BasicFactor(object):
         :param seasonal_factor_name: list of string，需要转换的因子的名称
         :return: pd.DataFrame 转换好的日频数据，列包含 'ENDDATE''SECUCODE'和需要转换的因子
         """
-        # TODO: 看一下源码concat_inner 或者 to list之后用binary search
         from factors.util.datetime_ops import first_day_this_month
         daily_data = pd.DataFrame(daily_data[['SECUCODE', 'TRADINGDAY']])
         for f in seasonal_factor_name:

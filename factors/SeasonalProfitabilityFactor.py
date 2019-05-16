@@ -36,6 +36,8 @@ class SeasonalProfitabilityFactor(SeasonalFrequency, ProfitabilityFactor):
     def __init__(self, factor_code= '', name= '', describe= ''):
         super().__init__(factor_code, name, describe)
         self.type = '季频盈利能力'
+        self.data_sql_file_path = r'.\sql\sql_seasonal_profitability_factor.sql'
+        self.code_sql_file_path = r'.\sql\sql_get_secucode.sql'
 
     def init_factors(self):
         factor_entities = dict()  # 存储实例化的因子
