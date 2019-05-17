@@ -18,10 +18,11 @@ date: 2019/4/8  10:12
 desc:
 '''
 
-import pandas as pd
-import numpy as np
-from sqlalchemy import create_engine
 import cx_Oracle
+import numpy as np
+import pandas as pd
+from sqlalchemy import create_engine
+
 
 class dbData_import(object):
     def __init__(self):
@@ -38,7 +39,6 @@ class dbData_import(object):
             sentence += line
             if 'where' in line:
                 sql_sentences.append(sentence + secucode + date)
-
         # for sentence in sql_sentences:
         #     print(sentence)
         #
@@ -86,6 +86,27 @@ def delete_existing_records(sql: str):
     conn.commit()
     cur.close()
 
+def execute_inquery(sql:str):
+    """
+    执行单条查询语句
+    :param sql: str, sql语句
+    :return: pandas.DataFrame, 查询结果
+    """
+    conn_string = 'oracle+cx_oracle://jydb:jydb@192.168.1.187/JYDB'
+    engine = create_engine(conn_string, echo=False)
+
+    with engine.connect() as conn, conn.begin():
+        res = engine.execute(sql)
+        res = pd.DataFrame(data=res.fetchall(),columns=[key.upper() for key in res.keys()]) # 赋列名
+        res = res.replace([None], np.nan) # 将None替换为np.nan
+        try: # 将非float格式的数据转换为float
+            temp =res['SECUCODE']
+            res = res.drop(columns='SECUCODE').convert_objects(convert_numeric=True)
+            res['SECUCODE'] = temp
+        except: pass
+
+    return res
+
 
 def df_to_DB(df:pd.DataFrame, table_name, if_exists, data_type):
     """
@@ -110,4 +131,6 @@ def df_to_DB(df:pd.DataFrame, table_name, if_exists, data_type):
 
 if __name__ == '__main__':
     pass
-    update_table('seasonalvaluefactor')
+    sql = 'select * from seasonalvaluefactor where secucode = \'000001\'and startday <= to_date( \'2019-05-17\',\'yyyy-mm-dd\')and startday >= to_date( \'2018-06-30\',\'yyyy-mm-dd\')'
+
+    print(execute_inquery(sql))

@@ -3,12 +3,12 @@
 # 2019/5/9 15:39
 
 
-from factors.Frequency import SeasonalFrequency
-from factors.Category import ComposedBasicFactorForm3
-from factors.sql import pl_sql_oracle
-
 import numpy as np
 import pandas as pd
+
+from factors.Category import ComposedBasicFactorForm3
+from factors.Frequency import SeasonalFrequency
+from factors.sql import pl_sql_oracle
 
 """
 季频组合基本面因子， Form3, X_change_pct - AT_change_pct形式
@@ -26,13 +26,15 @@ class SeasonalComposedBasicFactorF3(SeasonalFrequency, ComposedBasicFactorForm3)
     def __init__(self, factor_code= '', name= '', describe= ''):
         super().__init__(factor_code, name, describe)
         self.type = '季频组合基本面因子， Form3, X_change_pct - AT_change_pct形式'
-        self.data_sql_file_path = r'.\sql\sql_seasonal_composed_basic_factor_f2n3.sql'
+        self.data_sql_file_path = r'.\sql\sql_seasonal_composed_basic_factor.sql'
         self.code_sql_file_path = r'.\sql\sql_get_secucode.sql'
         # 特别的, 本类需要读取 组合基本面因子.xlsx 文件来获取分子分母
         numerator = pd.read_excel(r'./SeasonalComposedBasicFactor/组合基本面因子.xlsx', sheet_name='分子')
         self.numerator = numerator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
         denominator = pd.read_excel(r'./SeasonalComposedBasicFactor/组合基本面因子.xlsx', sheet_name='分母')
         self.denominator = denominator[['英文简写', '描述', '聚源表名', '聚源字段', '表编号']]
+        self.table_name = ['LC_BalanceSheetAll', 'LC_IncomeStatementAll', 'LC_MainDataNew',
+                              'LC_CashFlowStatementAll', 'LC_DerivativeData', 'LC_BalanceSheet', 'LC_Staff']
 
     # 形式3, X_change_pct - AT_change_pct
     def init_factors(self):
@@ -70,14 +72,14 @@ class SeasonalComposedBasicFactorF3(SeasonalFrequency, ComposedBasicFactorForm3)
                 break
         return change
 
-    def find_components(self, file_path, table_name,secucode, date):
+    def find_components(self, file_path,secucode, date):
         """
         在数据库中查询计算本类因子需要的数据
 
         :return: pandas.DataFrame, sql语句执行后返回的数据
         """
         sql = pl_sql_oracle.dbData_import()
-        components = sql.InputDataPreprocess(file_path, table_name, secucode,date)
+        components = sql.InputDataPreprocess(file_path, self.table_name, secucode,date)
 
 
 
@@ -86,7 +88,6 @@ class SeasonalComposedBasicFactorF3(SeasonalFrequency, ComposedBasicFactorForm3)
         for key in components.keys():
             components[key] = components[key].drop_duplicates(['ENDDATE', 'SECUCODE'], keep='first')
 
-        # TODO: 读取时需要按时间排序
         # LC_BalanceSheetAll
         # LC_IncomeStatementAll
         # LC_MainDataNews
@@ -173,7 +174,7 @@ class SeasonalComposedBasicFactorF3(SeasonalFrequency, ComposedBasicFactorForm3)
 
         return components
 
-    def get_factor_values_2(self, components):
+    def get_factor_values(self, components):
         """
         计算本类所有的因子
 
@@ -205,33 +206,6 @@ class SeasonalComposedBasicFactorF3(SeasonalFrequency, ComposedBasicFactorForm3)
         factor_values = temp
 
         return factor_values
-
-    def write_values_to_DB(self,date = ''):
-
-        sql = pl_sql_oracle.dbData_import()
-        s = sql.InputDataPreprocess(self.code_sql_file_path,
-                                            ['secucodes'])
-        for row in s['secucodes'].itertuples(index=True, name='Pandas'):
-            try:
-                data = self.find_components(file_path= self.data_sql_file_path,
-                                           table_name=['LC_BalanceSheetAll','LC_IncomeStatementAll','LC_MainDataNew','LC_CashFlowStatementAll' ,'LC_DerivativeData','LC_BalanceSheet','LC_Staff'],
-                                           secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'',
-                                            date = date
-                                            )
-                # print(data['LC_IncomeStatementAll_monthly_chg'])
-                factor_values = self.get_factor_values_2(data)
-
-                from sqlalchemy import String, Integer
-                # print(factor_values)
-                # TODO: 表名必须是小写
-                pl_sql_oracle.df_to_DB(factor_values, 'seasonalcomposedbasicfactorf3',if_exists= 'append',data_type={'SECUCODE': String(20), })
-                print(self.type, getattr(row, 'SECUCODE'),' done')
-
-
-            except Exception as e:
-                print("write to database failed, error: ", getattr(row, 'SECUCODE'), e)
-
-
 
 if __name__ == '__main__':
     pass

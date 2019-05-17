@@ -1,8 +1,5 @@
-import pandas as pd
 import numpy as np
-import datetime
-import time
-import parser
+import pandas as pd
 
 pd.set_option('display.max_columns', None)
 #
@@ -140,7 +137,7 @@ pd.set_option('display.max_columns', None)
 #
 #
 # if __name__ == '__main__':
-#     filepath = './factors/sql/sql_seasonal_composed_basic_factor_f1.sql'
+#     filepath = './factors/sql/sql_seasonal_composed_basic_factor.sql'
 #     table_name=['LC_BalanceSheetAll', 'LC_IncomeStatementAll', 'LC_MainDataNew',
 #                                             'LC_CashFlowStatementAll', 'LC_DerivativeData', 'LC_BalanceSheet',
 #                                             'LC_Staff']
@@ -228,4 +225,20 @@ pd.set_option('display.max_columns', None)
 #     print(e)
 
 
-print(str(1e-3))
+a = pd.DataFrame({ # 原来的
+    'c1':[np.nan,2.0,3.0,np.nan],
+})
+b = pd.DataFrame({ # 新算的
+'c1':[1.0,2.0,np.nan,np.nan],
+
+})
+
+print('a',a)
+print('b',b)
+print()
+
+
+for col in a.columns:
+    b[col] = a[col].mask(a[col].isna() & ~b[col].isna(), b[col])
+
+print(b)

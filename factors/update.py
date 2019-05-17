@@ -2,29 +2,27 @@
 # -*- coding: utf-8 -*-
 # 2019/4/25 9:36
 
-import  pandas as pd
-import numpy as np
-import time, datetime
-from factors.sql import pl_sql_oracle
-from factors.util import datetime_ops
-from factors.SeasonalValueFactor import SeasonalValueFactor
-from factors.SeasonalFinancialQualityFactor import SeasonalFinancialQualityFactor
-from factors.SeasonalGrowthFactor import SeasonalGrowthFactor
-from factors.DailyValueFactor import DailyValueFactor
-from factors.SeasonalSecuIndexFactor import SeasonalSecuIndexFactor
-from factors.SeasonalDebtpayingAbilityFactor import  SeasonalDebtpayingAbilityFactor
-from factors.SeasonalProfitabilityFactor import SeasonalProfitabilityFactor
-from factors.SeasonalOperatingFactor import  SeasonalOperatingFactor
+import datetime
+
+import pandas as pd
+
+from factors.SeasonalCapitalStructureFactor import SeasonalCapitalStructureFactor
 from factors.SeasonalCashFactor import SeasonalCashFactor
-from factors.SeasonalDividendFactor import  SeasonalDividendFactor
-from factors.SeasonalCapitalStructureFactor import  SeasonalCapitalStructureFactor
-from factors.SeasonalEarningQualityFactor import SeasonalEarningQualityFactor
-from factors.SeasonalDuPontFactor import SeasonalDuPontFactor
-from  factors.DailyDivideSeasonalFactor import DailyDivideSeasonalFactor
-from factors.DailyTechnicalIndicatorFactor import DailyTechnicalIndicatorFactor
 from factors.SeasonalComposedBasicFactor.form1 import SeasonalComposedBasicFactorF1
 from factors.SeasonalComposedBasicFactor.form2 import SeasonalComposedBasicFactorF2
 from factors.SeasonalComposedBasicFactor.form3 import SeasonalComposedBasicFactorF3
+from factors.SeasonalDebtpayingAbilityFactor import SeasonalDebtpayingAbilityFactor
+from factors.SeasonalDividendFactor import SeasonalDividendFactor
+from factors.SeasonalDuPontFactor import SeasonalDuPontFactor
+from factors.SeasonalEarningQualityFactor import SeasonalEarningQualityFactor
+from factors.SeasonalFinancialQualityFactor import SeasonalFinancialQualityFactor
+from factors.SeasonalGrowthFactor import SeasonalGrowthFactor
+from factors.SeasonalOperatingFactor import SeasonalOperatingFactor
+from factors.SeasonalProfitabilityFactor import SeasonalProfitabilityFactor
+from factors.SeasonalSecuIndexFactor import SeasonalSecuIndexFactor
+from factors.SeasonalValueFactor import SeasonalValueFactor
+from factors.sql import pl_sql_oracle
+from factors.util import datetime_ops
 
 
 def update_factor_list(factor_classes:list):
@@ -53,6 +51,7 @@ def multidays_write_to_DB(daterange:list, factor_classes:list, mode = 'print'):
     为了加快速度, 因为单只股票的数据较大, 所以数据库读写按照股票代码循环, 每次只读写一只股票
     :param daterange: list, 时间范围
     :param factor_classes:list, 因子类别
+    :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
     """
     # 格式转换
     for i in [0,1]:
@@ -64,7 +63,7 @@ def multidays_write_to_DB(daterange:list, factor_classes:list, mode = 'print'):
     for c in factor_classes:
         print('start writing ',c.type,'to DB, date range: ', daterange)
         date_symbol = 'TradingDay' # 日频时间标识符
-        if 'Seasonal' in c.__class__.__name__:
+        if c.__class__.__name__.startswith(('Seasonal')):
             date_symbol = 'EndDate' # 季频时间标识符
         # 其他频率时间标识符加在这里
         ###########################
@@ -80,6 +79,7 @@ def update_ordinary_daily_factors(daterange:list, factor_classes:list, mode = 'p
     如果只需要更新今天的数据, 设置date_range = [datetime.date.today(),datetime.date.today()]
     :param daterange: list, 时间范围
     :param factor_classes:list, 因子类别
+    :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
     """
     # 格式转换
     for i in [0,1]:
@@ -112,6 +112,13 @@ def update_ordinary_daily_factors(daterange:list, factor_classes:list, mode = 'p
 
 
 def update_interpolation_seasonal_factors(date:datetime.date, factor_classes:list, mode = 'print'):
+    """
+    更新需要插值到月频的季频因子
+    :param date: datetime.date, 更新至date, 一般设为datetime.date.today()
+    :param factor_classes: list, 因子类别
+    :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
+    :return:
+    """
 
     for c in factor_classes:
         print('start updating ', c.type, '; date: ', date)
@@ -128,18 +135,29 @@ def update_interpolation_seasonal_factors(date:datetime.date, factor_classes:lis
                 data = c.find_components(file_path=c.data_sql_file_path,
                                             secucode='and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'',
                                             date='and t1.EndDate<= to_date( \''+ end + '\',\'yyyy-mm-dd\')  '
-                                                                                'and t1.EndDate>= to_date( \''+ start + '\',\'yyyy-mm-dd\')')
+                                                'and t1.EndDate>= to_date( \''+ start + '\',\'yyyy-mm-dd\')')
                 factor_values = c.get_factor_values(data)
                 from sqlalchemy import String, Integer
 
+                sql_suffix = c.__class__.__name__.lower() + ' where secucode = \'' + getattr(row, 'SECUCODE') + '\'' \
+                             + 'and startday <= to_date( \'' + end + '\',\'yyyy-mm-dd\')'\
+                             + 'and startday >= to_date( \'' + start + '\',\'yyyy-mm-dd\')'
+
+                # 首先匹配数据库中已有的数据, 如果原数据不是nan就使用原数据
+                match_sql = 'select * from ' + sql_suffix
+                match_data = pl_sql_oracle.execute_inquery(match_sql)
+
+                # 两表必须是同样的shape
+                assert(match_data.shape == factor_values.shape)
+
+                ###### 重要: 两表取各自非nan的值 #######
+                for col in factor_values.columns:
+                    if factor_values[col].dtype != float: continue
+                    factor_values[col] = match_data[col.upper()].mask(match_data[col.upper()].isna() & ~factor_values[col].isna(), factor_values[col])
+
+
                 # 生成删除已有数据的sql
-                delete_sql = 'delete from '+c.__class__.__name__.lower() + ' where secucode = \''+ getattr(row, 'SECUCODE') \
-                             + '\''+'and startday <= to_date( \''+ end + '\',\'yyyy-mm-dd\')'\
-                             +'and startday >= to_date( \''+ start + '\',\'yyyy-mm-dd\')'
-
-
-                # print(factor_values)
-                # print(delete_sql)
+                delete_sql = 'delete from ' + sql_suffix
 
                 if mode == 'print':
                     print(factor_values)
@@ -147,7 +165,6 @@ def update_interpolation_seasonal_factors(date:datetime.date, factor_classes:lis
                 if mode == 'write':
                     pl_sql_oracle.delete_existing_records(delete_sql)
                     pl_sql_oracle.df_to_DB(factor_values,c.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
-
 
                 print(c.type, 'secucode', getattr(row, 'SECUCODE'), ' done')
 
@@ -159,31 +176,53 @@ def update_interpolation_seasonal_factors(date:datetime.date, factor_classes:lis
         print(c.type,' is up to date')
 
 
+def peg_multidays_to_DB(daterange:list, factor_classes:list, mode = 'print'):
+    pass
+
+
 
 
 if __name__ == '__main__':
     import warnings
-    warnings.filterwarnings("ignore")
+    warnings.filterwarnings('ignore')
 
-    # all_classes = [DailyValueFactor(),SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),SeasonalSecuIndexFactor(),
+    # 所有的因子类
+    # all_classes = [DailyValueFactor(),,DailyTechnicalIndicatorFactor(),SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),
     # SeasonalDebtpayingAbilityFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
-    # SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor(),DailyTechnicalIndicatorFactor(),
-    # SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3(),DailyDivideSeasonalFactor()]
+    # SeasonalSecuIndexFactor(),SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor()
+    # SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3()
+    # ,DailyDivideSeasonalFactor()]
 
     # 更新 因子主表
     # update_factor_list(factor_classes=all_classes)
 
-    # 更新日频非rolling非interpolation
+    # 更新 日频非rolling非插值因子
     # ordinary_daily_classes = [DailyValueFactor(),DailyTechnicalIndicatorFactor()]
     # multidays_write_to_DB(daterange = ['2005-01-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'print') # 日频直接使用05-01-01的数据即可
     # update_ordinary_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'print')
 
-
+    # 更新 季频插值因子
     interpolation_seasonal_classes = [SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),SeasonalSecuIndexFactor()
-        ,SeasonalDebtpayingAbilityFactor()]
-    temp = []
-    multidays_write_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= temp, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
+        ,SeasonalDebtpayingAbilityFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
+        SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor(),SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),
+        SeasonalComposedBasicFactorF3()]
+    temp = [SeasonalValueFactor()]
+    # multidays_write_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= temp, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
     update_interpolation_seasonal_factors(date = datetime.date.today(), factor_classes= temp, mode='print')
+
+
+    # TODO: complete this special class
+    # daily_divide_seasonal_class = [DailyPEG()]
+    # peg_multidays_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= daily_divide_seasonal_class, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
+
+
+
+
+
+
+
+
+
 
 
 

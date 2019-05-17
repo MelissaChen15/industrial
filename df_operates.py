@@ -54,3 +54,8 @@
 # df.mask
 # 按条件删除行
 # df = df.drop(df[df.score < 50].index)
+
+
+# 两个表取各自非nan的值
+# for col in b.columns:
+#     b[col] = b[col].mask(b[col].isna() & ~a[col].isna(), a[col])

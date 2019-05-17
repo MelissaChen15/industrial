@@ -47,7 +47,7 @@ class !因子类名(!继承的频率类名, !继承的经济类别类名):
         components = sql.InputDataPreprocess(filepath=file_path, table_name=self.table_name, secucode=secucode,
                                              date=date)
 
-        # TODO: 需要按时间排序
+        # 注意:需要按时间排序
         components['!表1名, 同聚源数据库'] = components['!表1名, 同聚源数据库'].sort_values(by='!表1时间标识符(全大写)')
         components['!表2名, 同聚源数据库'] = components['!表2名, 同聚源数据库'].sort_values(by='!表2时间标识符(全大写)'')
 

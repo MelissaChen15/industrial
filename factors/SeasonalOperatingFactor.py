@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 # 2019/4/8 16:37
 
-from factors.Frequency import SeasonalFrequency
-from factors.Category import OperatingFactor
-from factors.sql import pl_sql_oracle
-
 import pandas as pd
+
+from factors.Category import OperatingFactor
+from factors.Frequency import SeasonalFrequency
+from factors.sql import pl_sql_oracle
 
 """
 季频营运能力类因子
@@ -31,6 +31,9 @@ class SeasonalOperatingFactor(SeasonalFrequency, OperatingFactor):
     def __init__(self, factor_code= '', name= '', describe= ''):
         super().__init__(factor_code, name, describe)
         self.type = '季频营运能力类'
+        self.data_sql_file_path = r'.\sql\sql_seasonal_operating_factor.sql'
+        self.code_sql_file_path = r'.\sql\sql_get_secucode.sql'
+        self.table_name = ['LC_MainIndexNew']
 
     def init_factors(self):
         factor_entities = dict()  # 存储实例化的因子
@@ -97,19 +100,16 @@ class SeasonalOperatingFactor(SeasonalFrequency, OperatingFactor):
 
         return factor_entities
 
-    def find_components(self, file_path, table_name,secucode = ''):
+    def find_components(self, file_path,secucode, date):
         """
         在数据库中查询计算本类因子需要的数据
 
         :return: pandas.DataFrame, sql语句执行后返回的数据
         """
         sql = pl_sql_oracle.dbData_import()
-        components = sql.InputDataPreprocess(file_path, table_name, secucode )
+        components = sql.InputDataPreprocess(file_path, self.table_name, secucode, date )
 
-        # TODO: 读取时需要按时间排序
         components['LC_MainIndexNew']  = components['LC_MainIndexNew'].sort_values(by='ENDDATE')
-
-        # 如果需要转换
         components['LC_MainIndexNew_monthly'] = self.seasonal_to_monthly(components['LC_MainIndexNew'],['OPERCYCLE', 'INVENTORYTRATE', 'INVENTORYTDAYS', 'ARTRATE', 'ARTDAYS', 'ACCOUNTSPAYABLESTRATE', 'ACCOUNTSPAYABLESTDAYS', 'CURRENTASSETSTRATE', 'FIXEDASSETTRATE', 'EQUITYTRATE'])
 
         return components
@@ -138,34 +138,6 @@ class SeasonalOperatingFactor(SeasonalFrequency, OperatingFactor):
         return factor_values
 
 
-
-    def write_values_to_DB(self,mode,  code_sql_file_path, data_sql_file_path):
-        sql = pl_sql_oracle.dbData_import()
-        s = sql.InputDataPreprocess(code_sql_file_path,
-                                            ['secucodes'])
-        for row in s['secucodes'].itertuples(index=True, name='Pandas'):
-            try:
-                data = self.find_components(file_path= data_sql_file_path,
-                                           table_name=['LC_MainIndexNew'],
-                                           secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'')
-                factor_values = self.get_factor_values(data)
-
-
-                from sqlalchemy import String, Integer
-                # print(factor_values)
-                pl_sql_oracle.df_to_DB(factor_values, 'SeasonalOperatingFactor'.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
-
-                print(self.type, getattr(row, 'SECUCODE'),' done')
-
-
-            except Exception as e:
-                print("write to database failed, error: ", getattr(row, 'SECUCODE'), e)
-
-
-
 if __name__ == '__main__':
-    sof = SeasonalOperatingFactor()
-    data_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_seasonal_operating_factor.sql'
-    code_sql_file_path = r'D:\Meiying\codes\industrial\factors\sql\sql_get_secucode.sql'
-    sof.write_values_to_DB(mode = 'append',data_sql_file_path=data_sql_file_path, code_sql_file_path = code_sql_file_path)
+    pass
 

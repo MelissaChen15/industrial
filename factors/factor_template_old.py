@@ -51,7 +51,7 @@ class !因子类名(!继承的频率类名, !继承的经济类别类名):
         sql = pl_sql_oracle.dbData_import()
         components = sql.InputDataPreprocess(file_path, table_name, secucode )
 
-        # TODO: 读取时需要按时间排序
+        # 注意: 读取时需要按时间排序
         components['!表1名, 同聚源数据库']  = components['!表1名, 同聚源数据库'].sort_values(by='!表1时间标识符(全大写)')
         components['!表2名, 同聚源数据库'] = components['!表2名, 同聚源数据库'].sort_values(by='!表2时间标识符(全大写)'')
 
@@ -97,7 +97,7 @@ class !因子类名(!继承的频率类名, !继承的经济类别类名):
 
                 from sqlalchemy import String, Integer
                 print(factor_values)
-                # TODO: 表名必须是小写
+                # 注意: 表名必须是小写
                 # pl_sql_oracle.df_to_DB(factor_values, '!存入数据库的表名, 必须是连续的小写字符',if_exists='append',data_type={'SECUCODE': String(20)})
 
                 print(self.type, getattr(row, 'SECUCODE'),' done')
