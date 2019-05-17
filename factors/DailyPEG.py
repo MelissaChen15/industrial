@@ -46,15 +46,20 @@ class DailyPEG(DailyFrequency, ValueFactor):
         :return: pandas.DataFrame, sql语句执行后返回的数据
         """
         sql = pl_sql_oracle.dbData_import()
-        components = sql.InputDataPreprocess(file_path, self.table_name, secucode, date)
 
-        components['LC_MainIndexNew']  = components['LC_MainIndexNew'].sort_values(by='ENDDATE')
-        components['LC_DIndicesForValuation'] = components['LC_DIndicesForValuation'].sort_values(by='TRADINGDAY')
+        components = {}
+        date_daily = 'and t1.TradingDay <= to_date( \'' + date[0] + '\',\'yyyy-mm-dd\')  ''and t1. TradingDay>= to_date( \'' + date[1] + '\',\'yyyy-mm-dd\')'
+        date_seasonal =  'and t1.EndDate <= to_date( \'' + date[0] + '\',\'yyyy-mm-dd\')  ''and t1. EndDate>= to_date( \'' + date[1] + '\',\'yyyy-mm-dd\')'
+        c_daily = sql.InputDataPreprocess(file_path,['LC_DIndicesForValuation'] , secucode, date_daily)
+        c_seasonal = sql.InputDataPreprocess(file_path, ['LC_MainIndexNew'], secucode, date_seasonal)
+
+
+        components['LC_MainIndexNew']  = c_seasonal['LC_MainIndexNew'].sort_values(by='ENDDATE')
+        components['LC_DIndicesForValuation'] = c_daily['LC_DIndicesForValuation'].sort_values(by='TRADINGDAY')
 
         monthly_data = self.seasonal_to_monthly(components['LC_MainIndexNew'],['NETPROFITGROWRATE']) # 季频插值为月频
         components['LC_MainIndexNew_daily'] = self.monthly_to_daily(monthly_data, components['LC_DIndicesForValuation'],['NETPROFITGROWRATE']) # 月频转换为日频
 
-        print(components)
         return components
 
     def get_factor_values(self, components):

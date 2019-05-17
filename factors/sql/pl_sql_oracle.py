@@ -131,6 +131,3 @@ def df_to_DB(df:pd.DataFrame, table_name, if_exists, data_type):
 
 if __name__ == '__main__':
     pass
-    sql = 'select * from seasonalvaluefactor where secucode = \'000001\'and startday <= to_date( \'2019-05-17\',\'yyyy-mm-dd\')and startday >= to_date( \'2018-06-30\',\'yyyy-mm-dd\')'
-
-    print(execute_inquery(sql))

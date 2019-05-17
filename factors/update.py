@@ -21,6 +21,7 @@ from factors.SeasonalOperatingFactor import SeasonalOperatingFactor
 from factors.SeasonalProfitabilityFactor import SeasonalProfitabilityFactor
 from factors.SeasonalSecuIndexFactor import SeasonalSecuIndexFactor
 from factors.SeasonalValueFactor import SeasonalValueFactor
+from factors.DailyPEG import DailyPEG
 from factors.sql import pl_sql_oracle
 from factors.util import datetime_ops
 
@@ -177,9 +178,17 @@ def update_interpolation_seasonal_factors(date:datetime.date, factor_classes:lis
 
 
 def peg_multidays_to_DB(daterange:list, factor_classes:list, mode = 'print'):
-    pass
+    # 格式转换
+    for i in [0, 1]:
+        if type(daterange[i]) == datetime.date: daterange[i] = daterange[i].strftime("%Y-%m-%d")
+    start = daterange[0]
+    end = daterange[1]
 
-
+    # 循环因子类
+    for c in factor_classes:
+        print('start writing ', c.type, 'to DB, date range: ', daterange)
+        c.write_values_to_DB(date=daterange, mode=mode)
+        print(c.type, ' is up to date')
 
 
 if __name__ == '__main__':
@@ -202,18 +211,18 @@ if __name__ == '__main__':
     # update_ordinary_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'print')
 
     # 更新 季频插值因子
-    interpolation_seasonal_classes = [SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),SeasonalSecuIndexFactor()
-        ,SeasonalDebtpayingAbilityFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
-        SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor(),SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),
-        SeasonalComposedBasicFactorF3()]
-    temp = [SeasonalValueFactor()]
-    # multidays_write_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= temp, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
-    update_interpolation_seasonal_factors(date = datetime.date.today(), factor_classes= temp, mode='print')
+    # interpolation_seasonal_classes = [SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),SeasonalSecuIndexFactor()
+    #     ,SeasonalDebtpayingAbilityFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
+    #     SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor(),SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),
+    #     SeasonalComposedBasicFactorF3()]
+    # temp = [SeasonalValueFactor()]
+    # # multidays_write_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= temp, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
+    # update_interpolation_seasonal_factors(date = datetime.date.today(), factor_classes= temp, mode='print')
 
 
     # TODO: complete this special class
-    # daily_divide_seasonal_class = [DailyPEG()]
-    # peg_multidays_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= daily_divide_seasonal_class, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
+    daily_divide_seasonal_class = [DailyPEG()]
+    peg_multidays_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= daily_divide_seasonal_class, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
 
 
 
