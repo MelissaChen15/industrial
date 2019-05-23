@@ -39,6 +39,7 @@ class dbData_import(object):
             sentence += line
             if 'where' in line:
                 sql_sentences.append(sentence + secucode + date)
+
         # for sentence in sql_sentences:
         #     print(sentence)
         #

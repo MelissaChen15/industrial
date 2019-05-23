@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from factors.sql import pl_sql_oracle
 import datetime
+from factors.util import datetime_ops
 
 """
 基础因子类
@@ -139,13 +140,14 @@ class BasicFactor(object):
         a_stock_monthly_data = a_stock_monthly_data.fillna(method='ffill')
         return a_stock_monthly_data
 
-    def monthly_to_daily(self, monthly_data: pd.DataFrame, daily_data: pd.DataFrame, seasonal_factor_name: list):
+    def monthly_to_daily(self, monthly_data: pd.DataFrame, daily_data: pd.DataFrame, seasonal_factor_name: list,date:list):
         """
         将seasonal_to_monthly转换之后的月频数据转换为日频数据
 
         :param monthly_data:  pd.DataFrame seasonal_to_monthly转换之后的月频数据，必须有[['SECUCODE', 'TRADINGDAY']两列
         :param daily_data: pd.DataFrame 必须有[['SECUCODE', 'TRADINGDAY']两列
         :param seasonal_factor_name: list of string，需要转换的因子的名称
+        :param date: list of string，转换后需要的日期范围
         :return: pd.DataFrame 转换好的日频数据，列包含 'ENDDATE''SECUCODE'和需要转换的因子
         """
         from factors.util.datetime_ops import first_day_this_month
@@ -163,7 +165,10 @@ class BasicFactor(object):
                 if (code == code2 and start_day == start_day2): # 如果某日期的上季度报告已经发布
                     for f in seasonal_factor_name:
                         daily_data.loc[row.Index, f] = getattr(row2, f)
-
+        #
+        # # 如果日期超过了限定的日期范围, 则删除
+        # daily_data = daily_data.drop(daily_data[daily_data.TRADINGDAY > datetime_ops.next_day(date[1])].index)
+        # daily_data = daily_data.drop(daily_data[daily_data.TRADINGDAY < datetime_ops.next_day(date[0])].index)
         # 处理数据尾部空值，目前解决方案是全部等于最近一期报告披露的数值
         daily_data = daily_data.fillna(method='ffill')
 

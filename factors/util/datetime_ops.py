@@ -52,8 +52,9 @@ def first_day_this_month(date_now):
     y = date_now+pd.tseries.offsets.DateOffset(days=1-date_now.day)
     return y
 
-def next_day(date_now):
-    y = date_now + datetime.timedelta(days=1)
+def next_day(date_now:str):
+    y =  datetime.datetime.strptime(date_now, '%Y-%m-%d')
+    y +=  datetime.timedelta(days=1)
     return y
 
 #获取两个日期间的所有日期

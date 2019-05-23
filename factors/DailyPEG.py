@@ -19,11 +19,11 @@ from factors.sql import pl_sql_oracle
 """
 
 class DailyPEG(DailyFrequency, ValueFactor):
- 
+
     def __init__(self, factor_code= '', name= '', describe= ''):
         super().__init__(factor_code, name, describe)
         self.type = '日频价值类特殊处理'
-        self.data_sql_file_path = r'.\sql\sql_daily_peg.sql'
+        self.data_sql_file_path = ['.\sql\sql_daily_peg_1.sql', '.\sql\sql_daily_peg_2.sql']
         self.code_sql_file_path = r'.\sql\sql_get_secucode.sql'
         self.table_name = ['LC_MainIndexNew','LC_DIndicesForValuation']
 
@@ -48,17 +48,17 @@ class DailyPEG(DailyFrequency, ValueFactor):
         sql = pl_sql_oracle.dbData_import()
 
         components = {}
-        date_daily = 'and t1.TradingDay <= to_date( \'' + date[0] + '\',\'yyyy-mm-dd\')  ''and t1. TradingDay>= to_date( \'' + date[1] + '\',\'yyyy-mm-dd\')'
-        date_seasonal =  'and t1.EndDate <= to_date( \'' + date[0] + '\',\'yyyy-mm-dd\')  ''and t1. EndDate>= to_date( \'' + date[1] + '\',\'yyyy-mm-dd\')'
-        c_daily = sql.InputDataPreprocess(file_path,['LC_DIndicesForValuation'] , secucode, date_daily)
-        c_seasonal = sql.InputDataPreprocess(file_path, ['LC_MainIndexNew'], secucode, date_seasonal)
-
+        date_daily = 'and t1.TradingDay >= to_date( \'' + date[0] + '\',\'yyyy-mm-dd\')  ''and t1. TradingDay <= to_date( \'' + date[1] + '\',\'yyyy-mm-dd\')'
+        date_seasonal =  'and t1.EndDate >= to_date( \'' + date[0] + '\',\'yyyy-mm-dd\')  ''and t1. EndDate <= to_date( \'' + date[1] + '\',\'yyyy-mm-dd\')'
+        c_daily = sql.InputDataPreprocess(file_path[0],['LC_DIndicesForValuation'] , secucode, date_daily)
+        c_seasonal = sql.InputDataPreprocess(file_path[1], ['LC_MainIndexNew'], secucode, date_seasonal)
 
         components['LC_MainIndexNew']  = c_seasonal['LC_MainIndexNew'].sort_values(by='ENDDATE')
         components['LC_DIndicesForValuation'] = c_daily['LC_DIndicesForValuation'].sort_values(by='TRADINGDAY')
 
+
         components['LC_MainIndexNew_monthly'] = self.seasonal_to_monthly(components['LC_MainIndexNew'],['NETPROFITGROWRATE']) # 季频插值为月频
-        components['LC_MainIndexNew_daily'] = self.monthly_to_daily(components['LC_MainIndexNew_monthly'], components['LC_DIndicesForValuation'],['NETPROFITGROWRATE']) # 月频转换为日频
+        components['LC_MainIndexNew_daily'] = self.monthly_to_daily(components['LC_MainIndexNew_monthly'], components['LC_DIndicesForValuation'],['NETPROFITGROWRATE'],date = date) # 月频转换为日频
 
         return components
 
