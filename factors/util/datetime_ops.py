@@ -78,12 +78,17 @@ def last_4th_report_day(date_now):
     y = date_now + pd.tseries.offsets.DateOffset(months=-((date_now.month - 1) % 3) - 9, days= - date_now.day)  # 上季最后一天
     return y
 
+def last_year_start(date_now):
+    y = str(datetime.datetime.strptime(date_now, '%Y-%m-%d').year - 1)+ '-01-01'
+    y = datetime.datetime.strptime(y, '%Y-%m-%d').date()
+    return y
+
 
 
 if __name__ == '__main__':
     # https://www.jb51.net/article/138085.htm
-    date = datetime.datetime.strptime('2019-04-01', '%Y-%m-%d')
+    date = datetime.datetime.strptime('2005-12-31', '%Y-%m-%d')
     # print(last_day_last_season(date))
     # print(first_day_this_season(date))
     # print(last_day_this_season(date))
-    print(last_4th_report_day(date))
+    print(last_year_start(date))

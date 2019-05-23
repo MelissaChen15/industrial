@@ -63,12 +63,16 @@ class dbData_import(object):
                 data[table_name[i]] = data[table_name[i]].replace([None],np.nan)
                 # 将非float格式的数据转换为float
                 if table_name[i] != 'secucodes':
-                    try:
-                        temp = data[table_name[i]]['SECUCODE']
-                        data[table_name[i]] = data[table_name[i]].drop(columns='SECUCODE').convert_objects(convert_numeric=True)
-                        data[table_name[i]]['SECUCODE'] = temp
-                        # print(data[table_name[i]].sort_values(by='ENDDATE'))
-                    except: pass
+                    if 'SECUCODE' in data[table_name[i]].columns:
+                        try:
+                            temp = data[table_name[i]]['SECUCODE']
+                            data[table_name[i]] = data[table_name[i]].drop(columns='SECUCODE').convert_objects(convert_numeric=True)
+                            data[table_name[i]]['SECUCODE'] = temp
+                            # print(data[table_name[i]].sort_values(by='ENDDATE'))
+                        except: pass
+                    else:
+                        try:data[table_name[i]] = data[table_name[i]].convert_objects(convert_numeric=True)
+                        except:pass
 
         # print(data)
         return data
@@ -86,6 +90,7 @@ def delete_existing_records(sql: str):
     cur.execute(sql)
     conn.commit()
     cur.close()
+
 
 def execute_inquery(sql:str):
     """
@@ -131,4 +136,5 @@ def df_to_DB(df:pd.DataFrame, table_name, if_exists, data_type):
 
 
 if __name__ == '__main__':
-    pass
+    sql = 'delete from dailyvaluefactor where TRADINGDAY <= to_date( \'2019-05-23\',\'yyyy-mm-dd\')and TRADINGDAY >= to_date(\'2019-05-01\',\'yyyy-mm-dd\')'
+    delete_existing_records(sql)

@@ -225,20 +225,27 @@ pd.set_option('display.max_columns', None)
 #     print(e)
 
 
-a = pd.DataFrame({ # 原来的
-    'c1':[np.nan,2.0,3.0,np.nan],
-})
-b = pd.DataFrame({ # 新算的
-'c1':[1.0,2.0,np.nan,np.nan],
+# a = pd.DataFrame({ # 原来的
+#     'c1':[np.nan,2.0,3.0,np.nan],
+# })
+# b = pd.DataFrame({ # 新算的
+# 'c1':[1.0,2.0,np.nan,np.nan],
+#
+# })
+#
+# print('a',a)
+# print('b',b)
+# print()
+#
+#
+# for col in a.columns:
+#     b[col] = a[col].mask(a[col].isna() & ~b[col].isna(), b[col])
+#
+# print(b)
 
-})
+s1 = pd.Series([.2, .0, .6, .2])
+s2 = pd.Series([.3, .6, .0, .1])
 
-print('a',a)
-print('b',b)
-print()
-
-
-for col in a.columns:
-    b[col] = a[col].mask(a[col].isna() & ~b[col].isna(), b[col])
-
-print(b)
+print(s1, s2)
+print(s1.shape, s2.shape)
+print(s1.corr(s2))

@@ -132,3 +132,12 @@ class ComposedBasicFactorForm3(BasicFactor):
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
         self.type = '组合基本面因子, Form3, X_change_pct - AT_change_pct形式'
+
+
+
+# 日频相关性类因子
+class CorrelationFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '日频相关性类因子'

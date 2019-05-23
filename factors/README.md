@@ -331,3 +331,6 @@ To be added:
 删掉sql文件里面的日期
 新增to sql 函数的mode模式, 指定将结果打在terminal上还是直接写入数据库
 因为上面的这一大堆修改, 修改了所有因子类的py和sql文件引用上述函数的地方
+
+新增好多好多类
+secumain加listed_state字段

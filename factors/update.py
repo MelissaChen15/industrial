@@ -22,6 +22,9 @@ from factors.SeasonalProfitabilityFactor import SeasonalProfitabilityFactor
 from factors.SeasonalSecuIndexFactor import SeasonalSecuIndexFactor
 from factors.SeasonalValueFactor import SeasonalValueFactor
 from factors.DailyPEG import DailyPEG
+from factors.DailyValueFactor import  DailyValueFactor
+from factors.DailyTechnicalIndicatorFactor import DailyTechnicalIndicatorFactor
+from factors.DailyCorrelationFactor import DailyCorrelationFactor
 from factors.sql import pl_sql_oracle
 from factors.util import datetime_ops
 
@@ -60,6 +63,8 @@ def multidays_write_to_DB(daterange:list, factor_classes:list, mode = 'print'):
     start = daterange[0]
     end = daterange[1]
 
+
+
     # 循环因子类
     for c in factor_classes:
         print('start writing ',c.type,'to DB, date range: ', daterange)
@@ -75,7 +80,7 @@ def multidays_write_to_DB(daterange:list, factor_classes:list, mode = 'print'):
 
 def update_ordinary_daily_factors(daterange:list, factor_classes:list, mode = 'print'):
     """
-    更新将日频非rolling和非interpolation因子
+    更新日频因子, 包括普通的不需要rolling的日频因子
     为了加快速度, 因为日期范围小, 单只股票的数据不多, 所以每次读写所有的股票在整个datarange上的数据
     如果只需要更新今天的数据, 设置date_range = [datetime.date.today(),datetime.date.today()]
     :param daterange: list, 时间范围
@@ -95,16 +100,27 @@ def update_ordinary_daily_factors(daterange:list, factor_classes:list, mode = 'p
         try:
             data = c.find_components(file_path=c.data_sql_file_path,
                                         secucode='',
-                                        date='and t1.TradingDay = to_date( \''+ end + '\',\'yyyy-mm-dd\')  '
+                                        date='and t1.TradingDay <= to_date( \''+ end + '\',\'yyyy-mm-dd\')  '
                                                                             'and t1.TradingDay >= to_date( \''+ start + '\',\'yyyy-mm-dd\')'
                                         )
+            # print(data)
             factor_values = c.get_factor_values(data)
+            # print(factor_values)
             factor_values = factor_values.reset_index(drop=True) # 重排索引
+
+
+            # 将原有记录删掉, 以防重复写入
+            delete_sql = 'delete from ' + c.__class__.__name__.lower() +  ' where TRADINGDAY <= to_date( \'' + end + '\',\'yyyy-mm-dd\')' \
+                         + 'and TRADINGDAY >= to_date( \'' + start + '\',\'yyyy-mm-dd\')'
+
 
             from sqlalchemy import String, Integer
             if mode == 'print':
                 print(factor_values)
+                print(delete_sql)
             if mode == 'write':
+                print(factor_values)
+                pl_sql_oracle.delete_existing_records(delete_sql)
                 pl_sql_oracle.df_to_DB(factor_values,c.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
 
         except Exception as e:
@@ -196,6 +212,12 @@ def peg_multidays_to_DB(daterange:list, factor_classes:list, mode = 'print'):
 
 
 def update_peg(date:datetime.date, factor_classes:list, mode = 'print'):
+    """
+    更新peg
+    :param date: datetime.date, 更新至date, 一般设为datetime.date.today()
+    :param factor_classes: list, 因子类别
+    :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
+    """
     for c in factor_classes:
         print('start updating ', c.type, '; date: ', date)
         # 为了满足三次样条插值的要求, 从最近的报告日算起, 向前回滚三个报告期, 也就是9个月. e.g. 今天是19.4.5, 读取19.3.31, 18.12.31/9.30/6.30 的数据, 为中间没有数据的月份插值
@@ -209,7 +231,6 @@ def update_peg(date:datetime.date, factor_classes:list, mode = 'print'):
             try:
                 data = c.find_components(file_path=c.data_sql_file_path,
                                             secucode='and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'',
-                                         # TODO: 改这里
                                             date=[start, end])
                 factor_values = c.get_factor_values(data)
 
@@ -252,9 +273,62 @@ def update_peg(date:datetime.date, factor_classes:list, mode = 'print'):
         print(c.type,' is up to date')
 
 
+def update_rolling_daily_factors(daterange: list, factor_classes:list, mode = 'print'):
+
+    for c in factor_classes:
+        print('start updating ', c.type, '; date range: ', daterange)
+        # 为了满足rolling的要求, 从最近的报告日算起, 向前回滚三个报告期, 也就是9个月. e.g. 今天是19.4.5, 读取19.3.31, 18.12.31/9.30/6.30 的数据, 为中间没有数据的月份插值
+        start = datetime_ops.last_year_start(daterange[0]).strftime("%Y-%m-%d")
+        end = daterange[1].strftime("%Y-%m-%d") # 格式转换
+        # print(start, end)
+
+        # 因为必须一只一只股票的计算相关系数等指标, 所以虽然速度很慢, 但是只能循环股票代码
+        sql = pl_sql_oracle.dbData_import()
+        s = sql.InputDataPreprocess(c.code_sql_file_path, ['secucodes'])
+        for row in s['secucodes'].itertuples(index=True, name='Pandas'):
+            try:
+                data = c.find_components(file_path=c.data_sql_file_path,
+                                            secucode='and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'',
+                                            date='and t1.TradingDay<= to_date( \''+ end + '\',\'yyyy-mm-dd\')  '
+                                                'and t1.TradingDay>= to_date( \''+ start + '\',\'yyyy-mm-dd\')')
+                factor_values = c.get_factor_values(data)
+
+                # 去除不在时间范围内的数据
+                factor_values = factor_values.drop(factor_values[factor_values.TRADINGDAY > datetime.date.today()].index)
+                factor_values = factor_values.drop(factor_values[factor_values.TRADINGDAY < datetime.datetime.strptime(daterange[0], '%Y-%m-%d') ].index)
+
+
+
+                from sqlalchemy import String, Integer
+
+                delete_sql = 'delete from ' + c.__class__.__name__.lower() + ' where secucode = \'' + getattr(row, 'SECUCODE') + '\'' \
+                             + 'and TradingDay <= to_date( \'' + end + '\',\'yyyy-mm-dd\')'\
+                             + 'and TradingDay >= to_date( \'' + start + '\',\'yyyy-mm-dd\')'
+
+                if mode == 'print':
+                    print(factor_values)
+                    print(delete_sql)
+                if mode == 'write':
+                    pl_sql_oracle.delete_existing_records(delete_sql)
+                    pl_sql_oracle.df_to_DB(factor_values,c.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
+
+                print(c.type, 'secucode', getattr(row, 'SECUCODE'), ' done')
+
+
+            except Exception as e:
+                print(getattr(row, 'SECUCODE'), e)
+
+
+        print(c.type,' is up to date')
+
+
+
+
 if __name__ == '__main__':
     import warnings
     warnings.filterwarnings('ignore')
+
+    ################ 第一次写入数据库之前,请先drop想要写入的数据表 #################
 
     # 所有的因子类
     # all_classes = [DailyValueFactor(),,DailyTechnicalIndicatorFactor(),SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),
@@ -264,12 +338,13 @@ if __name__ == '__main__':
     # ,DailyDivideSeasonalFactor()]
 
     # 更新 因子主表
+    # TODO: 写新类别的因子主表更新
     # update_factor_list(factor_classes=all_classes)
 
-    # 更新 日频非rolling非插值因子
+    # 更新 日频非插值因子
     # ordinary_daily_classes = [DailyValueFactor(),DailyTechnicalIndicatorFactor()]
     # multidays_write_to_DB(daterange = ['2005-01-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'print') # 日频直接使用05-01-01的数据即可
-    # update_ordinary_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'print')
+    # update_ordinary_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'write')
 
     # 更新 季频插值因子
     # interpolation_seasonal_classes = [SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),SeasonalSecuIndexFactor()
@@ -285,17 +360,8 @@ if __name__ == '__main__':
     # peg_multidays_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= peg, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
     # update_peg(date=datetime.date.today(), factor_classes=peg, mode='print')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    # TODO: 写daily_rolling_factors更新
+    temp = [DailyCorrelationFactor()]
+    # multidays_write_to_DB(daterange = ['2001-12-31', datetime.date.today()], factor_classes= temp, mode = 'print')
+    update_rolling_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= temp, mode = 'print')
 

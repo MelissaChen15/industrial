@@ -104,7 +104,6 @@ class DailyValueFactor(DailyFrequency, ValueFactor):
         components = sql.InputDataPreprocess(filepath=file_path, table_name = self.table_name, secucode = secucode,date=date)
         components['LC_DIndicesForValuation'] = components['LC_DIndicesForValuation'].sort_values(by='TRADINGDAY')
 
-
         return components
 
     def get_factor_values(self, components):
