@@ -141,3 +141,12 @@ class CorrelationFactor(BasicFactor):
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
         self.type = '日频相关性类因子'
+
+
+
+# 日频动量类因子
+class MomentumFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '日频动量类因子'

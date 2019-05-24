@@ -25,6 +25,7 @@ from factors.DailyPEG import DailyPEG
 from factors.DailyValueFactor import  DailyValueFactor
 from factors.DailyTechnicalIndicatorFactor import DailyTechnicalIndicatorFactor
 from factors.DailyCorrelationFactor import DailyCorrelationFactor
+from factors.DailyMomentumFactor import DailyMomentumFactor
 from factors.sql import pl_sql_oracle
 from factors.util import datetime_ops
 
@@ -277,8 +278,8 @@ def update_rolling_daily_factors(daterange: list, factor_classes:list, mode = 'p
 
     for c in factor_classes:
         print('start updating ', c.type, '; date range: ', daterange)
-        # 为了满足rolling的要求, 从最近的报告日算起, 向前回滚三个报告期, 也就是9个月. e.g. 今天是19.4.5, 读取19.3.31, 18.12.31/9.30/6.30 的数据, 为中间没有数据的月份插值
-        start = datetime_ops.last_year_start(daterange[0]).strftime("%Y-%m-%d")
+        # 为了满足rolling的要求, 从最近的报告日算起, 向前回滚两年
+        start = datetime_ops.last_2nd_year_start(daterange[0]).strftime("%Y-%m-%d")
         end = daterange[1].strftime("%Y-%m-%d") # 格式转换
         # print(start, end)
 
@@ -330,16 +331,20 @@ if __name__ == '__main__':
 
     ################ 第一次写入数据库之前,请先drop想要写入的数据表 #################
 
+    # TODO: 写新类别的因子主表更新, 可以在correlationfuc.py 的print语句中找到
+
     # 所有的因子类
-    # all_classes = [DailyValueFactor(),,DailyTechnicalIndicatorFactor(),SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),
-    # SeasonalDebtpayingAbilityFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
-    # SeasonalSecuIndexFactor(),SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor()
-    # SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3()
-    # ,DailyDivideSeasonalFactor()]
+    all_classes = [DailyValueFactor(),DailyTechnicalIndicatorFactor(),SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),
+    SeasonalDebtpayingAbilityFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
+    SeasonalSecuIndexFactor(),SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor(),
+    SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3()
+    ,DailyPEG()]
+
+
 
     # 更新 因子主表
-    # TODO: 写新类别的因子主表更新
     # update_factor_list(factor_classes=all_classes)
+
 
     # 更新 日频非插值因子
     # ordinary_daily_classes = [DailyValueFactor(),DailyTechnicalIndicatorFactor()]
@@ -360,8 +365,8 @@ if __name__ == '__main__':
     # peg_multidays_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= peg, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
     # update_peg(date=datetime.date.today(), factor_classes=peg, mode='print')
 
-    # TODO: 写daily_rolling_factors更新
-    temp = [DailyCorrelationFactor()]
-    # multidays_write_to_DB(daterange = ['2001-12-31', datetime.date.today()], factor_classes= temp, mode = 'print')
-    update_rolling_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= temp, mode = 'print')
+    rolling_daily_factors = [DailyCorrelationFactor(),DailyMomentumFactor()]
+    temp = [()]
+    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= temp, mode = 'print')
+    # update_rolling_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= temp, mode = 'print')
 

@@ -49,7 +49,6 @@ class DailyCorrelationFactor(DailyFrequency,CorrelationFactor):
         factor_entities = dict()
         for i in range(len(self.target_methods)):
             factor_entities[self.target_methods[i]] = DailyCorrelationFactor(factor_code=self.nameGroup[i],name=self.target_methods[i],describe='')
-
         return factor_entities  # 不止一个因子
 
     def find_components(self, file_path,secucode,date):

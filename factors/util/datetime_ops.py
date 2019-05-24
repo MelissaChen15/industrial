@@ -78,8 +78,8 @@ def last_4th_report_day(date_now):
     y = date_now + pd.tseries.offsets.DateOffset(months=-((date_now.month - 1) % 3) - 9, days= - date_now.day)  # 上季最后一天
     return y
 
-def last_year_start(date_now):
-    y = str(datetime.datetime.strptime(date_now, '%Y-%m-%d').year - 1)+ '-01-01'
+def last_2nd_year_start(date_now):
+    y = str(datetime.datetime.strptime(date_now, '%Y-%m-%d').year - 2)+ '-01-01'
     y = datetime.datetime.strptime(y, '%Y-%m-%d').date()
     return y
 

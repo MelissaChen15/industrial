@@ -61,6 +61,7 @@ class CorrelationFunc(StockIndexGroup):
                     correaltion_cal = correaltion_cal.append(pd.DataFrame(res_all).transpose())
             correaltion_cal.columns = ['corrIF'+'_'+str(j)+'m','corrIH'+'_'+str(j)+'m','corrIC'+'_'+str(j)+'m']
             correaltion_all = pd.concat([correaltion_all,correaltion_cal],axis=1)
+            # print(correaltion_cal.columns )
         correaltion_all.index = common_index
         return correaltion_all
 
@@ -93,6 +94,7 @@ class CorrelationFunc(StockIndexGroup):
                     correaltiondiff_cal = correaltiondiff_cal.append(pd.DataFrame(res_all).transpose())
             correaltiondiff_cal.columns = ['corrIFchg' + '_' + str(j) + 'm', 'corrIHchg' + '_' + str(j) + 'm', 'corrICchg' + '_' + str(j) + 'm']
             correaltiondiff_all = pd.concat([correaltiondiff_all, correaltiondiff_cal], axis=1)
+            # print(correaltiondiff_cal.columns)
         correaltiondiff_all.index = common_index
         return correaltiondiff_all
 
