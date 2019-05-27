@@ -4,6 +4,16 @@ Author: Kangchen Wei
 Email:  weixk@cifutures.com.cn
 Application : machine learning for investment
 
+date: 2019/5/7  15:30
+desc:
+'''
+
+# coding=utf-8
+'''
+Author: Kangchen Wei
+Email:  weixk@cifutures.com.cn
+Application : machine learning for investment
+
 date: 2019/5/6  13:17
 desc:
 '''
@@ -28,12 +38,12 @@ def GroupingStock_SMB(RawData):
     BL, BN, BH = calpart(bigsize)
     SL, SN, SH = calpart(smallsize)
 
-    SMB = ((SL['CHANGEPCT'].mean()+SN['CHANGEPCT'].mean()+SH['CHANGEPCT'].mean())/3)- \
-    ((BL['CHANGEPCT'].mean()+BN['CHANGEPCT'].mean()+BH['CHANGEPCT'].mean())/3)  # 简单平均
+    SMB = ((SL['CHANGEPCTRW'].mean()+SN['CHANGEPCTRW'].mean()+SH['CHANGEPCTRW'].mean())/3)- \
+    ((BL['CHANGEPCTRW'].mean()+BN['CHANGEPCTRW'].mean()+BH['CHANGEPCTRW'].mean())/3)  # 简单平均
 
-    HML = (BH['CHANGEPCT'].mean()+SH['CHANGEPCT'].mean())/2 -(BL['CHANGEPCT'].mean()+SL['CHANGEPCT'].mean())
+    HML = (BH['CHANGEPCTRW'].mean()+SH['CHANGEPCTRW'].mean())/2 -(BL['CHANGEPCTRW'].mean()+SL['CHANGEPCTRW'].mean())
     res = pd.DataFrame([SMB ,HML]).transpose()
-    res.columns = ['SMB','HML']  #输出结果为百分数
+    res.columns = ['SMB','HML']  # 输出结果为百分数
     return res
 
 # def GroupingStock_UMD(*inputdata):
@@ -42,11 +52,11 @@ def GroupingStock_SMB(RawData):
 #     return res
 
 
-class TimeseriesFactorCal(object):
+class TimeseriesFactorCal_weekly(object):
     '''
     计算HML,SMB以及UMD，FF五因子的CMA以及RMW数据涉及财务报表，为季频数据，不采用FF5模型
     '''
-    def __init__(self,data_sql_file_path,code_sql_file_path, daterange):
+    def __init__(self,data_sql_file_path,code_sql_file_path,daterange):
         '''
         :param data_sql_file_path: 原始数据sql文件路径
         :param code_sql_file_path: 交易日生成sql文件路径
@@ -59,25 +69,32 @@ class TimeseriesFactorCal(object):
 
     def get_data_cal(self):
         sql = pl_sql_oracle.dbData_import()
-        s1 = sql.InputDataPreprocess(self.code_sql_file_path, ['TradingDay'],date= ' and TRADINGDATE <= to_date( \'' + self.daterange[1] + '\',\'yyyy-mm-dd\')' \
-                         + 'and TRADINGDATE >= to_date( \'' + self.daterange[0] + '\',\'yyyy-mm-dd\')')
-        # s1 = sql.InputDataPreprocess(self.code_sql_file_path, ['TradingDay'])
-        SML_and_HML = pd.DataFrame()
 
-        s1['TradingDay'] = s1['TradingDay'].sort_values(by='TRADINGDATE')
-        # print(s1['TradingDay'])
-        for row in s1['TradingDay'].itertuples(index=True, name='Pandas'):
+        s1 = sql.InputDataPreprocess(self.code_sql_file_path, ['TradingDayWeek'],
+                                     date=' and TRADINGDATE <= to_date( \'' + self.daterange[1] + '\',\'yyyy-mm-dd\')' \
+                                          + 'and TRADINGDATE >= to_date( \'' + self.daterange[0] + '\',\'yyyy-mm-dd\')')
+        s1['TradingDayWeek'] = s1['TradingDayWeek'].sort_values(by='TRADINGDATE')
+        SML_and_HML = pd.DataFrame()
+        for row in s1['TradingDayWeek'].itertuples(index=True, name='Pandas'):
             try:
                 # sql = pl_sql_oracle.dbData_import()  getattr(row, 'TRADINGDAY')
-                s2 = sql.InputDataPreprocess(self.data_sql_file_path, ['RawData'], date='and (t1.tradingday = to_date(\''+str(getattr(row, 'TRADINGDATE'))+\
+                s2 = sql.InputDataPreprocess(self.data_sql_file_path, ['RawData'], secucode='and (t1.tradingday = to_date(\''+str(getattr(row, 'TRADINGDATE'))+\
                                                                              '\''+','+'\'yyyy-mm-dd hh24:mi:ss\''+')'+')')
                 SML_and_HML = SML_and_HML.append(GroupingStock_SMB(s2['RawData']))  # s2是一个字典形式
-
-
-                print(getattr(row, 'TRADINGDATE'), ' done')  # 查看
+                # print(SML_and_HML)
+                print(getattr(row, 'TRADINGDATE'), ' done')
 
             except Exception as e:
 
                 print(getattr(row, 'TRADINGDATE'), e)
-        SML_and_HML.index = list(s1['TradingDay']['TRADINGDATE'][:len(SML_and_HML)])  # s1是一个字典
+        SML_and_HML = SML_and_HML.reset_index(drop=True)
+        SML_and_HML.index = list(s1['TradingDayWeek']['TRADINGDATE'][:len(SML_and_HML)])
         return SML_and_HML
+
+
+# if __name__ == '__main__':
+#     data_sql_file_path = r'D:\项目\FOF相关资料\wind研报\工具性代码\Chen\industrial\factors_ver3\factors\sql\sql_classical_factor_rawdata_weekly.sql'
+#     code_sql_file_path = r'D:\项目\FOF相关资料\wind研报\工具性代码\Chen\industrial\factors_ver3\factors\sql\sql_get_last_trading_weekday.sql'
+#     aa = TimeseriesFactorCal(data_sql_file_path,code_sql_file_path)
+#     ddd = aa.get_data_cal()
+#     print(ddd)

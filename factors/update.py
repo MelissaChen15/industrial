@@ -36,6 +36,7 @@ from factors.WeeklyIdiosyncrasticFactor import WeeklyIdiosyncrasticFactor
 from  factors.WeeklyMomentumFactor import WeeklyMomentumFactor
 from factors.WeeklyTechnicalIndicatorFactor import WeeklyTechnicalIndicatorFactor
 from factors.WeeklyVolatilityFactor import WeeklyVolatilityFactor
+from factors.DailyFinancialModelFactor1 import DailyFinancialModelFactor1
 from factors.sql import pl_sql_oracle
 from factors.util import datetime_ops
 
@@ -339,6 +340,47 @@ def update_rolling_factors(daterange: list, factor_classes:list, mode = 'print')
         print(c.type,' is up to date')
 
 
+def update_time_series(daterange:list, factor_classes:list, mode = 'print'):
+    """
+    首次写入 或者 更新日频和周频的time_series文件
+    :param daterange: [str, datetime.date] 更新的时间range, 第二项一般设为datetime.date.today()
+    :param factor_classes: list, 类别
+    :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
+    """
+    # 转换为string
+    for i in [0,1]:
+        if type(daterange[i]) == datetime.date: daterange[i] = daterange[i].strftime("%Y-%m-%d")
+    start = daterange[0]
+    end = daterange[1]
+
+    # 循环因子类
+    for c in factor_classes:
+        print('start updating ',c.get_name(), '; date range: ', daterange)
+        # 因为因子没有做运算,是直接读取的数据库中的某个字段,所以不用write_values_to_DB方法,而是直接加载出所有股票在这一时间段上的值
+        try:
+            factor_values = c.calculate_SMB_HML(daterange=daterange)
+
+            # print(factor_values)
+            factor_values = factor_values.reset_index(drop=True) # 重排索引
+
+
+            # 将原有记录删掉, 以防重复写入
+            delete_sql = 'delete from ' + c.__class__.__name__.lower() +  ' where TRADINGDAY <= to_date( \'' + end + '\',\'yyyy-mm-dd\')' \
+                         + 'and TRADINGDAY >= to_date( \'' + start + '\',\'yyyy-mm-dd\')'
+
+            if mode == 'print':
+                print(factor_values)
+            if mode == 'write':
+                from sqlalchemy import Float,String
+                try:
+                    pl_sql_oracle.delete_existing_records(delete_sql)
+                except Exception as e: print(e)
+                pl_sql_oracle.df_to_DB(factor_values, c.get_name(), if_exists='append', data_type={'SMB': Float()})
+
+        except Exception as e:
+            print(e)
+        print(c.get_name() ,' is up to date')
+
 
 
 if __name__ == '__main__':
@@ -398,6 +440,20 @@ if __name__ == '__main__':
     #                           WeeklyVolatilityFactor(),WeeklyTurnoverFactor()]
     # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= weekly_rolling_factors, mode = 'print')
     # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= weekly_rolling_factors, mode = 'print')
+
+    # 更新 日频和周频的timeseries
+    from factors import DailyTimeSeries, WeeklyTimeSeries
+    temp = [DailyTimeSeries,WeeklyTimeSeries]
+    # 更新或者首次写入都是使用下面这个函数
+    update_time_series(daterange = ['2001-01-01', datetime.date.today()], factor_classes = temp, mode = 'print')
+
+
+    # # todo: 写完四类financial model因子的更新
+    # temp = [DailyFinancialModelFactor1()]
+    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= temp, mode = 'print')
+    # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= temp, mode = 'print')
+
+
 
 
 
