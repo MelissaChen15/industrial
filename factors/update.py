@@ -26,6 +26,9 @@ from factors.DailyValueFactor import  DailyValueFactor
 from factors.DailyTechnicalIndicatorFactor import DailyTechnicalIndicatorFactor
 from factors.DailyCorrelationFactor import DailyCorrelationFactor
 from factors.DailyMomentumFactor import DailyMomentumFactor
+from factors.DailyIdiosyncrasticFactor import  DailyIdiosyncrasticFactor
+from factors.DailyTurnoverFactor import DailyTurnoverFactor
+from factors.DailyVolatilityFactor import  DailyVolatilityFactor
 from factors.sql import pl_sql_oracle
 from factors.util import datetime_ops
 
@@ -275,6 +278,12 @@ def update_peg(date:datetime.date, factor_classes:list, mode = 'print'):
 
 
 def update_rolling_daily_factors(daterange: list, factor_classes:list, mode = 'print'):
+    """
+    更新需要rolling的日频因子
+    :param daterange: [str, datetime.date] 更新所需要数据的时间range, 第二项一般设为datetime.date.today()
+    :param factor_classes: list, 因子类别
+    :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
+    """
 
     for c in factor_classes:
         print('start updating ', c.type, '; date range: ', daterange)
@@ -304,7 +313,7 @@ def update_rolling_daily_factors(daterange: list, factor_classes:list, mode = 'p
 
                 delete_sql = 'delete from ' + c.__class__.__name__.lower() + ' where secucode = \'' + getattr(row, 'SECUCODE') + '\'' \
                              + 'and TradingDay <= to_date( \'' + end + '\',\'yyyy-mm-dd\')'\
-                             + 'and TradingDay >= to_date( \'' + start + '\',\'yyyy-mm-dd\')'
+                             + 'and TradingDay >= to_date( \'' + daterange[0] + '\',\'yyyy-mm-dd\')'
 
                 if mode == 'print':
                     print(factor_values)
@@ -331,7 +340,7 @@ if __name__ == '__main__':
 
     ################ 第一次写入数据库之前,请先drop想要写入的数据表 #################
 
-    # TODO: 写新类别的因子主表更新, 可以在correlationfuc.py 的print语句中找到
+    # TODO: 写roling日频因子主表更新, 不含DailyTechnicalIndicatorFactor,可以在correlationfuc.py 的print语句中找到
 
     # 所有的因子类
     all_classes = [DailyValueFactor(),DailyTechnicalIndicatorFactor(),SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),
@@ -346,8 +355,8 @@ if __name__ == '__main__':
     # update_factor_list(factor_classes=all_classes)
 
 
-    # 更新 日频非插值因子
-    # ordinary_daily_classes = [DailyValueFactor(),DailyTechnicalIndicatorFactor()]
+    # 更新 日频非插值非rolling因子
+    # ordinary_daily_classes = [DailyValueFactor()]
     # multidays_write_to_DB(daterange = ['2005-01-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'print') # 日频直接使用05-01-01的数据即可
     # update_ordinary_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'write')
 
@@ -365,8 +374,13 @@ if __name__ == '__main__':
     # peg_multidays_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= peg, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
     # update_peg(date=datetime.date.today(), factor_classes=peg, mode='print')
 
-    rolling_daily_factors = [DailyCorrelationFactor(),DailyMomentumFactor()]
-    temp = [()]
-    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= temp, mode = 'print')
-    # update_rolling_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= temp, mode = 'print')
+    # 更新 日频rolling因子
+    # rolling_daily_factors = [DailyCorrelationFactor(),DailyMomentumFactor(),DailyIdiosyncrasticFactor(),DailyTurnoverFactor(),
+    #                          DailyTechnicalIndicatorFactor(),DailyVolatilityFactor()]
+    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= rolling_daily_factors, mode = 'print')
+    # update_rolling_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= rolling_daily_factors, mode = 'print')
+
+    # 更新
+
+
 

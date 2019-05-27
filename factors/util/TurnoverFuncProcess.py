@@ -13,6 +13,6 @@ from factors.util.TurnoverFunc import TurnoverFunc
 
 def TurnoverFuncProcess():
     target_methods = [x for x in dir(TurnoverFunc) if not x.startswith('_')]  # 返回非内置方法
-    nameGroup = [x+'_' for x in target_methods]  # 生成的FactorCode，
+    nameGroup = [x+'_' for x in target_methods]  # 生成的FactorCode
 
     return target_methods,nameGroup

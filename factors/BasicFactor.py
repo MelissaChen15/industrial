@@ -53,22 +53,36 @@ class BasicFactor(object):
         sql = pl_sql_oracle.dbData_import()
         s = sql.InputDataPreprocess(self.code_sql_file_path,['secucodes'])
         for row in s['secucodes'].itertuples(index=True, name='Pandas'):
-            try:
-                data = self.find_components(file_path=self.data_sql_file_path,
+            # try:
+            #     data = self.find_components(file_path=self.data_sql_file_path,
+            #                                secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'',
+            #                                 date = date)
+            #     factor_values = self.get_factor_values(data)
+            #
+            #     from sqlalchemy import String, Integer
+            #     if mode == 'print':
+            #         print(factor_values)
+            #     if mode == 'write':
+            #         pl_sql_oracle.df_to_DB(factor_values, self.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
+            #     print(self.type,'secucode' ,getattr(row, 'SECUCODE'),' done')
+            #
+            #
+            # except Exception as e:
+            #     print(getattr(row, 'SECUCODE'), e)
+
+            # TODO: 改回来
+
+            data = self.find_components(file_path=self.data_sql_file_path,
                                            secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'',
                                             date = date)
-                factor_values = self.get_factor_values(data)
+            factor_values = self.get_factor_values(data)
 
-                from sqlalchemy import String, Integer
-                if mode == 'print':
+            from sqlalchemy import String, Integer
+            if mode == 'print':
                     print(factor_values)
-                if mode == 'write':
-                    pl_sql_oracle.df_to_DB(factor_values, self.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
-                print(self.type,'secucode' ,getattr(row, 'SECUCODE'),' done')
-
-
-            except Exception as e:
-                print(getattr(row, 'SECUCODE'), e)
+            if mode == 'write':
+                pl_sql_oracle.df_to_DB(factor_values, self.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
+            print(self.type,'secucode' ,getattr(row, 'SECUCODE'),' done')
 
 
     def find_components(self, file_path,secucode,date):

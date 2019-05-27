@@ -11,9 +11,11 @@ import pandas as pd
 
 
 class TurnoverFunc(object):
-    # TODO : window等窗口数据为月份数，每个月交易日为20
-    # TODO : 注意检查数据类型,满足足够的数据长度
-    # TODO : 日频的window=[1,3,6]
+    """
+     window等窗口数据为月份数，每个月交易日为20
+     注意检查数据类型,满足足够的数据长度
+    日频的window=[1,3,6]
+    """
 
     def __init__(self,turnover,dailypct, periodcoef, window):
         '''
@@ -32,7 +34,8 @@ class TurnoverFunc(object):
         '''
         res1 = pd.DataFrame(index=[])
         for i in self.window:
-            res1 = pd.concat([res1, pd.rolling_mean(self.turnover,i*self.periodcoef)],axis=1)  # 前i*20-1的数据为NaN
+            # res1 = pd.concat([res1, pd.rolling_mean(self.turnover,i*self.periodcoef)],axis=1)  # 前i*20-1的数据为NaN
+            res1 = pd.concat([res1, pd.DataFrame(self.turnover).rolling(window=i*self.periodcoef).mean()],axis=1)  # 前i*20-1的数据为NaN
         return res1
 
     def meanchgTurnover(self):  # 月份数
@@ -41,14 +44,15 @@ class TurnoverFunc(object):
         :param long_win: 长窗口周期
         :return: 换手率相对变化
         '''
-        if self.periodcoef ==20 | self.periodcoef==4:
+        if self.periodcoef == 20 or self.periodcoef==4:
             long_win = 12
         elif self.periodcoef ==1:
             long_win = 24
 
         res1 =pd.DataFrame(index=[])
         for i in self.window:
-            temp = (pd.rolling_mean(self.turnover, i*self.periodcoef)/pd.rolling_mean(self.turnover,long_win*self.periodcoef))-1
+            # temp = (pd.rolling_mean(self.turnover, i*self.periodcoef)/pd.rolling_mean(self.turnover,long_win*self.periodcoef))-1
+            temp = (pd.DataFrame(self.turnover).rolling(window=i*self.periodcoef).mean()/pd.DataFrame(self.turnover).rolling(window=long_win*self.periodcoef).mean())-1
             res1 = pd.concat([res1, temp], axis=1)
         return res1
 
@@ -59,17 +63,19 @@ class TurnoverFunc(object):
         '''
         res1 = pd.DataFrame(index=[])
         for i in self.window:
-            res1 = pd.concat([res1, pd.rolling_std(self.turnover,i*self.periodcoef)],axis=1)  # 前i*20-1的数据为NaN
+            res1 = pd.concat([res1, pd.DataFrame(self.turnover).rolling(window=i*self.periodcoef).std()],axis=1)  # 前i*20-1的数据为NaN
         return  res1
 
     def stdchgTurnover(self):
-        if self.periodcoef ==20 | self.periodcoef==4:
+        if self.periodcoef ==20 or self.periodcoef==4:
             long_win = 12
         elif self.periodcoef == 1:
             long_win = 24
         res1 =pd.DataFrame(index=[])
         for i in self.window:
-            temp = (pd.rolling_std(self.turnover.values,i*self.periodcoef)/pd.rolling_std(self.turnover,long_win*self.periodcoef))-1
+            n = pd.Series(self.turnover.values).rolling(window=i*self.periodcoef).std()
+            d = pd.Series(self.turnover).rolling(window=long_win*self.periodcoef).std()
+            temp = (n/d)-1
             res1 = pd.concat([res1,temp],axis=1)
         return res1
 
@@ -80,7 +86,9 @@ class TurnoverFunc(object):
         '''
         res1 = pd.DataFrame(index=[])
         for j in self.window:
-            res1 = pd.concat([res1, pd.DataFrame(pd.ewma(self.turnover.values*self.dailypct.values,span=j*self.periodcoef))],axis=1)  # 前i*20-1的数据为NaN
+            # res1 = pd.concat([res1, pd.DataFrame(pd.ewma(self.turnover.values*self.dailypct.values,span=j*self.periodcoef))],axis=1)  # 前i*20-1的数据为NaN
+            res1 = pd.concat([res1, pd.DataFrame(self.turnover.values*self.dailypct.values).ewm(span=j*self.periodcoef).mean()],axis=1)  # 前i*20-1的数据为NaN
+
         return res1
 
 
