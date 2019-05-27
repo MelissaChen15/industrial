@@ -135,51 +135,65 @@ class ComposedBasicFactorForm3(BasicFactor):
 
 
 
-# 日频相关性类因子
+# 相关性类因子
 class CorrelationFactor(BasicFactor):
 
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
-        self.type = '日频相关性类因子'
+        self.type = '相关性类因子'
 
 
 
-# 日频动量类因子
+# 动量类因子
 class MomentumFactor(BasicFactor):
 
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
-        self.type = '日频动量类因子'
+        self.type = '动量类因子'
 
-# 日频特异类因子
+# 特异类因子
 class IdiosyncrasticFactor(BasicFactor):
 
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
-        self.type = '日频特异类因子'
+        self.type = '特异类因子'
 
 
 
-# 日频换手率类因子
+# 换手率类因子
 class TurnoverFactor(BasicFactor):
 
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
-        self.type = '日频换手率类因子'
+        self.type = '换手率类因子'
 
-# 日频波动类因子
+# 波动类因子
 class VolatilityFactor(BasicFactor):
 
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
-        self.type = '日频波动类因子'
+        self.type = '波动类因子'
 
 
-
-
-# 日频金融模型_FF3类因子
+# 金融模型_FF3类因子
 class FinancialModelFactor(BasicFactor):
 
     def __init__(self, factor_code, name, describe):
         super().__init__(factor_code, name, describe)
-        self.type = '日频金融模型_FF3类因子'
+        self.type = '金融模型_FF3类因子'
+
+
+# 换手率类因子
+class TurnoverFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '换手率类因子'
+
+
+# 相关性类因子
+class CorrelationFactor(BasicFactor):
+
+    def __init__(self, factor_code, name, describe):
+        super().__init__(factor_code, name, describe)
+        self.type = '相关性类因子'

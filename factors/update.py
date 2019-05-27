@@ -24,11 +24,18 @@ from factors.SeasonalValueFactor import SeasonalValueFactor
 from factors.DailyPEG import DailyPEG
 from factors.DailyValueFactor import  DailyValueFactor
 from factors.DailyTechnicalIndicatorFactor import DailyTechnicalIndicatorFactor
+from factors.WeeklyTurnoverFactor import WeeklyTurnoverFactor
 from factors.DailyCorrelationFactor import DailyCorrelationFactor
 from factors.DailyMomentumFactor import DailyMomentumFactor
 from factors.DailyIdiosyncrasticFactor import  DailyIdiosyncrasticFactor
 from factors.DailyTurnoverFactor import DailyTurnoverFactor
 from factors.DailyVolatilityFactor import  DailyVolatilityFactor
+from factors.MonthlyTurnoverFactor import MonthlyTurnoverFactor
+from factors.WeeklyCorrelationFactor import WeeklyCorrelationFactor
+from factors.WeeklyIdiosyncrasticFactor import WeeklyIdiosyncrasticFactor
+from  factors.WeeklyMomentumFactor import WeeklyMomentumFactor
+from factors.WeeklyTechnicalIndicatorFactor import WeeklyTechnicalIndicatorFactor
+from factors.WeeklyVolatilityFactor import WeeklyVolatilityFactor
 from factors.sql import pl_sql_oracle
 from factors.util import datetime_ops
 
@@ -277,10 +284,11 @@ def update_peg(date:datetime.date, factor_classes:list, mode = 'print'):
         print(c.type,' is up to date')
 
 
-def update_rolling_daily_factors(daterange: list, factor_classes:list, mode = 'print'):
+def update_rolling_factors(daterange: list, factor_classes:list, mode = 'print'):
     """
-    更新需要rolling的日频因子
-    :param daterange: [str, datetime.date] 更新所需要数据的时间range, 第二项一般设为datetime.date.today()
+    更新不需要插值需要rolling的因子
+    注意: 用本函数更新,因子的数据窗口均为向前回滚两年
+    :param daterange: [str, datetime.date] 更新的时间range, 第二项一般设为datetime.date.today()
     :param factor_classes: list, 因子类别
     :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
     """
@@ -306,7 +314,6 @@ def update_rolling_daily_factors(daterange: list, factor_classes:list, mode = 'p
                 # 去除不在时间范围内的数据
                 factor_values = factor_values.drop(factor_values[factor_values.TRADINGDAY > datetime.date.today()].index)
                 factor_values = factor_values.drop(factor_values[factor_values.TRADINGDAY < datetime.datetime.strptime(daterange[0], '%Y-%m-%d') ].index)
-
 
 
                 from sqlalchemy import String, Integer
@@ -340,7 +347,7 @@ if __name__ == '__main__':
 
     ################ 第一次写入数据库之前,请先drop想要写入的数据表 #################
 
-    # TODO: 写roling日频因子主表更新, 不含DailyTechnicalIndicatorFactor,可以在correlationfuc.py 的print语句中找到
+    # TODO: 写新加入的因子类的主表更新, 不含DailyTechnicalIndicatorFactor,可以在correlationfuc.py 的print语句中找到
 
     # 所有的因子类
     all_classes = [DailyValueFactor(),DailyTechnicalIndicatorFactor(),SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),
@@ -378,9 +385,23 @@ if __name__ == '__main__':
     # rolling_daily_factors = [DailyCorrelationFactor(),DailyMomentumFactor(),DailyIdiosyncrasticFactor(),DailyTurnoverFactor(),
     #                          DailyTechnicalIndicatorFactor(),DailyVolatilityFactor()]
     # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= rolling_daily_factors, mode = 'print')
-    # update_rolling_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= rolling_daily_factors, mode = 'print')
+    # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= rolling_daily_factors, mode = 'print')
 
-    # 更新
+    # 更新 月频 非插值rolling因子
+    # monthly_rolling_factor = [MonthlyTurnoverFactor()]
+    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= monthly_rolling_factor, mode = 'print')
+    # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= monthly_rolling_factor, mode = 'print')
+
+
+    # 更新 周频 非插值rolling因子
+    # weekly_rolling_factors = [WeeklyCorrelationFactor(),WeeklyIdiosyncrasticFactor(),WeeklyMomentumFactor(),WeeklyTechnicalIndicatorFactor(),
+    #                           WeeklyVolatilityFactor(),WeeklyTurnoverFactor()]
+    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= weekly_rolling_factors, mode = 'print')
+    # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= weekly_rolling_factors, mode = 'print')
+
+
+
+
 
 
 

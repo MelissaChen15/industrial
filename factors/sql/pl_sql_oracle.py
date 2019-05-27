@@ -56,6 +56,7 @@ class dbData_import(object):
         with engine.connect() as conn, conn.begin():
             for i in range(len(sql_sentences)):
                 res = engine.execute(sql_sentences[i])
+                # print(table_name[i])
                 # print(sql_sentences[i])
                 data[table_name[i]] = pd.DataFrame(data=res.fetchall(),
                                                    columns=[key.upper() for key in res.keys()])
