@@ -37,6 +37,9 @@ from  factors.WeeklyMomentumFactor import WeeklyMomentumFactor
 from factors.WeeklyTechnicalIndicatorFactor import WeeklyTechnicalIndicatorFactor
 from factors.WeeklyVolatilityFactor import WeeklyVolatilityFactor
 from factors.DailyFinancialModelFactor1 import DailyFinancialModelFactor1
+from factors.DailyFinancialModelFactor2 import DailyFinancialModelFactor2
+from factors.WeeklyFinancialModelFactor1 import  WeeklyFinancialModelFactor1
+from factors.WeeklyFinancialModelFactor2 import  WeeklyFinancialModelFactor2
 from factors.sql import pl_sql_oracle
 from factors.util import datetime_ops
 
@@ -400,10 +403,10 @@ if __name__ == '__main__':
     SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3(),DailyVolatilityFactor()
     ,DailyPEG(),DailyTurnoverFactor(),DailyCorrelationFactor(),DailyIdiosyncrasticFactor(),DailyMomentumFactor(),
     MonthlyTurnoverFactor(),WeeklyCorrelationFactor(),WeeklyIdiosyncrasticFactor(),WeeklyMomentumFactor(),WeeklyTurnoverFactor(),
-    WeeklyVolatilityFactor(),WeeklyTechnicalIndicatorFactor()]
+    WeeklyVolatilityFactor(),WeeklyTechnicalIndicatorFactor(),DailyFinancialModelFactor2(),WeeklyFinancialModelFactor1(),WeeklyFinancialModelFactor2()]
 
     # 更新 因子主表
-    # update_factor_list(factor_classes=all_classes, mode='print')
+    # update_factor_list(factor_classes=all_classes, mode= 'write')
 
 
     # 更新 日频非插值非rolling因子
@@ -449,12 +452,10 @@ if __name__ == '__main__':
     # # 更新或者首次写入都是使用下面这个函数
     # update_time_series(daterange = ['2016-01-01', datetime.date.today()], factor_classes = series, mode = 'write')
 
-
-    # # todo: 写完四类financial model因子的更新
-    # temp = [DailyFinancialModelFactor1()]
-    # # DailyFinancialModelFactor2()
-    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= temp, mode = 'print')
-    # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= temp, mode = 'print')
+    # 更新 日频和周频的financial model因子
+    # financial_models = [WeeklyFinancialModelFactor1(),DailyFinancialModelFactor2(),WeeklyFinancialModelFactor1(),WeeklyFinancialModelFactor2()]
+    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= financial_models, mode = 'print')
+    # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= financial_models, mode = 'print')
 
 
 

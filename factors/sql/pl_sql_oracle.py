@@ -34,10 +34,13 @@ class dbData_import(object):
         sentence = ''
         file = open(filepath, 'r', encoding='utf-8')
         for line in file:
+            # sql语句需要以select开头, 以where或order by结尾; 但是不能同时存在where 和 order by
             if 'select' in line:
                 sentence = ''
             sentence += line
             if 'where' in line:
+                sql_sentences.append(sentence + secucode + date)
+            if 'order' in line:
                 sql_sentences.append(sentence + secucode + date)
 
         # for sentence in sql_sentences:
@@ -62,6 +65,9 @@ class dbData_import(object):
                                                    columns=[key.upper() for key in res.keys()])
                 # 将None替换为np.nan
                 data[table_name[i]] = data[table_name[i]].replace([None],np.nan)
+                # 排序
+                if table_name[i] == 'secucodes':
+                    data[table_name[i]] = data[table_name[i]].sort_values(by='SECUCODE')
                 # 将非float格式的数据转换为float
                 if table_name[i] != 'secucodes':
                     if 'SECUCODE' in data[table_name[i]].columns:

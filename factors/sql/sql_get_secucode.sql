@@ -3,4 +3,4 @@
 
  -- A股代码
 select secucode from SecuMain t2
-where (t2.SecuMarket='83' or t2.SecuMarket='90') and t2.SecuCategory = 1 and ListedState = 1 order by secucode
+where (t2.SecuMarket='83' or t2.SecuMarket='90') and t2.SecuCategory = 1 and ListedState = 1

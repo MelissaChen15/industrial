@@ -42,10 +42,22 @@ class DailyFinancialModelFactor2(DailyFrequency,FinancialModelFactor):
         :return: dict, key为因子名,value为因子类的一个实例
         """
         factor_entities = dict()
-        for i in range(len(self.target_methods)):
-            factor_entities[self.target_methods[i]] = DailyFinancialModelFactor2(factor_code=self.nameGroup[i],name=self.target_methods[i],describe='')
+        count = 0000
+        columns_name = ['alpha','beta','波动率', '上行波动率', '下行波动率', '上下波动率之差', '偏度','上行beta','下行beta','上下行beta差']
+        marketindex = ['IF','IC','IH']
+        window = [3,6]
 
-        return factor_entities  # 不止一个因子
+        for i in columns_name:
+            for j in marketindex:
+                for w in window:
+                    name = i + '_' + j + '_'+ str(w) + '_m'
+                    entity = DailyFinancialModelFactor2(factor_code='DFB%04d' % count,
+                                            name=name,
+                                            describe='')
+                    factor_entities[name] = entity
+                    count += 1
+
+        return factor_entities
 
     def find_components(self, file_path,secucode,date):
         """
@@ -57,6 +69,7 @@ class DailyFinancialModelFactor2(DailyFrequency,FinancialModelFactor):
         components = sql.InputDataPreprocess(self.data_sql_file_path, ['QT_Performance'], secucode )
 
         components['QT_Performance'] = components['QT_Performance'].sort_values(by='TRADINGDAY')
+        # print(components)
         return components
 
     def get_factor_values(self, components):
@@ -78,7 +91,9 @@ class DailyFinancialModelFactor2(DailyFrequency,FinancialModelFactor):
 
         datagroup_capm = pd.DataFrame()
         for i in marketindex:
+            # print(1)
             alpha1_all, beta_all, residuals_stats, upsidebeta_all, downsidebeta_all, sidediffbeta_all = TO_cal.CAPM_model_stats(i)
+            # print(2)
             index_datagroup = pd.DataFrame()
             for j in alpha1_all.keys():
                 temp_datagroup = pd.concat([alpha1_all[j],beta_all[j],residuals_stats[j],upsidebeta_all[j], downsidebeta_all[j], sidediffbeta_all[j]],axis=1)

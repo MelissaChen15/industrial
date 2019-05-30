@@ -41,10 +41,22 @@ class DailyFinancialModelFactor1(DailyFrequency,FinancialModelFactor):
         :return: dict, key为因子名,value为因子类的一个实例
         """
         factor_entities = dict()
-        for i in range(len(self.target_methods)):
-            factor_entities[self.target_methods[i]] = DailyFinancialModelFactor1(factor_code=self.nameGroup[i],name=self.target_methods[i],describe='')
+        count = 0000
+        columns_name = ['alpha', 'beta_index', 'beta_HML', 'beta_SMB', '波动率', '上行波动率', '下行波动率', '上下波动率之差', '偏度']
+        marketindex = ['IF', 'IC', 'IH']
+        window = [3,6]
 
-        return factor_entities  # 不止一个因子
+        for i in columns_name:
+            for j in marketindex:
+                for w in window:
+                    name = i + '_' + j + '_'+ str(w) + '_m'
+                    entity = DailyFinancialModelFactor1(factor_code='DFA%04d' % count,
+                                            name=name,
+                                            describe='')
+                    factor_entities[name] = entity
+                    count += 1
+
+        return factor_entities
 
     def find_components(self, file_path,secucode,date):
         """
@@ -77,6 +89,9 @@ class DailyFinancialModelFactor1(DailyFrequency,FinancialModelFactor):
 
         datagroup_FF3 = pd.DataFrame()
         for i in marketindex:
+            # print(i)
+            # print(self.SMB_HML_file_path_daily)
+            # print(self.SMB_HML_file_path_weekly)
             alpha1_all, beta_all, residuals_stats = TO_cal.FF3_model_stats(i,self.SMB_HML_file_path_daily,self.SMB_HML_file_path_weekly)
             index_datagroup = pd.DataFrame()
             for j in alpha1_all.keys():
@@ -86,9 +101,10 @@ class DailyFinancialModelFactor1(DailyFrequency,FinancialModelFactor):
                 index_datagroup = pd.concat([index_datagroup,temp_datagroup],axis=1)
             datagroup_FF3 = pd.concat([datagroup_FF3,index_datagroup],axis=1)
 
-        print(len(datagroup_FF3))
+        # print(len(datagroup_FF3))
         factor_values = pd.DataFrame()
         factor_values[list(datagroup_FF3.columns)] = datagroup_FF3
         factor_values['TRADINGDAY'] = datagroup_FF3.index
         factor_values['SECUCODE'] = components['QT_Performance']['SECUCODE'].values[:len(datagroup_FF3)]
+
         return factor_values
