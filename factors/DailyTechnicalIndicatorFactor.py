@@ -99,7 +99,7 @@ class DailyTechnicalIndicatorFactor(DailyFrequency,TechnicalIndicatorFactor ):
     def __init__(self, factor_code= '', name= '', describe= ''):
         super().__init__(factor_code, name, describe)
         self.type = '日频技术指标类'
-        self.target_methods, self.nameGroup = TechnicalIndicatorProcess()
+        self.target_methods, self.nameGroup, *args = TechnicalIndicatorProcess()
         self.data_sql_file_path = r'.\sql\sql_daily_technicalIndicator_factor.sql'
         self.code_sql_file_path = r'.\sql\sql_get_secucode.sql'
         self.table_name = ['QT_DailyQuote']
@@ -128,7 +128,7 @@ class DailyTechnicalIndicatorFactor(DailyFrequency,TechnicalIndicatorFactor ):
         计算本类所有的因子
 
         :param components: pandas.DataFrame,计算需要的数据
-        :return:
+        :return:S
             factor_values： pandas.DataFrame, 因子值
         """
 

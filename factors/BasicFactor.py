@@ -43,8 +43,11 @@ class BasicFactor(object):
         factor_entities = self.init_factors()
         factor_list = pd.DataFrame(columns=['FactorCode', '简称', '频率', '类别', '描述'])
         for k in factor_entities.keys():
-            row = {'FactorCode': factor_entities.get(k).factor_code, '简称': factor_entities.get(k).name,
-                   '频率': factor_entities.get(k).frequency, '类别': factor_entities.get(k).type,
+            row = {'FactorCode': factor_entities.get(k).factor_code,
+                   '表名': factor_entities.get(k).__class__.__name__,
+                   '简称': factor_entities.get(k).name,
+                   '类别': factor_entities.get(k).type,
+                   '频率': factor_entities.get(k).frequency,
                    '描述': factor_entities.get(k).describe}
             factor_list = factor_list.append(row, ignore_index=True)
         return factor_list
@@ -69,19 +72,6 @@ class BasicFactor(object):
 
             except Exception as e:
                 print(getattr(row, 'SECUCODE'), e)
-
-
-            # data = self.find_components(file_path=self.data_sql_file_path,
-            #                                secucode=  'and t2.Secucode = \'' + getattr(row, 'SECUCODE') + '\'',
-            #                                 date = date)
-            # factor_values = self.get_factor_values(data)
-            #
-            # from sqlalchemy import String, Integer
-            # if mode == 'print':
-            #         print(factor_values)
-            # if mode == 'write':
-            #     pl_sql_oracle.df_to_DB(factor_values, self.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
-            # print(self.type,'secucode' ,getattr(row, 'SECUCODE'),' done')
 
 
     def find_components(self, file_path,secucode,date):

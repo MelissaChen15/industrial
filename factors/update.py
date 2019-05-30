@@ -41,23 +41,26 @@ from factors.sql import pl_sql_oracle
 from factors.util import datetime_ops
 
 
-def update_factor_list(factor_classes:list):
+def update_factor_list(factor_classes:list, mode = 'print'):
     """
     更新因子主表
     :param factor_classes: list, 包含所有的因子类
-    """
+    :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
 
+    """
+    print('updating factor list')
     factor_list = pd.DataFrame()
     for c in factor_classes:
         factor_list = factor_list.append(c.get_factor_list(), ignore_index=True)
-    # print(factor_list)
 
-    # 将因子表写入数据库
-    print('updating factor list')
-    from sqlalchemy import String, Integer
-    pl_sql_oracle.df_to_DB(df=factor_list, table_name='factorlist',if_exists= 'replace',
-                               data_type={'FactorCode': String(16), '简称': String(64), '频率': Integer(),
-                                '类别': String(128), '描述': String(512)})
+    if mode == 'print':
+        print(factor_list)
+    if mode == 'write':
+        # 将因子表写入数据库
+        from sqlalchemy import String, Integer
+        pl_sql_oracle.df_to_DB(df=factor_list, table_name='factorlist',if_exists= 'replace',
+                                   data_type={'FactorCode': String(16), '表名': String(128),'简称': String(128), '频率': Integer(),
+                                    '类别': String(128), '描述': String(512)})
     print('factor list is up to date')
 
 
@@ -389,19 +392,18 @@ if __name__ == '__main__':
 
     ################ 第一次写入数据库之前,请先drop想要写入的数据表 #################
 
-    # TODO: 写新加入的因子类的主表更新, 不含DailyTechnicalIndicatorFactor,可以在correlationfuc.py 的print语句中找到
 
     # 所有的因子类
     all_classes = [DailyValueFactor(),DailyTechnicalIndicatorFactor(),SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),
     SeasonalDebtpayingAbilityFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
     SeasonalSecuIndexFactor(),SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor(),
-    SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3()
-    ,DailyPEG()]
-
-
+    SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3(),DailyVolatilityFactor()
+    ,DailyPEG(),DailyTurnoverFactor(),DailyCorrelationFactor(),DailyIdiosyncrasticFactor(),DailyMomentumFactor(),
+    MonthlyTurnoverFactor(),WeeklyCorrelationFactor(),WeeklyIdiosyncrasticFactor(),WeeklyMomentumFactor(),WeeklyTurnoverFactor(),
+    WeeklyVolatilityFactor(),WeeklyTechnicalIndicatorFactor()]
 
     # 更新 因子主表
-    # update_factor_list(factor_classes=all_classes)
+    # update_factor_list(factor_classes=all_classes, mode='print')
 
 
     # 更新 日频非插值非rolling因子
@@ -442,14 +444,15 @@ if __name__ == '__main__':
     # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= weekly_rolling_factors, mode = 'print')
 
     # 更新 日频和周频的timeseries
-    from factors import DailyTimeSeries, WeeklyTimeSeries
-    temp = [DailyTimeSeries,WeeklyTimeSeries]
-    # 更新或者首次写入都是使用下面这个函数
-    update_time_series(daterange = ['2001-01-01', datetime.date.today()], factor_classes = temp, mode = 'print')
+    # from factors import DailyTimeSeries, WeeklyTimeSeries
+    # series = [DailyTimeSeries,WeeklyTimeSeries]
+    # # 更新或者首次写入都是使用下面这个函数
+    # update_time_series(daterange = ['2016-01-01', datetime.date.today()], factor_classes = series, mode = 'write')
 
 
     # # todo: 写完四类financial model因子的更新
     # temp = [DailyFinancialModelFactor1()]
+    # # DailyFinancialModelFactor2()
     # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= temp, mode = 'print')
     # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= temp, mode = 'print')
 

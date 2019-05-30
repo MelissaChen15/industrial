@@ -23,7 +23,7 @@ class WeeklyTechnicalIndicatorFactor(WeeklyFrequency,TechnicalIndicatorFactor ):
     def __init__(self, factor_code= '', name= '', describe= ''):
         super().__init__(factor_code, name, describe)
         self.type = '周频技术指标类'
-        self.target_methods, self.nameGroup = TechnicalIndicatorProcess()
+        self.target_methods, *args , self.nameGroup  = TechnicalIndicatorProcess()
         self.data_sql_file_path = r'.\sql\sql_weekly_technicalIndicator_factor.sql'
         self.code_sql_file_path = r'.\sql\sql_get_secucode.sql'
         self.weeklyday_file_path = r'.\sql\sql_get_last_trading_weekday.sql'

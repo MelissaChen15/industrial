@@ -99,15 +99,6 @@ class CorrelationFunc(StockIndexGroup):
         return correaltiondiff_all
 
 
-# # # if __name__ == '__main__':
-#     code_sql_file_path_index = r'D:\项目\FOF相关资料\wind研报\工具性代码\Chen\industrial\factors_ver4\StockFactorsCreating\factors\sql\sql_StockIndex.sql'
-#     weekday_sql_file_path = r'D:\项目\FOF相关资料\wind研报\工具性代码\Chen\industrial\factors_ver4\StockFactorsCreating\factors\sql\sql_get_last_trading_weekday.sql'
-#     ex = CorrelationFunc(components['QT_Performance']['CHANGEPCT'],components['QT_Performance']['TRADINGDAY'], periodcoef=20,window=[1,3,6],
-#                                 flag=1,code_sql_file_path=code_sql_file_path_index,weekday_sql_file_path=weekday_sql_file_path)
-
-
-
-
 
 
 

@@ -11,6 +11,8 @@ from factors.util.TechnicalIndicatorFunc import TechnicalIndicatorFunc
 
 def TechnicalIndicatorProcess():
     target_methods = [x for x in dir(TechnicalIndicatorFunc) if not x.startswith('_')]  # 返回非内置方法
-    nameGroup = ['TI'+str(x).zfill(4) for x in range(len(target_methods))]  # 生成TI的FactorCode
+    nameGroup_daily = ['TI'+str(x).zfill(4) for x in range(len(target_methods))]  # 生成TI的FactorCode
+    nameGroup_weekly = ['WT'+str(x).zfill(4) for x in range(len(target_methods))]  # 生成TI的FactorCode
 
-    return target_methods,nameGroup
+
+    return target_methods,nameGroup_daily,nameGroup_weekly

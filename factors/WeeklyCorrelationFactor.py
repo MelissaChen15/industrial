@@ -43,10 +43,19 @@ class WeeklyCorrelationFactor(WeeklyFrequency,CorrelationFactor):
         :return: dict, key为因子名,value为因子类的一个实例
         """
         factor_entities = dict()
-        for i in range(len(self.target_methods)):
-            factor_entities[self.target_methods[i]] = WeeklyCorrelationFactor(factor_code=self.nameGroup[i],name=self.target_methods[i],describe='')
-
-        return factor_entities  # 不止一个因子
+        count = 0000
+        columns = []
+        for j in [3,6,12]:
+           columns.append(['corrIF'+'_'+str(j)+'m','corrIH'+'_'+str(j)+'m','corrIC'+'_'+str(j)+'m','corrIFchg' + '_' + str(j) + 'm',
+                  'corrIHchg' + '_' + str(j) + 'm', 'corrICchg' + '_' + str(j) + 'm'])
+        for i in columns:
+            for n in i:
+                entity = WeeklyCorrelationFactor(factor_code='WC%04d' % count,
+                          name = n,
+                          describe = '')
+                factor_entities[n] = entity
+                count += 1
+        return factor_entities
 
     def find_components(self, file_path,secucode, date):
         """

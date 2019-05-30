@@ -40,10 +40,22 @@ class WeeklyIdiosyncrasticFactor(WeeklyFrequency,IdiosyncrasticFactor):
         :return: dict, key为因子名,value为因子类的一个实例
         """
         factor_entities = dict()
-        for i in range(len(self.target_methods)):
-            factor_entities[self.target_methods[i]] = WeeklyIdiosyncrasticFactor(factor_code=self.nameGroup[i],name=self.target_methods[i],describe='')
+        count = 0000
+        TO_cal = IdiosyncrasticFunc(pd.DataFrame(),pd.DataFrame(),
+                              pd.DataFrame(),pd.DataFrame(),
+                              window=[3,6,9],periodcoef=4)
+        for i in self.target_methods:
+            name = [i+'_'+str(TO_cal.window[0])+'_'+str(self.frequency),i+'_'+str(TO_cal.window[1])+'_'+str(self.frequency)
+                    ,i+'_'+str(TO_cal.window[2])+'_'+str(self.frequency)]
+            for n in name:
+                # print(n) expwgtTurnover_1_1
+                entity = WeeklyIdiosyncrasticFactor(factor_code='WI%04d' % count,
+                                        name=n,
+                                        describe='')
+                factor_entities[n] = entity
+                count += 1
 
-        return factor_entities  # 不止一个因子
+        return factor_entities
 
     def find_components(self, file_path,secucode,date):
         """

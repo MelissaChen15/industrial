@@ -35,37 +35,37 @@ class SeasonalDividendFactor(SeasonalFrequency,DividendFactor ):
         factor_entities = dict()  # 存储实例化的因子
 
         # CashEquivalentPS 每股现金及现金等价物余额(元/股)
-        CashEquivalentPS = SeasonalDividendFactor(factor_code='1001',
+        CashEquivalentPS = SeasonalDividendFactor(factor_code='1401',
                                                   name='CashEquivalentPS',
                                                   describe='见聚源数据库，表LC_MainIndexNew')
         factor_entities['CashEquivalentPS'] = CashEquivalentPS
 
         # DividendPS 每股股利(元/股)
-        DividendPS = SeasonalDividendFactor(factor_code='1002',
+        DividendPS = SeasonalDividendFactor(factor_code='1402',
                                             name='DividendPS',
                                             describe='见聚源数据库，表LC_MainIndexNew')
         factor_entities['DividendPS'] = DividendPS
 
         # DividendCover 股利保障倍数(倍)
-        DividendCover = SeasonalDividendFactor(factor_code='1003',
+        DividendCover = SeasonalDividendFactor(factor_code='1403',
                                                name='DividendCover',
                                                describe='见聚源数据库，表LC_MainIndexNew')
         factor_entities['DividendCover'] = DividendCover
 
         # CashDividendCover 现金股利保障倍数(倍)
-        CashDividendCover = SeasonalDividendFactor(factor_code='1004',
+        CashDividendCover = SeasonalDividendFactor(factor_code='1404',
                                                    name='CashDividendCover',
                                                    describe='见聚源数据库，表LC_MainIndexNew')
         factor_entities['CashDividendCover'] = CashDividendCover
 
         # DividendPaidRatio 股利支付率(%)
-        DividendPaidRatio = SeasonalDividendFactor(factor_code='1005',
+        DividendPaidRatio = SeasonalDividendFactor(factor_code='1405',
                                                    name='DividendPaidRatio',
                                                    describe='见聚源数据库，表LC_MainIndexNew')
         factor_entities['DividendPaidRatio'] = DividendPaidRatio
 
         # RetainedEarningRatio 留存盈余比率(%)
-        RetainedEarningRatio = SeasonalDividendFactor(factor_code='1006',
+        RetainedEarningRatio = SeasonalDividendFactor(factor_code='1406',
                                                       name='RetainedEarningRatio',
                                                       describe='见聚源数据库，表LC_MainIndexNew')
         factor_entities['RetainedEarningRatio'] = RetainedEarningRatio
