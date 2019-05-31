@@ -11,7 +11,7 @@ from factors.SeasonalCashFactor import SeasonalCashFactor
 from factors.SeasonalComposedBasicFactor.form1 import SeasonalComposedBasicFactorF1
 from factors.SeasonalComposedBasicFactor.form2 import SeasonalComposedBasicFactorF2
 from factors.SeasonalComposedBasicFactor.form3 import SeasonalComposedBasicFactorF3
-from factors.SeasonalDebtpayingAbilityFactor import SeasonalDebtpayingAbilityFactor
+from factors.SeasonalDebtFactor import SeasonalDebtFactor
 from factors.SeasonalDividendFactor import SeasonalDividendFactor
 from factors.SeasonalDuPontFactor import SeasonalDuPontFactor
 from factors.SeasonalEarningQualityFactor import SeasonalEarningQualityFactor
@@ -460,7 +460,7 @@ if __name__ == '__main__':
 
     # 所有的因子类
     all_classes = [DailyValueFactor(),DailyTechnicalIndicatorFactor(),SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),
-    SeasonalDebtpayingAbilityFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
+    SeasonalDebtFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
     SeasonalSecuIndexFactor(),SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor(),
     SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3(),DailyVolatilityFactor()
     ,DailyPEG(),DailyTurnoverFactor(),DailyCorrelationFactor(),DailyIdiosyncrasticFactor(),DailyMomentumFactor(),
@@ -472,18 +472,22 @@ if __name__ == '__main__':
     # update_factor_list(factor_classes=all_classes, mode= 'write')
 
 
+    # 更新 季频插值因子
+    interpolation_seasonal_classes = [SeasonalFinancialQualityFactor(),SeasonalValueFactor(),SeasonalGrowthFactor(),SeasonalSecuIndexFactor()
+        ,SeasonalDebtFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor()
+        ,SeasonalDividendFactor(),SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor()]
+    multidays_write_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= interpolation_seasonal_classes, mode='write') # 因为需要插值, 要使用2004-12-31开始的数据
+    # update_interpolation_seasonal_factors(date = datetime.date.today(), factor_classes= interpolation_seasonal_classes, mode='write')
+
+
+    nmsl = [SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3()]
+
+
+
     # 更新 日频非插值非rolling因子
     # ordinary_daily_classes = [DailyValueFactor()]
     # multidays_write_to_DB(daterange = ['2005-01-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'print') # 日频直接使用05-01-01的数据即可
     # update_ordinary_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'write')
-
-    # 更新 季频插值因子
-    # interpolation_seasonal_classes = [SeasonalValueFactor(),SeasonalFinancialQualityFactor(),SeasonalGrowthFactor(),SeasonalSecuIndexFactor()
-    #     ,SeasonalDebtpayingAbilityFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
-    #     SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor(),SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),
-    #     SeasonalComposedBasicFactorF3()]
-    # multidays_write_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= interpolation_seasonal_classes, mode='write') # 因为需要插值, 要使用2004-12-31开始的数据
-    # update_interpolation_seasonal_factors(date = datetime.date.today(), factor_classes= interpolation_seasonal_classes, mode='write')
 
 
     # 更新 日频价值类因子PEG 特殊处理原因: 日频/季频

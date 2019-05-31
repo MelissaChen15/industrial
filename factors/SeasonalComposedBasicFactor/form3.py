@@ -195,8 +195,10 @@ class SeasonalComposedBasicFactorF3(SeasonalFrequency, ComposedBasicFactorForm3)
                     # 某类因子如果存在大于10^6的数值，这个因子取log(1+x)
                     isbig = factor_values[factor_name] >= 10e6    # 判断是否含有大于10e6的值
                     if True in isbig.values:
-                        isplus = factor_values[factor_name] >= 0  # 因为log函数的定义域大于零, 所以此处还需要判断是否大于零, 如果小于零则先取绝对值再计算log再加上负号
-                        factor_values[factor_name] = np.log1p(np.abs(factor_values[factor_name])) * isplus.mask(isplus == False, -1)
+                        # isplus = factor_values[factor_name] >= 0  # 因为log函数的定义域大于零, 所以此处还需要判断是否大于零, 如果小于零则先取绝对值再计算log再加上负号
+                        # factor_values[factor_name] = np.log1p(np.abs(factor_values[factor_name])) * isplus.mask(isplus == False, -1)
+                        factor_values[factor_name] = np.tanh(factor_values[factor_name])
+
                 except Exception as e:
                     print('factor', factor_name, 'error: ', e)
 
