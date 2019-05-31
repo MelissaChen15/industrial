@@ -390,8 +390,12 @@ def update_time_series(daterange:list, factor_classes:list, mode = 'print'):
 
 
 if __name__ == '__main__':
+    # 去除warning
     import warnings
     warnings.filterwarnings('ignore')
+    # 初始化logger
+    # from factors.logger import Logger
+    # logger = Logger.getLogger()
 
 
     ################ 第一次写入数据库之前,请先drop想要写入的数据表 #################
@@ -449,15 +453,17 @@ if __name__ == '__main__':
     # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= weekly_rolling_factors, mode = 'print')
 
     # 更新 日频和周频的timeseries
-    # from factors import DailyTimeSeries, WeeklyTimeSeries
+    from factors import DailyTimeSeries, WeeklyTimeSeries
     # series = [DailyTimeSeries,WeeklyTimeSeries]
     # # 更新或者首次写入都是使用下面这个函数
-    # update_time_series(daterange = ['2016-01-01', datetime.date.today()], factor_classes = series, mode = 'write')
+    # update_time_series(daterange = ['2004-01-01', datetime.date.today()], factor_classes = [DailyTimeSeries], mode = 'write')
 
     # 更新 日频和周频的financial model因子
-    financial_models = [DailyFinancialModelFactor1(),DailyFinancialModelFactor2(),WeeklyFinancialModelFactor1(),WeeklyFinancialModelFactor2()]
-    multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= financial_models, mode = 'print')
+    # financial_models = [DailyFinancialModelFactor1(),DailyFinancialModelFactor2(),WeeklyFinancialModelFactor1(),WeeklyFinancialModelFactor2()]
+    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= financial_models, mode = 'print')
     # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= financial_models, mode = 'print')
+
+
 
 
 

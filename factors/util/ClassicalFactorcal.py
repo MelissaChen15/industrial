@@ -59,25 +59,26 @@ class TimeseriesFactorCal(object):
 
     def get_data_cal(self):
         sql = pl_sql_oracle.dbData_import()
-        s1 = sql.InputDataPreprocess(self.code_sql_file_path, ['TradingDay'],date= ' and TRADINGDATE <= to_date( \'' + self.daterange[1] + '\',\'yyyy-mm-dd\')' \
-                         + 'and TRADINGDATE >= to_date( \'' + self.daterange[0] + '\',\'yyyy-mm-dd\')')
-        # s1 = sql.InputDataPreprocess(self.code_sql_file_path, ['TradingDay'])
+        date =  ' TRADINGDAY <= to_date( \'' + self.daterange[1] + '\',\'yyyy-mm-dd\')' \
+                         + 'and TRADINGDAY >= to_date( \'' + self.daterange[0] + '\',\'yyyy-mm-dd\')'
+        s1 = sql.InputDataPreprocess(self.code_sql_file_path, ['TradingDay'],date=date)
+
         SML_and_HML = pd.DataFrame()
 
-        s1['TradingDay'] = s1['TradingDay'].sort_values(by='TRADINGDATE')
+        s1['TradingDay'] = s1['TradingDay'].sort_values(by='TRADINGDAY')
         # print(s1['TradingDay'])
         for row in s1['TradingDay'].itertuples(index=True, name='Pandas'):
             try:
                 # sql = pl_sql_oracle.dbData_import()  getattr(row, 'TRADINGDAY')
-                s2 = sql.InputDataPreprocess(self.data_sql_file_path, ['RawData'], date='and (t1.tradingday = to_date(\''+str(getattr(row, 'TRADINGDATE'))+\
+                s2 = sql.InputDataPreprocess(self.data_sql_file_path, ['RawData'], date='and (t1.tradingday = to_date(\''+str(getattr(row, 'TRADINGDAY'))+\
                                                                              '\''+','+'\'yyyy-mm-dd hh24:mi:ss\''+')'+')')
                 SML_and_HML = SML_and_HML.append(GroupingStock_SMB(s2['RawData']))  # s2是一个字典形式
 
 
-                print(getattr(row, 'TRADINGDATE'), ' done')  # 查看
+                print(getattr(row, 'TRADINGDAY'), ' done')  # 查看
 
             except Exception as e:
 
-                print(getattr(row, 'TRADINGDATE'), e)
-        SML_and_HML.index = list(s1['TradingDay']['TRADINGDATE'][:len(SML_and_HML)])  # s1是一个字典
+                print(getattr(row, 'TRADINGDAY'), e)
+        SML_and_HML.index = list(s1['TradingDay']['TRADINGDAY'][:len(SML_and_HML)])  # s1是一个字典
         return SML_and_HML

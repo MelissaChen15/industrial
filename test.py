@@ -31,10 +31,20 @@ class Logger:
   Logger.logger.setLevel(Logger.levels.get(Logger.log_level))
   return Logger.logger
 
+def print1():
+ print(1)
+
+def return1():
+ return 1
+
+
+
 if __name__ == "__main__":
  logger = Logger.getLogger()
- logger.debug("this is a debug msg!")
- logger.info("this is a info msg!")
- logger.warning("this is a warn msg!")
- logger.error("this is a error msg!")
- logger.critical("this is a critical msg!")
+ # logger.debug("this is a debug msg!")
+ # logger.info("this is a info msg!")
+ # logger.warning("this is a warn msg!")
+ # logger.error("this is a error msg!")
+ # logger.critical("this is a critical msg!")
+ logger.info(return1())
+

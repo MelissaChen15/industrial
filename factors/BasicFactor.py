@@ -169,7 +169,7 @@ class BasicFactor(object):
                 if (code == code2 and start_day == start_day2): # 如果某日期的上季度报告已经发布
                     for f in seasonal_factor_name:
                         daily_data.loc[row.Index, f] = getattr(row2, f)
-        #
+
         # # 如果日期超过了限定的日期范围, 则删除
         # daily_data = daily_data.drop(daily_data[daily_data.TRADINGDAY > datetime_ops.next_day(date[1])].index)
         # daily_data = daily_data.drop(daily_data[daily_data.TRADINGDAY < datetime_ops.next_day(date[0])].index)
