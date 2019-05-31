@@ -1,50 +1,54 @@
-import logging.handlers
+import pandas as pd
+import numpy as np
 
-class Logger:
+new = pd.DataFrame([
+ [np.nan],
+ [4],
+ [np.nan]
+])
 
- logger = None
+old = pd.DataFrame([
+ [0],
+ [np.nan],
+])
 
- levels = {"n" : logging.NOTSET,
-  "d" : logging.DEBUG,
-  "i" : logging.INFO,
-  "w" : logging.WARN,
-  "e" : logging.ERROR,
-  "c" : logging.CRITICAL}
+a = new.isna() & ~old.isna()
+b = a.mask(a.isna(),False)
 
- log_level = "n"
- log_file = "update_factors.log"
- log_max_byte = 10 * 1024 * 1024
- log_backup_count = 5
+new = new.mask(b.astype('bool'),old)
+print(new)
 
- @staticmethod
- def getLogger():
-  if Logger.logger is not None:
-   return Logger.logger
-
-  Logger.logger = logging.Logger("oggingmodule.FinalLogger")
-  log_handler = logging.handlers.RotatingFileHandler(filename = Logger.log_file,
-                                                     maxBytes = Logger.log_max_byte,
-                                                     backupCount = Logger.log_backup_count)
-  log_fmt = logging.Formatter("[%(levelname)s][%(funcName)s][%(asctime)s]%(message)s")
-  log_handler.setFormatter(log_fmt)
-  Logger.logger.addHandler(log_handler)
-  Logger.logger.setLevel(Logger.levels.get(Logger.log_level))
-  return Logger.logger
-
-def print1():
- print(1)
-
-def return1():
- return 1
+# for i in range(old.shape[0]):
+#  if b.iloc[i,0] == True:
+#   new.iloc[i,0] = old.iloc[i,0]
+#
+# print(b)
+# print(new)
 
 
 
-if __name__ == "__main__":
- logger = Logger.getLogger()
- # logger.debug("this is a debug msg!")
- # logger.info("this is a info msg!")
- # logger.warning("this is a warn msg!")
- # logger.error("this is a error msg!")
- # logger.critical("this is a critical msg!")
- logger.info(return1())
 
+
+
+
+df1 = pd.DataFrame([['a', 10, '男'],
+                 ['b', 11, '男'],
+                 ['c', 11, '女'],
+                 ['a', 10, '女'],
+                 ['c', 11, '男']],
+                columns=['name', 'age', 'sex'])
+df2 = pd.DataFrame([['a', 10, '男'],
+                 ['b', 11, '女']],
+                columns=['name', 'age', 'sex'])
+# print(df1)
+# print(df2)
+# # 取交集
+# # print(pd.merge(df1,df2,on=['name', 'age', 'sex']))
+#
+# # 取并集
+# print( pd.merge(df1,df2,on=['name', 'age', 'sex'], how='outer'))
+
+# 从df1中过滤df1在df2中存在的行，也就是取补集
+# df1 = df1.append(df2)
+# df1 = df1.append(df2)
+# print(df1.drop_duplicates(subset=['name', 'age', 'sex'],keep=False))

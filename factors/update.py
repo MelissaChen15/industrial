@@ -64,6 +64,10 @@ def update_factor_list(factor_classes:list, mode = 'print'):
         pl_sql_oracle.df_to_DB(df=factor_list, table_name='factorlist',if_exists= 'replace',
                                    data_type={'FactorCode': String(16), '表名': String(128),'简称': String(128), '频率': Integer(),
                                     '类别': String(128), '描述': String(512)})
+        from factors.util.logger import Logger
+        logger = Logger.getLogger()
+        logger.info('update factor list')
+
     print('factor list is up to date')
 
 
@@ -91,6 +95,12 @@ def multidays_write_to_DB(daterange:list, factor_classes:list, mode = 'print'):
             date_symbol = 'EndDate' # 季频时间标识符
         # 其他频率时间标识符加在这里
         ###########################
+        if mode == 'write':
+            from factors.util.logger import Logger
+            logger = Logger.getLogger()
+            info = 'update ' + c.__class__.__name__ + '; date range: from ' + daterange[0] + ' to ' + daterange[1]
+            logger.info(info)
+
         c.write_values_to_DB(date='and t1.'+date_symbol+ '<= to_date( \''+ end + '\',\'yyyy-mm-dd\')  '
                                                                             'and t1.'+date_symbol+'>= to_date( \''+ start + '\',\'yyyy-mm-dd\')',mode = mode)
         print(c.type,' is up to date')
@@ -105,6 +115,9 @@ def update_ordinary_daily_factors(daterange:list, factor_classes:list, mode = 'p
     :param factor_classes:list, 因子类别
     :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
     """
+    from factors.util.logger import Logger
+    logger = Logger.getLogger()
+
     # 格式转换
     for i in [0,1]:
         if type(daterange[i]) == datetime.date: daterange[i] = daterange[i].strftime("%Y-%m-%d")
@@ -137,12 +150,15 @@ def update_ordinary_daily_factors(daterange:list, factor_classes:list, mode = 'p
                 print(factor_values)
                 print(delete_sql)
             if mode == 'write':
-                print(factor_values)
+                info = 'update ' + c.__class__.__name__ + '; date range: from ' + daterange[0] + ' to ' + daterange[1]
+                logger.info(info)
+
                 pl_sql_oracle.delete_existing_records(delete_sql)
                 pl_sql_oracle.df_to_DB(factor_values,c.__class__.__name__.lower(),if_exists= 'append',data_type={'SECUCODE': String(20)})
 
         except Exception as e:
             print(e)
+            logger.warning(e)
         print(c.type,' is up to date')
 
 
@@ -154,6 +170,8 @@ def update_interpolation_seasonal_factors(date:datetime.date, factor_classes:lis
     :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
     :return:
     """
+    from factors.util.logger import Logger
+    logger = Logger.getLogger()
 
     for c in factor_classes:
         print('start updating ', c.type, '; date: ', date)
@@ -161,6 +179,10 @@ def update_interpolation_seasonal_factors(date:datetime.date, factor_classes:lis
         start = datetime_ops.last_4th_report_day(date).strftime("%Y-%m-%d")
         end = date.strftime("%Y-%m-%d") # 格式转换
         # print(earliest_report_day, now)
+
+        if mode == 'write':
+            info = 'update ' + c.__class__.__name__ + '; date range: until ' + end
+            logger.info(info)
 
         # 因为必须一只一只股票的插值, 所以虽然速度很慢, 但是只能循环股票代码
         sql = pl_sql_oracle.dbData_import()
@@ -182,13 +204,15 @@ def update_interpolation_seasonal_factors(date:datetime.date, factor_classes:lis
                 match_sql = 'select * from ' + sql_suffix
                 match_data = pl_sql_oracle.execute_inquery(match_sql)
 
-                # 两表必须是同样的shape
-                assert(match_data.shape == factor_values.shape)
 
                 ###### 重要: 两表取各自非nan的值 #######
                 for col in factor_values.columns:
                     if factor_values[col].dtype != float: continue
-                    factor_values[col] = match_data[col.upper()].mask(match_data[col.upper()].isna() & ~factor_values[col].isna(), factor_values[col])
+                    cond1 = factor_values[col].isna() & ~match_data[col.upper()].isna()
+                    cond2 = cond1.mask(cond1.isna(), False)
+                    factor_values[col] = factor_values[col].mask(cond2.astype('bool'), match_data[col.upper()])
+
+                    # factor_values[col] = match_data[col.upper()].mask(match_data[col.upper()].isna() & ~factor_values[col].isna(), factor_values[col])
 
 
                 # 生成删除已有数据的sql
@@ -205,6 +229,7 @@ def update_interpolation_seasonal_factors(date:datetime.date, factor_classes:lis
 
 
             except Exception as e:
+                logger.warning(getattr(row, 'SECUCODE'), e)
                 print(getattr(row, 'SECUCODE'), e)
 
 
@@ -218,6 +243,9 @@ def peg_multidays_to_DB(daterange:list, factor_classes:list, mode = 'print'):
     :param factor_classes:list, 因子类别
     :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
     """
+    from factors.util.logger import Logger
+    logger = Logger.getLogger()
+
     # 格式转换
     for i in [0, 1]:
         if type(daterange[i]) == datetime.date: daterange[i] = daterange[i].strftime("%Y-%m-%d")
@@ -225,6 +253,9 @@ def peg_multidays_to_DB(daterange:list, factor_classes:list, mode = 'print'):
     # 循环因子类
     for c in factor_classes:
         print('start writing ', c.type, 'to DB, date range: ', daterange)
+        if mode == 'write':
+            info = 'update ' + c.__class__.__name__ + '; date range: from ' + daterange[0] + ' to ' + daterange[1]
+            logger.info(info)
         c.write_values_to_DB(date=daterange, mode=mode)
         print(c.type, ' is up to date')
 
@@ -236,6 +267,9 @@ def update_peg(date:datetime.date, factor_classes:list, mode = 'print'):
     :param factor_classes: list, 因子类别
     :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
     """
+    from factors.util.logger import Logger
+    logger = Logger.getLogger()
+
     for c in factor_classes:
         print('start updating ', c.type, '; date: ', date)
         # 为了满足三次样条插值的要求, 从最近的报告日算起, 向前回滚三个报告期, 也就是9个月. e.g. 今天是19.4.5, 读取19.3.31, 18.12.31/9.30/6.30 的数据, 为中间没有数据的月份插值
@@ -245,6 +279,9 @@ def update_peg(date:datetime.date, factor_classes:list, mode = 'print'):
         # 因为必须一只一只股票的插值, 所以虽然速度很慢, 但是只能循环股票代码
         sql = pl_sql_oracle.dbData_import()
         s = sql.InputDataPreprocess(c.code_sql_file_path, ['secucodes'])
+        if mode == 'write':
+            info = 'update ' + c.__class__.__name__ + '; date range: util ' + end
+            logger.info(info)
         for row in s['secucodes'].itertuples(index=True, name='Pandas'):
             try:
                 data = c.find_components(file_path=c.data_sql_file_path,
@@ -255,20 +292,20 @@ def update_peg(date:datetime.date, factor_classes:list, mode = 'print'):
                 from sqlalchemy import String, Integer
 
                 sql_suffix = c.__class__.__name__.lower() + ' where secucode = \'' + getattr(row, 'SECUCODE') + '\'' \
-                             + 'and startday <= to_date( \'' + end + '\',\'yyyy-mm-dd\')'\
-                             + 'and startday >= to_date( \'' + start + '\',\'yyyy-mm-dd\')'
+                             + 'and tradingday <= to_date( \'' + end + '\',\'yyyy-mm-dd\')'\
+                             + 'and tradingday >= to_date( \'' + start + '\',\'yyyy-mm-dd\')'
 
                 # 首先匹配数据库中已有的数据, 如果原数据不是nan就使用原数据
                 match_sql = 'select * from ' + sql_suffix
                 match_data = pl_sql_oracle.execute_inquery(match_sql)
 
-                # 两表必须是同样的shape
-                assert(match_data.shape == factor_values.shape)
-
                 ###### 重要: 两表取各自非nan的值 #######
                 for col in factor_values.columns:
                     if factor_values[col].dtype != float: continue
-                    factor_values[col] = match_data[col.upper()].mask(match_data[col.upper()].isna() & ~factor_values[col].isna(), factor_values[col])
+                    cond1 = factor_values[col].isna() & ~match_data[col.upper()].isna()
+                    cond2 = cond1.mask(cond1.isna(), False)
+                    factor_values[col] = factor_values[col].mask(cond2.astype('bool'), match_data[col.upper()])
+                    # factor_values[col] = match_data[col.upper()].mask(match_data[col.upper()].isna() & ~factor_values[col].isna(), factor_values[col])
 
 
                 # 生成删除已有数据的sql
@@ -285,6 +322,7 @@ def update_peg(date:datetime.date, factor_classes:list, mode = 'print'):
 
 
             except Exception as e:
+                logger.warning(getattr(row, 'SECUCODE'), e)
                 print(getattr(row, 'SECUCODE'), e)
 
 
@@ -299,13 +337,22 @@ def update_rolling_factors(daterange: list, factor_classes:list, mode = 'print')
     :param factor_classes: list, 因子类别
     :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
     """
+    from factors.util.logger import Logger
+    logger = Logger.getLogger()
 
     for c in factor_classes:
         print('start updating ', c.type, '; date range: ', daterange)
         # 为了满足rolling的要求, 从最近的报告日算起, 向前回滚两年
+        # 格式转换
         start = datetime_ops.last_2nd_year_start(daterange[0]).strftime("%Y-%m-%d")
-        end = daterange[1].strftime("%Y-%m-%d") # 格式转换
+        end = daterange[1].strftime("%Y-%m-%d")
+        for i in [0,1]:
+            if type(daterange[i]) == datetime.date :
+                daterange[i] = daterange[i].strftime("%Y-%m-%d")
         # print(start, end)
+
+        info = 'update ' + c.__class__.__name__ + '; date range: from ' + daterange[0] + ' to ' + daterange[1]
+        logger.info(info)
 
         # 因为必须一只一只股票的计算相关系数等指标, 所以虽然速度很慢, 但是只能循环股票代码
         sql = pl_sql_oracle.dbData_import()
@@ -340,6 +387,7 @@ def update_rolling_factors(daterange: list, factor_classes:list, mode = 'print')
 
 
             except Exception as e:
+                logger.warning(getattr(row, 'SECUCODE'), e)
                 print(getattr(row, 'SECUCODE'), e)
 
 
@@ -353,6 +401,9 @@ def update_time_series(daterange:list, factor_classes:list, mode = 'print'):
     :param factor_classes: list, 类别
     :param mode: str, default = 'print'. 函数模式,  'print'表示将计算结果打印到terminal, 'write'表示将计算结果写入数据库
     """
+    from factors.util.logger import Logger
+    logger = Logger.getLogger()
+
     # 转换为string
     for i in [0,1]:
         if type(daterange[i]) == datetime.date: daterange[i] = daterange[i].strftime("%Y-%m-%d")
@@ -371,19 +422,27 @@ def update_time_series(daterange:list, factor_classes:list, mode = 'print'):
 
 
             # 将原有记录删掉, 以防重复写入
-            delete_sql = 'delete from ' + c.__class__.__name__.lower() +  ' where TRADINGDAY <= to_date( \'' + end + '\',\'yyyy-mm-dd\')' \
-                         + 'and TRADINGDAY >= to_date( \'' + start + '\',\'yyyy-mm-dd\')'
+            delete_sql = 'delete from ' + c.get_name() +  ' where "TradingDay" <= to_date( \'' + end + '\',\'yyyy-mm-dd\')' \
+                         + 'and "TradingDay" >= to_date( \'' + start + '\',\'yyyy-mm-dd\')'
 
             if mode == 'print':
                 print(factor_values)
+                print(delete_sql)
             if mode == 'write':
+
+                info = 'update ' + c.get_name() + '; date range: from ' + daterange[0] + ' to ' + daterange[1]
+                logger.info(info)
+
                 from sqlalchemy import Float,String
                 try:
                     pl_sql_oracle.delete_existing_records(delete_sql)
-                except Exception as e: print(e)
+                except Exception as e:
+                    logger.warning(e)
+                    print(e)
                 pl_sql_oracle.df_to_DB(factor_values, c.get_name(), if_exists='append', data_type={'SMB': Float()})
 
         except Exception as e:
+            logger.warning(e)
             print(e)
         print(c.get_name() ,' is up to date')
 
@@ -393,9 +452,7 @@ if __name__ == '__main__':
     # 去除warning
     import warnings
     warnings.filterwarnings('ignore')
-    # 初始化logger
-    # from factors.logger import Logger
-    # logger = Logger.getLogger()
+
 
 
     ################ 第一次写入数据库之前,请先drop想要写入的数据表 #################
@@ -412,7 +469,7 @@ if __name__ == '__main__':
     ,WeeklyFinancialModelFactor1(),WeeklyFinancialModelFactor2()]
 
     # 更新 因子主表
-    # update_factor_list(factor_classes=all_classes, mode= 'print')
+    # update_factor_list(factor_classes=all_classes, mode= 'write')
 
 
     # 更新 日频非插值非rolling因子
@@ -425,25 +482,25 @@ if __name__ == '__main__':
     #     ,SeasonalDebtpayingAbilityFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor(),SeasonalDividendFactor(),
     #     SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor(),SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),
     #     SeasonalComposedBasicFactorF3()]
-    # multidays_write_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= interpolation_seasonal_classes, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
-    # update_interpolation_seasonal_factors(date = datetime.date.today(), factor_classes= interpolation_seasonal_classes, mode='print')
+    # multidays_write_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= interpolation_seasonal_classes, mode='write') # 因为需要插值, 要使用2004-12-31开始的数据
+    # update_interpolation_seasonal_factors(date = datetime.date.today(), factor_classes= interpolation_seasonal_classes, mode='write')
 
 
     # 更新 日频价值类因子PEG 特殊处理原因: 日频/季频
     # peg = [DailyPEG()]
-    # peg_multidays_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= peg, mode='print') # 因为需要插值, 要使用2004-12-31开始的数据
-    # update_peg(date=datetime.date.today(), factor_classes=peg, mode='print')
+    # peg_multidays_to_DB(daterange = ['2004-12-31', '2019-04-30'], factor_classes= peg, mode='write') # 因为需要插值, 要使用2004-12-31开始的数据
+    # update_peg(date=datetime.date.today(), factor_classes=peg, mode='write')
 
     # 更新 日频rolling因子
-    # rolling_daily_factors = [DailyCorrelationFactor(),DailyMomentumFactor(),DailyIdiosyncrasticFactor(),DailyTurnoverFactor(),
-    #                          DailyTechnicalIndicatorFactor(),DailyVolatilityFactor()]
-    # multidays_write_to_DB(daterange = ['2002-12-31', '2019-05-29'], factor_classes= [rolling_daily_factors()], mode = 'write')
-    # update_rolling_factors(daterange = ['2019-05-29', datetime.date.today()], factor_classes= [rolling_daily_factors()], mode = 'write')
+    # rolling_daily_factors = [DailyCorrelationFactor(),DailyTechnicalIndicatorFactor(),
+    #                          DailyVolatilityFactor(),DailyMomentumFactor(),DailyIdiosyncrasticFactor(),DailyTurnoverFactor()]
+    # multidays_write_to_DB(daterange = ['2002-12-31', '2019-01-01'], factor_classes= rolling_daily_factors, mode = 'print')
+    # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= rolling_daily_factors, mode = 'write')
 
     # 更新 月频 非插值rolling因子
     # monthly_rolling_factor = [MonthlyTurnoverFactor()]
-    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= monthly_rolling_factor, mode = 'print')
-    # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= monthly_rolling_factor, mode = 'print')
+    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= monthly_rolling_factor, mode = 'write')
+    # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= monthly_rolling_factor, mode = 'write')
 
 
     # 更新 周频 非插值rolling因子
@@ -453,16 +510,15 @@ if __name__ == '__main__':
     # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= weekly_rolling_factors, mode = 'print')
 
     # 更新 日频和周频的timeseries
-    from factors import DailyTimeSeries, WeeklyTimeSeries
+    # from factors import DailyTimeSeries,WeeklyTimeSeries
     # series = [DailyTimeSeries,WeeklyTimeSeries]
-    # # 更新或者首次写入都是使用下面这个函数
-    # update_time_series(daterange = ['2004-01-01', datetime.date.today()], factor_classes = [DailyTimeSeries], mode = 'write')
+    # 更新或者首次写入都是使用下面这个函数
+    # update_time_series(daterange=['2019-05-01', datetime.date.today()], factor_classes=[DailyTimeSeries],mode='write')
 
     # 更新 日频和周频的financial model因子
     # financial_models = [DailyFinancialModelFactor1(),DailyFinancialModelFactor2(),WeeklyFinancialModelFactor1(),WeeklyFinancialModelFactor2()]
     # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= financial_models, mode = 'print')
     # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= financial_models, mode = 'print')
-
 
 
 

@@ -1,8 +1,11 @@
+# __author__ = Chen Meiying
+# -*- coding: utf-8 -*-
+# 2019/4/25 9:36
 
 import logging.handlers
 
 
-class FinalLogger:
+class Logger:
     logger = None
 
     levels = {'n': logging.NOTSET,
@@ -19,22 +22,23 @@ class FinalLogger:
 
     @staticmethod
     def getLogger():
-        if FinalLogger.logger is not None:
-            return FinalLogger.logger
+        if Logger.logger is not None:
+            return Logger.logger
 
-        FinalLogger.logger = logging.Logger('oggingmodule.FinalLogger')
-        log_handler = logging.handlers.RotatingFileHandler(filename=FinalLogger.log_file,
-                                                           maxBytes=FinalLogger.log_max_byte,
-                                                           backupCount=FinalLogger.log_backup_count)
+        Logger.logger = logging.Logger('oggingmodule.Logger')
+        log_handler = logging.handlers.RotatingFileHandler(filename=Logger.log_file,
+                                                           maxBytes=Logger.log_max_byte,
+                                                           backupCount=Logger.log_backup_count,
+                                                           encoding='utf-8')
         log_fmt = logging.Formatter('[%(levelname)s][%(funcName)s][%(asctime)s]%(message)s')
         log_handler.setFormatter(log_fmt)
-        FinalLogger.logger.addHandler(log_handler)
-        FinalLogger.logger.setLevel(FinalLogger.levels.get(FinalLogger.log_level))
-        return FinalLogger.logger
+        Logger.logger.addHandler(log_handler)
+        Logger.logger.setLevel(Logger.levels.get(Logger.log_level))
+        return Logger.logger
 
 
 if __name__ == '__main__':
-    logger = FinalLogger.getLogger()
+    logger = Logger.getLogger()
     # logger.debug('this is a debug msg!')
     # logger.info('this is a info msg!')
     # logger.warning('this is a warn msg!')

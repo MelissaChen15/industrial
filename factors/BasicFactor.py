@@ -53,6 +53,9 @@ class BasicFactor(object):
         return factor_list
 
     def write_values_to_DB(self, date, mode = 'print'):
+        from factors.util.logger import Logger
+        logger = Logger.getLogger()
+
         sql = pl_sql_oracle.dbData_import()
         s = sql.InputDataPreprocess(self.code_sql_file_path,['secucodes'])
         for row in s['secucodes'].itertuples(index=True, name='Pandas'):
@@ -71,6 +74,7 @@ class BasicFactor(object):
 
 
             except Exception as e:
+                logger.warning(getattr(row, 'SECUCODE'), e)
                 print(getattr(row, 'SECUCODE'), e)
 
 

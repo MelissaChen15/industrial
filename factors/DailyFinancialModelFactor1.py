@@ -108,4 +108,6 @@ class DailyFinancialModelFactor1(DailyFrequency,FinancialModelFactor):
         factor_values['TRADINGDAY'] = datagroup_FF3.index
         factor_values['SECUCODE'] = components['QT_Performance']['SECUCODE'].values[:len(datagroup_FF3)]
 
+        # factor_values.to_excel(r'C:\Users\Kww\Desktop\temp.xlsx')
+
         return factor_values

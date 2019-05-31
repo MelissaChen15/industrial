@@ -40,7 +40,7 @@ class VolatilityFunc(object):
             res = pd.concat([res,self.TurnoverVolume.rolling(self.periodcoef*j).apply(np.std)],axis=1)
         return res
 
-    def high_low_std_part1(self):
+    def hl_std_p1(self):
         j = self.window[0]
         ChangePrice1 = (self.high-self.ClosePrice.shift())/self.ClosePrice.shift()
         ChangePrice2 = (self.low-self.ClosePrice.shift())/self.ClosePrice.shift()
@@ -51,7 +51,7 @@ class VolatilityFunc(object):
         res1 = pd.concat([std1,std2,diff_std1,diff_std2],axis=1)
         return res1
 
-    def high_low_std_part2(self):
+    def hl_std_2(self):
         j = self.window[1]
         ChangePrice1 = (self.high-self.ClosePrice.shift())/self.ClosePrice.shift()
         ChangePrice2 = (self.low-self.ClosePrice.shift())/self.ClosePrice.shift()
@@ -62,7 +62,7 @@ class VolatilityFunc(object):
         res1 = pd.concat([std1,std2,diff_std1,diff_std2],axis=1)
         return res1
 
-    def high_low_std_part3(self):
+    def hl_std_p3(self):
         j = self.window[2]
         ChangePrice1 = (self.high-self.ClosePrice.shift())/self.ClosePrice.shift()
         ChangePrice2 = (self.low-self.ClosePrice.shift())/self.ClosePrice.shift()
