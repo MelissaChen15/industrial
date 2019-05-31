@@ -393,6 +393,7 @@ if __name__ == '__main__':
     import warnings
     warnings.filterwarnings('ignore')
 
+
     ################ 第一次写入数据库之前,请先drop想要写入的数据表 #################
 
 
@@ -403,10 +404,11 @@ if __name__ == '__main__':
     SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3(),DailyVolatilityFactor()
     ,DailyPEG(),DailyTurnoverFactor(),DailyCorrelationFactor(),DailyIdiosyncrasticFactor(),DailyMomentumFactor(),
     MonthlyTurnoverFactor(),WeeklyCorrelationFactor(),WeeklyIdiosyncrasticFactor(),WeeklyMomentumFactor(),WeeklyTurnoverFactor(),
-    WeeklyVolatilityFactor(),WeeklyTechnicalIndicatorFactor(),DailyFinancialModelFactor2(),WeeklyFinancialModelFactor1(),WeeklyFinancialModelFactor2()]
+    WeeklyVolatilityFactor(),WeeklyTechnicalIndicatorFactor(),DailyFinancialModelFactor1(),DailyFinancialModelFactor2()
+    ,WeeklyFinancialModelFactor1(),WeeklyFinancialModelFactor2()]
 
     # 更新 因子主表
-    # update_factor_list(factor_classes=all_classes, mode= 'write')
+    # update_factor_list(factor_classes=all_classes, mode= 'print')
 
 
     # 更新 日频非插值非rolling因子
@@ -431,8 +433,8 @@ if __name__ == '__main__':
     # 更新 日频rolling因子
     # rolling_daily_factors = [DailyCorrelationFactor(),DailyMomentumFactor(),DailyIdiosyncrasticFactor(),DailyTurnoverFactor(),
     #                          DailyTechnicalIndicatorFactor(),DailyVolatilityFactor()]
-    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= rolling_daily_factors, mode = 'print')
-    # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= rolling_daily_factors, mode = 'print')
+    # multidays_write_to_DB(daterange = ['2002-12-31', '2019-05-29'], factor_classes= [rolling_daily_factors()], mode = 'write')
+    # update_rolling_factors(daterange = ['2019-05-29', datetime.date.today()], factor_classes= [rolling_daily_factors()], mode = 'write')
 
     # 更新 月频 非插值rolling因子
     # monthly_rolling_factor = [MonthlyTurnoverFactor()]
@@ -441,7 +443,7 @@ if __name__ == '__main__':
 
 
     # 更新 周频 非插值rolling因子
-    # weekly_rolling_factors = [WeeklyCorrelationFactor(),WeeklyIdiosyncrasticFactor(),WeeklyMomentumFactor(),WeeklyTechnicalIndicatorFactor(),
+    # weekly_rolling_factors = [WeeklyCorrelationFactor(),WeeklyIdiosyncrasticFactor(),WeeklyMomentumFactor(),WeeklyTechnicalI              ndicatorFactor(),
     #                           WeeklyVolatilityFactor(),WeeklyTurnoverFactor()]
     # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= weekly_rolling_factors, mode = 'print')
     # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= weekly_rolling_factors, mode = 'print')
@@ -453,8 +455,8 @@ if __name__ == '__main__':
     # update_time_series(daterange = ['2016-01-01', datetime.date.today()], factor_classes = series, mode = 'write')
 
     # 更新 日频和周频的financial model因子
-    # financial_models = [WeeklyFinancialModelFactor1(),DailyFinancialModelFactor2(),WeeklyFinancialModelFactor1(),WeeklyFinancialModelFactor2()]
-    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= financial_models, mode = 'print')
+    financial_models = [DailyFinancialModelFactor1(),DailyFinancialModelFactor2(),WeeklyFinancialModelFactor1(),WeeklyFinancialModelFactor2()]
+    multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= financial_models, mode = 'print')
     # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= financial_models, mode = 'print')
 
 

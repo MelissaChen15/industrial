@@ -62,7 +62,7 @@ class WeeklyMomentumFactor(WeeklyFrequency,MomentumFactor):
         :return: pandas.DataFrame, sql语句执行后返回的数据
         """
         sql = pl_sql_oracle.dbData_import()
-        components = sql.InputDataPreprocess(self.data_sql_file_path, ['QT_Performance'], secucode )
+        components = sql.InputDataPreprocess(self.data_sql_file_path, ['QT_Performance'], secucode,date)
         WeeklyTradingDay = sql.InputDataPreprocess(self.weeklyday_file_path,['QT_TradingDayNew'])
 
         components['QT_Performance'] = components['QT_Performance'].sort_values(by='TRADINGDAY')

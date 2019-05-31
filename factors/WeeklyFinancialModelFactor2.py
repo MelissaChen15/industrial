@@ -4,12 +4,13 @@ Author: Kangchen Wei
 Email:  weixk@cifutures.com.cn
 Application : machine learning for investment
 
-date: 2019/5/17  14:53
+date: 2019/5/17  18:14
 desc:
 '''
-# coding=utf-8
+
+
 # 引用frequency.py文件中相应的频率类
-from factors.Frequency import DailyFrequency
+from factors.Frequency import WeeklyFrequency
 # 引用category.py文件中相应的类别类
 from factors.Category import FinancialModelFactor
 from factors.sql import pl_sql_oracle
@@ -18,22 +19,23 @@ from factors.util.FinancialModelFunc import FinancialModel_statsFunc
 import pandas as pd
 
 """
-日频金融模型_CAPM类因子
+周频金融模型_CAPM类因子
 
 """
 
 
-class DailyFinancialModelFactor2(DailyFrequency,FinancialModelFactor):
+class WeeklyFinancialModelFactor2(WeeklyFrequency,FinancialModelFactor):
 
     def __init__(self, factor_code= '', name= '', describe= ''):
         super().__init__(factor_code, name, describe)
-        self.type = '日频金融模型_CAPM类因子'
+        self.type = '周频金融模型_CAPM类因子'
         self.target_methods,self.nameGroup = FinancialModelFuncProcess()  # 生成因子代码和因子名称，进行初始化
         self.code_sql_file_path_index = r'.\sql\sql_StockIndex.sql'
         self.SMB_HML_file_path_daily = r'.\sql\sql_daily_timeseries_factor.sql'
         self.SMB_HML_file_path_weekly = r'.\sql\sql_weekly_timeseries_factor.sql'
-        self.data_sql_file_path = r'.\sql\sql_daily_financialmodel_factor.sql'  # 读取数据库数据的sql代码文件路径
+        self.data_sql_file_path = r'.\sql\sql_weekly_financialmodel_factor.sql'  # 读取数据库数据的sql代码文件路径
         self.code_sql_file_path = r'.\sql\sql_get_secucode.sql'  # 查询股票代码的sql文件路径
+        self.weeklyday_file_path = r'.\sql\sql_get_last_trading_weekday.sql'
 
     def init_factors(self):
         """
@@ -44,16 +46,16 @@ class DailyFinancialModelFactor2(DailyFrequency,FinancialModelFactor):
         factor_entities = dict()
         count = 0000
         columns_name = ['alpha','beta','波动率', '上行波动率', '下行波动率', '上下波动率之差', '偏度','上行beta','下行beta','上下行beta差']
-        marketindex = ['IF','IC','IH']
-        window = [3,6]
+        marketindex = ['IF', 'IC', 'IH']
+        window = [3, 6]
 
         for i in columns_name:
             for j in marketindex:
                 for w in window:
-                    name = i + '_' + j + '_'+ str(w) + '_m'
-                    entity = DailyFinancialModelFactor2(factor_code='DFB%04d' % count,
-                                            name=name,
-                                            describe='')
+                    name = i + '_' + j + '_' + str(w) + '_m'
+                    entity = WeeklyFinancialModelFactor2(factor_code='WFB%04d' % count,
+                                                         name=name,
+                                                         describe='')
                     factor_entities[name] = entity
                     count += 1
 
@@ -66,10 +68,14 @@ class DailyFinancialModelFactor2(DailyFrequency,FinancialModelFactor):
         :return: pandas.DataFrame, sql语句执行后返回的数据
         """
         sql = pl_sql_oracle.dbData_import()
-        components = sql.InputDataPreprocess(self.data_sql_file_path, ['QT_Performance'], secucode,date )
-
+        components = sql.InputDataPreprocess(self.data_sql_file_path, ['QT_Performance'], secucode,date)
+        WeeklyTradingDay = sql.InputDataPreprocess(self.weeklyday_file_path, ['QT_TradingDayNew'])
         components['QT_Performance'] = components['QT_Performance'].sort_values(by='TRADINGDAY')
-        # print(components)
+        WeeklyTradingDay['QT_TradingDayNew'] = WeeklyTradingDay['QT_TradingDayNew'].sort_values(by='TRADINGDATE')  # 周频交易日期
+        # 匹配周频交易日期
+        components['QT_Performance'] = components['QT_Performance'][components['QT_Performance']['TRADINGDAY'].isin(WeeklyTradingDay['QT_TradingDayNew']['TRADINGDATE'])]
+        components['QT_Performance'] = components['QT_Performance'].reset_index(drop=True)  # 重设索引是必须的，否则会出错
+
         return components
 
     def get_factor_values(self, components):
@@ -82,18 +88,15 @@ class DailyFinancialModelFactor2(DailyFrequency,FinancialModelFactor):
         """
         # factor_values['SECUCODE'] = pd.DataFrame(components['QT_Performance']['SECUCODE']) # 'secucode'因子的长度与后面的数据要保持一致
 
-        TO_cal = FinancialModel_statsFunc(components['QT_Performance']['TRADINGDAY'],components['QT_Performance']['CHANGEPCT'],
-                                          flag=1,code_sql_file_path1=self.code_sql_file_path_index)
+        TO_cal = FinancialModel_statsFunc(components['QT_Performance']['TRADINGDAY'],components['QT_Performance']['CHANGEPCTRW'],
+                                          flag=2,code_sql_file_path1=self.code_sql_file_path_index)
 
         columns_name1 = ['alpha','beta','波动率', '上行波动率', '下行波动率', '上下波动率之差', '偏度','上行beta','下行beta','上下行beta差']
-        # columns_name2 = ['alpha','beta_index','beta_HML','beta_SMB','波动率', '上行波动率', '下行波动率', '上下波动率之差', '偏度']
         marketindex = ['IF','IC','IH']
 
         datagroup_capm = pd.DataFrame()
         for i in marketindex:
-            # print(1)
             alpha1_all, beta_all, residuals_stats, upsidebeta_all, downsidebeta_all, sidediffbeta_all = TO_cal.CAPM_model_stats(i)
-            # print(2)
             index_datagroup = pd.DataFrame()
             for j in alpha1_all.keys():
                 temp_datagroup = pd.concat([alpha1_all[j],beta_all[j],residuals_stats[j],upsidebeta_all[j], downsidebeta_all[j], sidediffbeta_all[j]],axis=1)
@@ -108,3 +111,4 @@ class DailyFinancialModelFactor2(DailyFrequency,FinancialModelFactor):
         factor_values['SECUCODE'] = components['QT_Performance']['SECUCODE'].values[:len(datagroup_capm)]
 
         return factor_values
+
