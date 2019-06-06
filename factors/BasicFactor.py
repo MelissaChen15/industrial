@@ -77,7 +77,6 @@ class BasicFactor(object):
                 logger.warning(getattr(row, 'SECUCODE'), e)
                 print(getattr(row, 'SECUCODE'), e)
 
-
     def find_components(self, file_path,secucode,date):
         """
         在数据库中查询计算本类因子需要的数据

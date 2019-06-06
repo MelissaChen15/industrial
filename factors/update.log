@@ -26,4 +26,8 @@
 [INFO][multidays_write_to_DB][2019-06-04 08:46:24,333]update WeeklyVolatilityFactor; date range: from 2002-12-31 to 2019-06-04
 [INFO][multidays_write_to_DB][2019-06-04 19:05:50,777]update DailyCorrelationFactor; date range: from 2002-12-31 to 2019-06-04
 [INFO][update_factor_list][2019-06-06 09:11:59,053]update factor list
-[INFO][multidays_write_to_DB][2019-06-06 09:11:59,149]update SeasonalComposedBasicFactorF1; date range: from 2004-12-31 to 2019-06-06
+[INFO][multidays_write_to_DB][2019-06-06 09:11:59,149]update SeasonalComposedBasicFactorF1; date range: from 2004-12-31 to 2019-06-05
+[INFO][multidays_write_to_DB][2019-06-06 11:45:16,281]update SeasonalComposedBasicFactorF2; date range: from 2004-12-31 to 2019-06-05 数据取得不够多导致15-01/15-02没有值, 稍后运行update修复
+[INFO][update_time_series][2019-06-06 15:04:27,496]update dailytimeseries; date range: from 2019-05-30 to 2019-06-05
+[INFO][update_time_series][2019-06-06 15:04:28,413]update weeklytimeseries; date range: from 2019-05-30 to 2019-06-05
+[INFO][update_interpolation_seasonal_factors][2019-06-06 15:14:58,212]update SeasonalComposedBasicFactorF2; date range: until 2005-02-01 修复"数据取得不够多导致15-01/15-02没有值"的问题

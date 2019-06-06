@@ -23,10 +23,11 @@ class FinancialModel_statsFunc(StockIndexGroup):
                  code_sql_file_path1):
         # 三类指数的涨跌幅带时间序列索引，个股的涨幅必须也带
         # 三类指数既可以是日频的涨跌幅，也可以是周频的涨跌幅
-        if flag==1:
+        if flag == 1:
             super().__init__(flag,code_sql_file_path1,weekday_sql_file_path='')  # path1是指数数据的路径
             ChangePCT.index = TradingDay
             self.ChangePCT = ChangePCT  # 涨跌幅
+            self.ChangePCT = self.ChangePCT.astype('float')
             # self.data_sql_file_path = data_sql_file_path_classic  # 计算SMB,HML使用，ClassicalFactorcal类的参数
             # self.code_sql_file_path = code_sql_file_path2_tradingday  # 计算SMB,HML使用，ClassicalFactorcal类的参数
             self.flag = flag
@@ -35,9 +36,15 @@ class FinancialModel_statsFunc(StockIndexGroup):
             super().__init__(flag,code_sql_file_path1,weekday_sql_file_path=weeklyday_file_path)  # path1是指数数据的路径
             ChangePCT.index = TradingDay
             self.ChangePCT = ChangePCT  # 涨跌幅
+            self.ChangePCT = self.ChangePCT.astype('float')
+
+        self.ChangePCT = self.ChangePCT * 0.01
+        self.HS300ChangePCT = self.HS300ChangePCT * 0.01
+        self.ZZ500ChangePCT = self.ZZ500ChangePCT * 0.01
+        self.SZ50ChangePCT = self.SZ50ChangePCT * 0.01
             # self.data_sql_file_path = data_sql_file_path_classic  # 计算SMB,HML使用，ClassicalFactorcal类的参数
             # self.code_sql_file_path = code_sql_file_path2_tradingday  # 计算SMB,HML使用，ClassicalFactorcal类的参数
-            self.flag = flag
+        self.flag = flag
 
     def CAPM_model_stats(self,marketindex):
         if marketindex == 'IF':
@@ -92,7 +99,13 @@ class FinancialModel_statsFunc(StockIndexGroup):
             SMB_and_HML_dict = sql.InputDataPreprocess(SMB_HML_file_path_weekly, table_name = ['weeklytimeseries'])
             SMB_and_HML_dict['weeklytimeseries'].index = SMB_and_HML_dict['weeklytimeseries']['TradingDay'.upper()]  # weeklytimeseries表中的字段名
             SMB_and_HML = SMB_and_HML_dict['weeklytimeseries']
-
+        # print(SMB_and_HML)
+        # self.ChangePCT = self.ChangePCT*0.01
+        # self.HS300ChangePCT = self.HS300ChangePCT*0.01
+        # self.ZZ500ChangePCT = self.ZZ500ChangePCT*0.01
+        # self.SZ50ChangePCT = self.SZ50ChangePCT*0.01
+        SMB_and_HML[['SMB','HML']] = SMB_and_HML[['SMB','HML']]*0.01  # 量纲统一成国际单位制 #注意这里
+        # print(SMB_and_HML)
         if marketindex == 'IF':
             if self.flag == 1:
                 # factors_exm = TimeseriesFactorCal(self.data_sql_file_path,self.code_sql_file_path)

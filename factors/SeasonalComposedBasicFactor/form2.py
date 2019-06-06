@@ -177,7 +177,6 @@ class SeasonalComposedBasicFactorF2(SeasonalFrequency, ComposedBasicFactorForm2)
         :return:
             factor_values： pandas.DataFrame, 因子值
         """
-        print(1)
         factor_values = pd.DataFrame(components['LC_BalanceSheetAll_monthly'][['SECUCODE','STARTDAY']]) # 存储因子值
 
         for n in self.numerator.itertuples(index=True, name='Pandas'):  # 分子
