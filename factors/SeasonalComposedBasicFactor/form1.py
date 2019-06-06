@@ -159,16 +159,15 @@ class SeasonalComposedBasicFactorF1(SeasonalFrequency, ComposedBasicFactorForm1)
                 d_table = getattr(d, '聚源表名') + '_monthly'  # 分母表名
                 factor_values[factor_name] = np.nan  # 使不同股票因子的个数对齐
                 try:
-                    factor_values[factor_name] = components[n_table][getattr(n, '聚源字段').upper()] / components[d_table][
-                        getattr(d, '聚源字段').upper()]
+                    factor_values[factor_name] = components[n_table][getattr(n, '聚源字段').upper()] / (components[d_table][getattr(d, '聚源字段').upper()] + 1e-6)
                     # 某类因子如果存在大于10^6的数值，这个因子取log(1+x)
                     isbig = factor_values[factor_name] >= 10e6  # 判断是否含有大于10e6的值
                     if True in isbig.values:
-                        # isplus = factor_values[factor_name] >= 0
-                        # factor_values[factor_name] = np.log1p(np.abs(factor_values[factor_name]))* isplus.mask(isplus == False, -1)
-                        factor_values[factor_name] = np.tanh(factor_values[factor_name])
-
-                    isbig = factor_values[factor_name] >= 10e6  # 判断是否含有大于10e6的值
+                        isplus = factor_values[factor_name] >= 0
+                        factor_values[factor_name] = np.log1p(np.abs(factor_values[factor_name]))* isplus.mask(isplus == False, -1)
+                        # factor_values[factor_name] = np.tanh(factor_values[factor_name])
+                    # print(factor_values[factor_name].min())
+                    # print(factor_values[factor_name].max())
 
 
                 except Exception as e:

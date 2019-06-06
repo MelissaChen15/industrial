@@ -80,10 +80,11 @@ class DailyVolatilityFactor(DailyFrequency,VolatilityFactor):
                               components['QT_Performance']['LOWPRICE'],components['QT_Performance']['CHANGEPCT'],20,
                                 [1, 3, 6],components['QT_Performance']['TURNOVERVOLUME'],components['QT_Performance']['TURNOVERRATE'])
 
+        factor_values_1 = pd.DataFrame(components['QT_Performance'][['SECUCODE','TRADINGDAY']]) # 存储因子值
         for i in self.target_methods:
             temp_str = 'TO_cal.'+i+'()'
             # 注意.values的操作并不多余，生成的dataframe的列名均为0，重新设置成pd.DF后列名会重置成1,2,3..
-            if i.startswith('high_low_std_part'):  # 这个函数的生成结果的shape与其他函数不一致
+            if i.startswith('hl_std_p'):  # 这个函数的生成结果的shape与其他函数不一致
                 factor_values[[i+'_'+'highcloseSTD'+'_'+str(self.frequency),i+'_'+'lowcloseSTD'+'_'+str(self.frequency)
                     ,i+'_'+'highlowdiffSTD1'+'_'+str(self.frequency),i+'_'+'highlowdiffSTD2'+'_'+str(self.frequency)]] = pd.DataFrame(eval(temp_str).values)
             else:
@@ -91,3 +92,9 @@ class DailyVolatilityFactor(DailyFrequency,VolatilityFactor):
                     ,i+'_'+str(TO_cal.window[2])+'_'+str(self.frequency)]] = pd.DataFrame(eval(temp_str).values)
         return factor_values
 
+
+# a = pd.DataFrame([[1,2,3,4],[12,3,4,6]]).transpose()
+# a.columns=['a','b']
+# b = pd.DataFrame([[3,4],[111,222]]).transpose()
+# b.columns=['a','c']
+# c = pd.merge(a,b,how='outer',on='a')

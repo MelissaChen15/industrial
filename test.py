@@ -7,10 +7,7 @@ new = pd.DataFrame([
  [np.nan]
 ])
 
-old = pd.DataFrame([
- [0],
- [np.nan],
-])
+old = pd.DataFrame()
 
 a = new.isna() & ~old.isna()
 b = a.mask(a.isna(),False)

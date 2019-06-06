@@ -469,25 +469,24 @@ if __name__ == '__main__':
     ,WeeklyFinancialModelFactor1(),WeeklyFinancialModelFactor2()]
 
     # 更新 因子主表
-    # update_factor_list(factor_classes=all_classes, mode= 'write')
+    update_factor_list(factor_classes=all_classes, mode= 'write')
 
 
     # 更新 季频插值因子
-    interpolation_seasonal_classes = [SeasonalFinancialQualityFactor(),SeasonalValueFactor(),SeasonalGrowthFactor(),SeasonalSecuIndexFactor()
-        ,SeasonalDebtFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor()
-        ,SeasonalDividendFactor(),SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor()]
-    multidays_write_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= interpolation_seasonal_classes, mode='write') # 因为需要插值, 要使用2004-12-31开始的数据
+    # interpolation_seasonal_classes = [SeasonalFinancialQualityFactor(),SeasonalValueFactor(),SeasonalGrowthFactor(),SeasonalSecuIndexFactor()
+    #     ,SeasonalDebtFactor(),SeasonalProfitabilityFactor(),SeasonalOperatingFactor(),SeasonalCashFactor()
+    #     ,SeasonalDividendFactor(),SeasonalCapitalStructureFactor(),SeasonalEarningQualityFactor(),SeasonalDuPontFactor()]
+    # multidays_write_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= interpolation_seasonal_classes, mode='write') # 因为需要插值, 要使用2004-12-31开始的数据
     # update_interpolation_seasonal_factors(date = datetime.date.today(), factor_classes= interpolation_seasonal_classes, mode='write')
 
-
-    nmsl = [SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3()]
-
+    temp = [SeasonalComposedBasicFactorF1(),SeasonalComposedBasicFactorF2(),SeasonalComposedBasicFactorF3()]
+    multidays_write_to_DB(daterange = ['2004-12-31', datetime.date.today()], factor_classes= temp, mode='write') # 因为需要插值, 要使用2004-12-31开始的数据
 
 
     # 更新 日频非插值非rolling因子
     # ordinary_daily_classes = [DailyValueFactor()]
-    # multidays_write_to_DB(daterange = ['2005-01-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'print') # 日频直接使用05-01-01的数据即可
-    # update_ordinary_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'write')
+    # multidays_write_to_DB(daterange = ['2005-01-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'write') # 日频直接使用05-01-01的数据即可
+    # # update_ordinary_daily_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= ordinary_daily_classes, mode = 'write')
 
 
     # 更新 日频价值类因子PEG 特殊处理原因: 日频/季频
@@ -496,10 +495,11 @@ if __name__ == '__main__':
     # update_peg(date=datetime.date.today(), factor_classes=peg, mode='write')
 
     # 更新 日频rolling因子
-    # rolling_daily_factors = [DailyCorrelationFactor(),DailyTechnicalIndicatorFactor(),
-    #                          DailyVolatilityFactor(),DailyMomentumFactor(),DailyIdiosyncrasticFactor(),DailyTurnoverFactor()]
-    # multidays_write_to_DB(daterange = ['2002-12-31', '2019-01-01'], factor_classes= rolling_daily_factors, mode = 'print')
+    # rolling_daily_factors = [DailyTechnicalIndicatorFactor(),
+    #                          DailyVolatilityFactor(),DailyMomentumFactor(),DailyIdiosyncrasticFactor(),DailyTurnoverFactor(),DailyCorrelationFactor()]
+    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= [DailyCorrelationFactor()], mode = 'write')
     # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= rolling_daily_factors, mode = 'write')
+
 
     # 更新 月频 非插值rolling因子
     # monthly_rolling_factor = [MonthlyTurnoverFactor()]
@@ -508,16 +508,17 @@ if __name__ == '__main__':
 
 
     # 更新 周频 非插值rolling因子
-    # weekly_rolling_factors = [WeeklyCorrelationFactor(),WeeklyIdiosyncrasticFactor(),WeeklyMomentumFactor(),WeeklyTechnicalI              ndicatorFactor(),
+    # weekly_rolling_factors = [WeeklyCorrelationFactor(),WeeklyIdiosyncrasticFactor(),WeeklyMomentumFactor(),WeeklyTechnicalIndicatorFactor(),
     #                           WeeklyVolatilityFactor(),WeeklyTurnoverFactor()]
-    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= weekly_rolling_factors, mode = 'print')
-    # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= weekly_rolling_factors, mode = 'print')
+    # multidays_write_to_DB(daterange = ['2002-12-31', datetime.date.today()], factor_classes= [WeeklyVolatilityFactor()], mode = 'write')
+    # # update_rolling_factors(daterange = ['2019-05-01', datetime.date.today()], factor_classes= weekly_rolling_factors, mode = 'print')
 
     # 更新 日频和周频的timeseries
     # from factors import DailyTimeSeries,WeeklyTimeSeries
     # series = [DailyTimeSeries,WeeklyTimeSeries]
     # 更新或者首次写入都是使用下面这个函数
     # update_time_series(daterange=['2019-05-01', datetime.date.today()], factor_classes=[DailyTimeSeries],mode='write')
+
 
     # 更新 日频和周频的financial model因子
     # financial_models = [DailyFinancialModelFactor1(),DailyFinancialModelFactor2(),WeeklyFinancialModelFactor1(),WeeklyFinancialModelFactor2()]

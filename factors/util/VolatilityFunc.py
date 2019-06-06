@@ -26,6 +26,7 @@ class VolatilityFunc(object):
         res = pd.DataFrame(index=[])
         for j in self.window:
             res = pd.concat([res,self.ChangePCT.rolling(self.periodcoef*j).apply(np.std)],axis=1)
+        # print('return_std'+res)
         return res
 
     def turnover_std(self):
@@ -51,7 +52,7 @@ class VolatilityFunc(object):
         res1 = pd.concat([std1,std2,diff_std1,diff_std2],axis=1)
         return res1
 
-    def hl_std_2(self):
+    def hl_std_p2(self):
         j = self.window[1]
         ChangePrice1 = (self.high-self.ClosePrice.shift())/self.ClosePrice.shift()
         ChangePrice2 = (self.low-self.ClosePrice.shift())/self.ClosePrice.shift()

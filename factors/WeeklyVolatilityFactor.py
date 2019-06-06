@@ -89,7 +89,7 @@ class WeeklyVolatilityFactor(WeeklyFrequency,VolatilityFactor):
 
         for i in self.target_methods:
             temp_str = 'TO_cal.'+i+'()'
-            if i.startswith('high_low_std_part'):  # 这个函数的生成结果的shape与其他函数不一致
+            if i.startswith('hl_std_p'):  # 这个函数的生成结果的shape与其他函数不一致
                 factor_values[[i+'_'+'highcloseSTD'+'_'+str(self.frequency),i+'_'+'lowcloseSTD'+'_'+str(self.frequency)
                     ,i+'_'+'highlowdiffSTD1'+'_'+str(self.frequency),i+'_'+'highlowdiffSTD2'+'_'+str(self.frequency)]] = pd.DataFrame(eval(temp_str).values)
             else:

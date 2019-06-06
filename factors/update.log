@@ -1,1 +1,29 @@
 [INFO][multidays_write_to_DB][2019-05-31 17:08:18,614]update SeasonalFinancialQualityFactor; date range: from 2004-12-31 to 2019-05-31
+[INFO][multidays_write_to_DB][2019-05-31 17:37:11,840]update SeasonalValueFactor; date range: from 2004-12-31 to 2019-05-31
+[INFO][multidays_write_to_DB][2019-05-31 18:01:46,961]update SeasonalGrowthFactor; date range: from 2004-12-31 to 2019-05-31
+[INFO][multidays_write_to_DB][2019-05-31 18:34:18,596]update SeasonalSecuIndexFactor; date range: from 2004-12-31 to 2019-05-31
+[INFO][multidays_write_to_DB][2019-05-31 19:02:36,019]update SeasonalDebtFactor; date range: from 2004-12-31 to 2019-05-31
+[INFO][multidays_write_to_DB][2019-05-31 19:31:39,296]update SeasonalProfitabilityFactor; date range: from 2004-12-31 to 2019-05-31
+[INFO][multidays_write_to_DB][2019-05-31 20:01:44,573]update SeasonalOperatingFactor; date range: from 2004-12-31 to 2019-05-31
+[INFO][multidays_write_to_DB][2019-05-31 20:29:17,886]update SeasonalCashFactor; date range: from 2004-12-31 to 2019-05-31
+[INFO][multidays_write_to_DB][2019-05-31 20:56:50,071]update SeasonalDividendFactor; date range: from 2004-12-31 to 2019-05-31
+[INFO][multidays_write_to_DB][2019-05-31 21:22:43,533]update SeasonalCapitalStructureFactor; date range: from 2004-12-31 to 2019-05-31
+[INFO][multidays_write_to_DB][2019-05-31 21:51:52,880]update SeasonalEarningQualityFactor; date range: from 2004-12-31 to 2019-05-31
+[INFO][multidays_write_to_DB][2019-05-31 22:18:53,107]update SeasonalDuPontFactor; date range: from 2004-12-31 to 2019-05-31
+[INFO][multidays_write_to_DB][2019-06-03 09:30:42,081]update DailyValueFactor; date range: from 2005-01-01 to 2019-06-03
+[INFO][multidays_write_to_DB][2019-06-03 13:00:20,053]update DailyTechnicalIndicatorFactor; date range: from 2002-12-31 to 2019-06-03
+[INFO][multidays_write_to_DB][2019-06-03 14:01:20,401]update DailyVolatilityFactor; date range: from 2002-12-31 to 2019-06-03  失败,函数名太长后更改报错.
+[INFO][multidays_write_to_DB][2019-06-03 14:51:35,646]update DailyVolatilityFactor; date range: from 2002-12-31 to 2019-06-03
+[INFO][multidays_write_to_DB][2019-06-03 16:38:14,246]update DailyMomentumFactor; date range: from 2002-12-31 to 2019-06-03
+[INFO][multidays_write_to_DB][2019-06-03 17:24:36,554]update DailyIdiosyncrasticFactor; date range: from 2002-12-31 to 2019-06-03
+[INFO][multidays_write_to_DB][2019-06-03 19:19:03,223]update DailyTurnoverFactor; date range: from 2002-12-31 to 2019-06-03
+[INFO][multidays_write_to_DB][2019-06-03 19:51:07,678]update WeeklyCorrelationFactor; date range: from 2002-12-31 to 2019-06-03
+[INFO][multidays_write_to_DB][2019-06-04 02:39:10,571]update WeeklyIdiosyncrasticFactor; date range: from 2002-12-31 to 2019-06-03
+[INFO][multidays_write_to_DB][2019-06-04 03:29:00,481]update WeeklyMomentumFactor; date range: from 2002-12-31 to 2019-06-03
+[INFO][multidays_write_to_DB][2019-06-04 04:09:29,387]update WeeklyTechnicalIndicatorFactor; date range: from 2002-12-31 to 2019-06-03
+[INFO][multidays_write_to_DB][2019-06-04 04:51:46,154]update WeeklyVolatilityFactor; date range: from 2002-12-31 to 2019-06-03
+[INFO][multidays_write_to_DB][2019-06-04 05:22:54,666]update WeeklyTurnoverFactor; date range: from 2002-12-31 to 2019-06-03
+[INFO][multidays_write_to_DB][2019-06-04 08:46:24,333]update WeeklyVolatilityFactor; date range: from 2002-12-31 to 2019-06-04
+[INFO][multidays_write_to_DB][2019-06-04 19:05:50,777]update DailyCorrelationFactor; date range: from 2002-12-31 to 2019-06-04
+[INFO][update_factor_list][2019-06-06 09:11:59,053]update factor list
+[INFO][multidays_write_to_DB][2019-06-06 09:11:59,149]update SeasonalComposedBasicFactorF1; date range: from 2004-12-31 to 2019-06-06
